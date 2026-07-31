@@ -1,0 +1,52 @@
+# コード品質バー（実用バランス）— ハーネス/hook が機械参照する。出典: ADR 0013-0016
+level: pragmatic-balance
+
+typescript:
+  strict: true
+  no_any_in: ['src/lib/server', 'src/lib/**/domain']
+  validate_external_input_with: zod # 境界の外部データは検証してから型付け
+
+tdd_required_for: # test-first 必須（ADR 0013）
+  - auth/session
+  - authz/billing (reserve->settle)
+  - ports and repositories
+  - stripe webhook
+  - rls policies
+  - product_behavior_change # 観測可能挙動の feature / bugfix / 新規 e2e 契約
+
+tdd_process:
+  red_before_green: required
+  red_evidence: e2e_runner_or_vitest_fail_log
+
+tdd_exceptions:
+  - docs_only
+  - style_only_no_behavior
+  - snapshot_baseline_import
+  - config_chore
+  - retrofit_with_human_ack
+
+testing:
+  unit: vitest # 純ロジック domain/utils
+  integration: services # Supabase ローカル or モック
+  e2e: playwright # 主要ユーザーフロー
+  ui_components: light # 重要 widget のみ
+
+definition_of_done: # 全て真で「前進可能」（ADR 0016）
+  - typecheck_green
+  - lint_format_pass
+  - critical_tests_green
+  - e2e_green_if_flow_touched
+  - tdd_red_evidence_or_exception # 挙動変更は red 証跡、例外は tdd_exceptions
+  - secret_scan_pass # PUBLIC_ 以外の鍵がクライアント/コミットに無い
+  - arch_fitness_pass # npm run arch:fitness（ADR 0034）
+  - review_pass # 独立敵対レビュー（高リスクは Opus/Grok/Sol 3体・[[0037]]）
+  - plan_confirm_if_fanout # fan-out 時は plan-confirm 証跡（ADR 0033）
+  - learnings_appended # knowledge/learnings.md に内省
+
+naming:
+  files: kebab-case
+  types: PascalCase
+  repositories: '*.repo.ts | *.client.ts'
+  ports: 'XxxPort'
+  services: '*.service.ts'
+  features: 'verb-noun (e.g. chat-send)'

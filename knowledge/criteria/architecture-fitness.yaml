@@ -1,0 +1,25 @@
+# Architecture fitness（機械ゲート）— ADR 0034
+# harness / verify が参照。実装は scripts/arch-fitness.mjs
+
+rules:
+  - id: client-must-not-import-server
+    description: >
+      Client must not import $lib/server (static from, dynamic import(), or relative …/lib/server)
+  - id: routes-must-not-import-adapters
+    description: src/routes and hooks.server.ts must not import adapters (services/errors/ports OK)
+  - id: supabase-js-createClient-only-in-adapters
+    description: '@supabase/supabase-js createClient (incl. aliases) only under adapters'
+  - id: stripe-openai-only-in-adapters
+    description: new Stripe / new OpenAI only under adapters
+  - id: supabase-ssr-only-in-composition-roots
+    description: >
+      createBrowserClient/createServerClient (@supabase/ssr) only in
+      src/hooks.server.ts and src/routes/+layout.ts
+
+allow_comment: '// arch-fitness-allow: <reason>' # first line only; discouraged
+
+known_non_goals:
+  - cross-file-reexport-tracking
+  - pre_commit-enforcement # verify/DoD primary
+
+npm_script: arch:fitness

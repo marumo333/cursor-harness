@@ -1,0 +1,33 @@
+{
+	"audit": 3,
+	"context": "W0–W5 agent-complete verify loop (2026-07-22); human ops excluded",
+	"scores": {
+		"rules_coverage": {
+			"score": 82,
+			"note": "hooks + arch:fitness + prepaid_gate。api-builder に invoice_totals 禁止を昇格。sandbox 実 E2B は stub のまま（HOTL）。"
+		},
+		"knowledge_sufficiency": {
+			"score": 90,
+			"note": "ADR0037 Accepted 経路・ontology invoice_totals criteria。ADR 0035/36 は Proposed のまま（人間 bakeoff）。"
+		},
+		"routing_integrity": {
+			"score": 90,
+			"note": "model-routing と agents 一致。Sol=trio only。親 Grok。verifier/e2e-runner/reflector 実行証跡あり。"
+		},
+		"verification_coverage": {
+			"score": 90,
+			"note": "hermetic e2e 41 pass / 0 fail / 3 skip。vitest 213。gitleaks clean。可用性 HOTL 数値は pending_human。"
+		},
+		"security": {
+			"score": 86,
+			"note": "W5 3体 approve・Critical 0。totals strip + shareUrl http(s)。Medium残: long_runs 列権限 / memory 500 本文。"
+		},
+		"learning": {
+			"score": 92,
+			"note": "W5 reflect + harness-grow（invoice_totals → ontology.yaml + api-builder）。audit-3 記録。"
+		}
+	},
+	"total": 88,
+	"delta_from_previous": 4,
+	"notes": "前回84→88。verification_coverage と learning/security が寄与。下降なし。人間残: secrets/Stripe実接続/HOTL数値/push・PR。"
+}

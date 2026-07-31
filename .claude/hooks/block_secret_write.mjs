@@ -1,0 +1,47 @@
+#!/usr/bin/env node
+// PreToolUse(Write|Edit): 規約1 — PUBLIC_ 以外のシークレットをクライアント/ソースに出さない。
+// 実 .env の書き込みも防ぐ。
+import { readFileSync } from 'node:fs';
+
+let raw = '';
+try {
+	raw = readFileSync(0, 'utf8');
+} catch {}
+let data = {};
+try {
+	data = JSON.parse(raw || '{}');
+} catch {}
+
+const ti = data.tool_input || {};
+const fp = String(ti.file_path || ti.path || '').replace(/\\/g, '/');
+const content = String(ti.content ?? ti.new_string ?? '');
+if (!fp) process.exit(0);
+
+// 実 .env（.env.example は除く）は禁止
+if (/(^|\/)\.env(\.[a-z]+)?$/.test(fp) && !/\.env\.example$/.test(fp)) {
+	console.error(
+		'[block_secret_write] 規約1: 実 .env の書き込み/コミットは禁止（.env.example のみ可）。'
+	);
+	process.exit(2);
+}
+
+const inSrc = /\/src\//.test(fp);
+const patterns = [
+	/sk-[A-Za-z0-9]{20,}/,
+	/SUPABASE_SERVICE_ROLE_KEY\s*[:=]/,
+	/STRIPE_SECRET_KEY\s*[:=]/,
+	/STRIPE_WEBHOOK_SECRET\s*[:=]/,
+	/OPENAI_API_KEY\s*[:=]\s*['"]?[A-Za-z0-9\-_]{10,}/,
+	/(?:api[_-]?key|secret|password|token)\s*[:=]\s*['"][A-Za-z0-9\-_]{16,}['"]/i
+];
+const hit = patterns.find((p) => p.test(content));
+if (hit && inSrc) {
+	console.error(
+		'[block_secret_write] 規約1: シークレットらしき値をソース(' +
+			fp +
+			')に埋め込もうとしています。' +
+			' PUBLIC_ 以外は server(`$env/static/private`)/Worker secret のみ。'
+	);
+	process.exit(2);
+}
+process.exit(0);

@@ -1,0 +1,33 @@
+{
+	"audit": 2,
+	"context": "W0 full-release harness/availability/security baseline (2026-07-21)",
+	"scores": {
+		"rules_coverage": {
+			"score": 78,
+			"note": "hooks (env/secret/merge/pre_commit) + arch:fitness + prepaid_gate。規約7 sandbox は M4 未実装のため機械強制は部分。"
+		},
+		"knowledge_sufficiency": {
+			"score": 88,
+			"note": "PRD/ADR/criteria 充実。full-release design + W0 plans 追加。ADR 0035/36 は Proposed のまま。"
+		},
+		"routing_integrity": {
+			"score": 90,
+			"note": "model-routing と agents frontmatter 一致。Sol=trio only。親 Grok。"
+		},
+		"verification_coverage": {
+			"score": 78,
+			"note": "hermetic e2e・課金・inference-routing あり。可用性 HOTL 数値は pending_human。M3+ 経路は未。"
+		},
+		"security": {
+			"score": 80,
+			"note": "W0 3体 approve・Critical 0。Medium: chat tool spotlighting / .env perms / e2e admin guard / future webhook idempotency。"
+		},
+		"learning": {
+			"score": 88,
+			"note": "learnings に V1r/pairing/bakeoff/HOTL 証跡。W0 監査でループ証跡を確認。"
+		}
+	},
+	"total": 84,
+	"delta_from_previous": 7,
+	"notes": "前回77→84。security baseline と routing 明示が寄与。下降要因なし。次は chat spotlighting 修正と availability HOTL 数値で verification/security を伸ばす。"
+}

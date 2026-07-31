@@ -1,0 +1,51 @@
+{
+	"$schema": "https://json.schemastore.org/claude-code-settings.json",
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Write|Edit",
+				"hooks": [
+					{ "type": "command", "command": "node .claude/hooks/block_jp_code_merge_write.mjs" },
+					{ "type": "command", "command": "node .claude/hooks/block_secret_write.mjs" }
+				]
+			},
+			{
+				"matcher": "Bash",
+				"hooks": [
+					{ "type": "command", "command": "node .claude/hooks/block_env_read.mjs" },
+					{ "type": "command", "command": "node .claude/hooks/pre_commit_guard.mjs" }
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "Write|Edit",
+				"hooks": [
+					{ "type": "command", "command": "node .claude/hooks/prepaid_gate_check.mjs" }
+				]
+			}
+		],
+		"Stop": [
+			{
+				"hooks": [
+					{ "type": "command", "command": "node .claude/hooks/post_task_reflect.mjs" }
+				]
+			}
+		]
+	},
+	"permissions": {
+		"allow": [
+			"Bash(npm run:*)",
+			"Bash(npm install)",
+			"Bash(npm ci)",
+			"Bash(npx:*)",
+			"Bash(git add:*)",
+			"Bash(git commit:*)",
+			"Bash(git status)",
+			"Bash(git diff:*)",
+			"Bash(git log:*)",
+			"Bash(node .claude/hooks/:*)"
+		],
+		"deny": ["Read(./.env)", "Read(./.env.*)"]
+	}
+}

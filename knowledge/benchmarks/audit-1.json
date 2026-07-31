@@ -1,0 +1,29 @@
+{
+	"audit": 1,
+	"context": "Cursor ハーネス移行（ADR 0031）直後の初回ベースライン",
+	"scores": {
+		"rules_coverage": {
+			"score": 70,
+			"note": "規約1/4/5/6/8 は hooks で機械強制（Cursor 上でも block_secret_write の発火を実機確認済）。規約2/3/7/9-13 は agent 禁止事項・criteria レベル（機械強制なし）。"
+		},
+		"knowledge_sufficiency": {
+			"score": 85,
+			"note": "PRD v2・ADR 31件（0026→0031 の supersede 連鎖維持）・criteria 9件。未解決: M2 マイニングの golden fixture 実体は未作成（verify チェック7 は M2 までスキップ運用）。"
+		},
+		"verification_coverage": {
+			"score": 70,
+			"note": "課金ハーネス16/16 PASS・実 Supabase e2e 完遂（learnings 2026-07-12）。独立敵対レビューは adversarial-review skill として手順化。Playwright e2e はフロー網羅が部分的。"
+		},
+		"security": {
+			"score": 75,
+			"note": "security-policy.yaml あり。M1 の敵対レビューで CRITICAL 検出→修正実績。3体多数決が3ファミリー化（盲点相関の低減）。DB側 settle×estimate 突合は未実装（learnings 記載の残課題）。"
+		},
+		"learning": {
+			"score": 85,
+			"note": "learnings 継続更新。本タスクで golden path 2件を skill 昇格（adversarial-review / parallel-dispatch）・ADR 0031 起票・model-routing.yaml 更新。モデル別失敗モードの記録軸を新設（蓄積はこれから）。"
+		}
+	},
+	"total": 77,
+	"delta_from_previous": null,
+	"notes": "初回のため前回比なし。次回 audit はモデル別 learnings の蓄積と M2 golden fixture 整備で learning/verification の伸びを確認する。"
+}

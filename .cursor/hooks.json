@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"hooks": {
+		"beforeShellExecution": [
+			{
+				"command": "node .cursor/hooks/block-env-read.mjs",
+				"failClosed": true
+			}
+		],
+		"beforeReadFile": [
+			{
+				"command": "node .cursor/hooks/block-env-read.mjs",
+				"failClosed": true
+			}
+		]
+	}
+}

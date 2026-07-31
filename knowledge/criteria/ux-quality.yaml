@@ -1,0 +1,41 @@
+# UX 品質バー — ux-reviewer / verify が機械参照（出典: ADR 0017・規約13）
+# 主観的「美しさ」はここには書かない（HOTL design-review 管轄）
+
+idiom:
+  required: general-workspace # 語彙=案件/文書/タスク/成果物
+  forbidden:
+    - ide-lookalike # ターミナル/IDE/diff 風の見た目・語彙
+    - single-chatbox-only # 単一チャットだけに閉じない（ワークスペース構造を保つ）
+
+layout_lite: # M0〜現行
+  left: project-sidebar
+  top: project-tabs
+  center: work-surface # チャット含む
+  right: project-explorer-min
+  bottom: activity
+
+agentic_ux_principles:
+  - plan-visible # 計画可視化
+  - tool-disclosure # ツール使用開示
+  - memory-surface # 記憶サーフェス
+  - multi-step-tracking # 多段追跡
+  - recovery # リカバリ可能なエラー提示
+
+security_output: # 規約13
+  - sanitize-assistant-output
+  - no-remote-image-autoload
+  - strict-csp
+
+gates:
+  mechanical: # CI / hermetic e2e
+    - axe-critical-serious-zero
+    - no-horizontal-overflow-at-375-768-1280
+    - visual-snapshot-linux-ci-only
+  semantic: # ux-reviewer (Opus 5・fresh context・[[0037]])
+    - adr0017-idiom-check
+    - agentic-ux-checklist
+    - output-sanitize-check
+  exploratory: # HOTL・マイルストーンのみ（必須ゲートにしない）
+    - responsiveness-check-plugin
+    - design-review-plugin
+    - ux-audit-plugin
