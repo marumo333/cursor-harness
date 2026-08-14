@@ -59,6 +59,20 @@ test_reject_harness_rule_without_policy_path if {
 	"harness-rule features must include a path under policy/" in canon.deny with input as {"feature": bad}
 }
 
+test_reject_missing_mutates_flag if {
+	missing_mutates := {
+		"id": "F-0002",
+		"title": "pin a learned invariant",
+		"kind": "harness-rule",
+		"status": "proposed",
+		"source": "reflector",
+		"learning_refs": ["knowledge/learnings.md"],
+		"proposed_change": {"paths": ["policy/learned/example.rego"]},
+		"evidence": {"adversarial_review": "pending"},
+	}
+	"feature.proposed_change.mutates_canon must be a boolean" in canon.deny with input as {"feature": missing_mutates}
+}
+
 test_reject_chore_mutating_canon if {
 	bad := object.union(good_feature, {"kind": "chore", "proposed_change": {"mutates_canon": true, "paths": ["README.md"]}})
 	"chore may not set proposed_change.mutates_canon=true" in canon.deny with input as {"feature": bad}

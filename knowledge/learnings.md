@@ -29,9 +29,21 @@
 - `post_task_reflect` は依然 stderr リマインダ。hooks から Task 物理起動は不可（[[0033]]）。
 - OPA に内省文を載せると誤ツール。learned/ はスロットのみ。
 
+**再レビュー Critical → 追加修正**
+
+- bootstrap は merge-base に F-0001 が無い時だけ（票を後から触っても再武装しない）。
+- 新規 Feature を admitted / approved で生まれさせない（同一 PR 自己承認を遮断）。
+- `mutates_canon` 必須 boolean。省略は deny。
+- JS は `allow` を見ず `deny` 空だけ。`policy/learned` の判定 package 名乗りを禁止。
+- `.cursor/hooks` と `.github/workflows` を canon に追加。OPA_BIN / 未ピン arch を拒否。
+- 強制点: pre_commit_guard + GitHub Actions（main に載った後は main の policy で判定）。
+
+**既知の限界**
+
+- `adversarial_review: approved` は 2PR 目ではまだ自己申告。レビュー成果物ハッシュとの突合は次 Feature。
+
 **next**
 
-- 再レビュー後に F-0001 の evidence を更新。bootstrap は導入差分限定のまま残す（マージ後は発火しない）。
 - 最初の harness-rule Feature で `policy/learned/` に1本落とす。
 
 ## 2026-07-24 — Claude ゲート席 Fable 5 → Opus 5（ADR 0037）

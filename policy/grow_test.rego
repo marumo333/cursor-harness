@@ -140,7 +140,7 @@ f0001 := {
 	"source": "human",
 	"bootstrap": true,
 	"learning_refs": ["knowledge/learnings.md"],
-	"proposed_change": {"mutates_canon": true, "paths": ["policy/", ".claude/skills/", "scripts/"]},
+	"proposed_change": {"mutates_canon": true, "paths": ["policy/", ".claude/skills/", "scripts/", "knowledge/features/"]},
 	"evidence": {"adversarial_review": "pending"},
 	"constraints": {"supersede_adr": true},
 }
@@ -149,6 +149,7 @@ test_bootstrap_f0001_only_while_introducing if {
 	admission.allow with input as {
 		"action": "apply",
 		"feature": f0001,
+		"f0001_in_merge_base": false,
 		"diff_paths": [
 			"knowledge/features/F-0001-feature-canon-opa-grow.yaml",
 			"policy/grow.rego",
@@ -162,7 +163,21 @@ test_bootstrap_without_intro_file_denied if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": f0001,
+		"f0001_in_merge_base": false,
 		"diff_paths": ["policy/grow.rego", ".claude/skills/harness-grow/SKILL.md"],
+		"existing_adrs": [],
+	}
+}
+
+test_bootstrap_after_merge_denied if {
+	not admission.allow with input as {
+		"action": "apply",
+		"feature": f0001,
+		"f0001_in_merge_base": true,
+		"diff_paths": [
+			"knowledge/features/F-0001-feature-canon-opa-grow.yaml",
+			"policy/learned/backdoor.rego",
+		],
 		"existing_adrs": [],
 	}
 }
@@ -170,6 +185,46 @@ test_bootstrap_without_intro_file_denied if {
 test_bootstrap_other_id_denied if {
 	boot := object.union(base, {"id": "F-0003", "bootstrap": true, "source": "human"})
 	not admission.allow with input as {"action": "admit", "feature": boot}
+}
+
+test_omit_mutates_canon_denied if {
+	omit_pc := {
+		"id": "F-0002",
+		"title": "promote a skill",
+		"kind": "harness-grow",
+		"status": "admitted",
+		"source": "reflector",
+		"learning_refs": ["knowledge/learnings.md"],
+		"proposed_change": {"paths": [".claude/skills/example/"]},
+		"evidence": {"adversarial_review": "approved"},
+		"constraints": {"supersede_adr": false},
+	}
+	not admission.allow with input as {
+		"action": "apply",
+		"feature": omit_pc,
+		"diff_paths": [".claude/skills/example/SKILL.md"],
+		"existing_adrs": [],
+	}
+}
+
+test_new_feature_cannot_be_born_approved if {
+	not admission.allow with input as {
+		"action": "apply",
+		"feature": base,
+		"feature_in_merge_base": false,
+		"diff_paths": [".claude/skills/example/SKILL.md"],
+		"existing_adrs": [],
+	}
+}
+
+test_empty_cover_paths_denied if {
+	not admission.allow with input as {
+		"action": "apply",
+		"feature": base,
+		"diff_paths": [".claude/skills/example/SKILL.md"],
+		"cover_paths": [],
+		"existing_adrs": [],
+	}
 }
 
 test_c3_bypass_ticket_denied if {

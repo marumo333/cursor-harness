@@ -49,6 +49,10 @@ has_paths if {
 
 has_review_state if feature.evidence.adversarial_review in review_states
 
+has_mutates_flag if feature.proposed_change.mutates_canon == true
+
+has_mutates_flag if feature.proposed_change.mutates_canon == false
+
 rule_path_present if {
 	some p in feature.proposed_change.paths
 	startswith(p, "policy/")
@@ -79,6 +83,8 @@ deny contains "harness-rule features must include a path under policy/" if {
 }
 
 deny contains "feature.evidence.adversarial_review must be approved|pending|not_required" if not has_review_state
+
+deny contains "feature.proposed_change.mutates_canon must be a boolean" if not has_mutates_flag
 
 deny contains "chore may not set proposed_change.mutates_canon=true" if {
 	feature.kind == "chore"

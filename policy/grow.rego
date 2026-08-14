@@ -29,10 +29,12 @@ has_action if input.action in {"admit", "apply"}
 
 deny contains "action must be admit or apply" if not has_action
 
+# True one-shot: merge-base に F-0001 がまだ無い導入コミットだけ。
 bootstrap_ok if {
 	feature.bootstrap == true
 	feature.id == "F-0001"
 	feature.source == "human"
+	input.f0001_in_merge_base == false
 	input.action == "admit"
 }
 
@@ -40,6 +42,7 @@ bootstrap_ok if {
 	feature.bootstrap == true
 	feature.id == "F-0001"
 	feature.source == "human"
+	input.f0001_in_merge_base == false
 	input.action == "apply"
 	bootstrap_feature_path in input.diff_paths
 }
@@ -53,10 +56,31 @@ canon_diff_paths contains p if {
 	some p in hcanon.paths
 }
 
-# Coverage can be narrowed to cover_paths for union-of-features evaluation.
+cover_requested if {
+	is_array(input.cover_paths)
+	count(input.cover_paths) > 0
+}
+
 need_cover contains p if {
-	some p in object.get(input, "cover_paths", canon_diff_paths)
+	cover_requested
+	some p in input.cover_paths
 	hcanon.canon_path(p)
+}
+
+need_cover contains p if {
+	not cover_requested
+	some p in canon_diff_paths
+}
+
+deny contains "cover_paths must be a non-empty subset of canon diff paths" if {
+	is_array(input.cover_paths)
+	count(input.cover_paths) == 0
+}
+
+deny contains "cover_paths must be a non-empty subset of canon diff paths" if {
+	cover_requested
+	some p in input.cover_paths
+	not p in canon_diff_paths
 }
 
 # Actual mutation is derived from the diff, not the ticket's self-report.
@@ -70,10 +94,22 @@ mutates if {
 	feature.proposed_change.mutates_canon == true
 }
 
-deny contains "mutates_canon=false but canon paths are in the diff" if {
+deny contains "mutates_canon must be true when canon paths are in the diff" if {
 	input.action == "apply"
 	count(canon_diff_paths) > 0
-	feature.proposed_change.mutates_canon == false
+	not feature.proposed_change.mutates_canon == true
+}
+
+deny contains "new features cannot be born admitted or review-approved" if {
+	input.feature_in_merge_base == false
+	not bootstrap_ok
+	feature.status in {"admitted", "in_progress", "done"}
+}
+
+deny contains "new features cannot be born admitted or review-approved" if {
+	input.feature_in_merge_base == false
+	not bootstrap_ok
+	feature.evidence.adversarial_review == "approved"
 }
 
 review_ok if bootstrap_ok

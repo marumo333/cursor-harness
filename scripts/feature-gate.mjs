@@ -1,21 +1,23 @@
 #!/usr/bin/env node
 /**
  * Feature 正本 + OPA grow 入場ゲート（ADR 0038）。
- * --test          : opa test policy/
- * --admit <yaml>  : grow.admission action=admit（パス必須・features 配下）
- * (default)       : opa test + 全票の canon + canon 差分の和集合 apply
+ * allow 完全ルールは信用しない。判定は deny 集合が空であることだけ。
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ensureOpa } from './ensure-opa.mjs';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const POLICY = join(ROOT, 'policy');
+const ROOT = process.env.HARNESS_ROOT || join(dirname(fileURLToPath(import.meta.url)), '..');
+const POLICY = process.env.OPA_POLICY_DIR || join(ROOT, 'policy');
 const FEATURES = join(ROOT, 'knowledge', 'features');
+const LEARNED = join(POLICY, 'learned');
 const GIT = ['-c', 'core.quotePath=false'];
+const F0001 = 'knowledge/features/F-0001-feature-canon-opa-grow.yaml';
+const FEATURE_NAME = /^F-\d{4}-.+\.ya?ml$/;
+const FORBIDDEN_LEARNED = /^\s*package\s+(grow\.admission|feature\.canon|harness\.canon)\b/m;
 
 const args = process.argv.slice(2);
 const testOnly = args.includes('--test');
@@ -37,9 +39,7 @@ function gitLines(cmd, { required = false } = {}) {
 			.map((s) => s.trim())
 			.filter(Boolean);
 	} catch (e) {
-		if (required) {
-			fail(`git ${cmd.join(' ')} failed: ${e.message || e}`);
-		}
+		if (required) fail(`git ${cmd.join(' ')} failed: ${e.message || e}`);
 		return [];
 	}
 }
@@ -55,7 +55,12 @@ function evalQuery(query, inputObj) {
 	writeFileSync(inputFile, JSON.stringify(inputObj));
 	try {
 		const parsed = opaJson(['eval', '-f', 'json', '-d', POLICY, '--input', inputFile, query]);
-		return parsed.result?.[0]?.expressions?.[0]?.value;
+		const value = parsed.result?.[0]?.expressions?.[0]?.value;
+		if (value === undefined) {
+			if (query === 'data.harness.canon.paths') return [];
+			fail(`opa eval returned empty for ${query}`);
+		}
+		return value;
 	} finally {
 		rmSync(dir, { recursive: true, force: true });
 	}
@@ -69,21 +74,31 @@ function loadFeature(path) {
 		fail(`cannot parse ${path}: ${e.message || e}`);
 	}
 	const data = parsed.result?.[0]?.expressions?.[0]?.value;
-	if (!data || !data.feature) {
-		fail(`${path}: top-level feature: mapping is required`);
-	}
+	if (!data || !data.feature) fail(`${path}: top-level feature: mapping is required`);
 	return data.feature;
 }
 
 function featureFiles() {
 	if (!existsSync(FEATURES)) return [];
 	return readdirSync(FEATURES)
-		.filter((n) => /^F-\d{4}-.+\.ya?ml$/.test(n))
+		.filter((n) => FEATURE_NAME.test(n))
 		.map((n) => join(FEATURES, n))
 		.sort();
 }
 
+function assertLearnedIsolation() {
+	if (!existsSync(LEARNED)) return;
+	for (const name of readdirSync(LEARNED)) {
+		if (!name.endsWith('.rego')) continue;
+		const text = readFileSync(join(LEARNED, name), 'utf8');
+		if (FORBIDDEN_LEARNED.test(text)) {
+			fail(`policy/learned/${name} must not declare package grow.admission|feature.canon|harness.canon`);
+		}
+	}
+}
+
 function runOpaTest() {
+	assertLearnedIsolation();
 	execFileSync(opa, ['test', POLICY, '-v'], { stdio: 'inherit', cwd: ROOT });
 }
 
@@ -102,34 +117,61 @@ function resolveMergeBase() {
 	return null;
 }
 
-function diffPaths() {
+function inMergeBase(mb, path) {
+	try {
+		execFileSync('git', [...GIT, 'cat-file', '-e', `${mb}:${path}`], {
+			cwd: ROOT,
+			stdio: 'ignore'
+		});
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+function diffPaths(resolved) {
 	const staged = gitLines(['diff', '--cached', '--name-only']);
 	const unstaged = gitLines(['diff', '--name-only']);
 	const untracked = gitLines(['ls-files', '--others', '--exclude-standard']);
-	const resolved = resolveMergeBase();
-	if (!resolved) {
-		const dirty = [...new Set([...staged, ...unstaged, ...untracked])];
-		if (dirty.length === 0) {
-			fail('cannot resolve merge-base against origin/main or main; refusing fail-open');
-		}
-		return dirty;
-	}
 	const against = gitLines(['diff', '--name-only', resolved.mb], { required: true });
 	return [...new Set([...staged, ...unstaged, ...untracked, ...against])];
 }
 
-function existingAdrs() {
-	const resolved = resolveMergeBase();
-	if (!resolved) fail('cannot resolve merge-base for existing ADR list; refusing fail-open');
-	return gitLines(['ls-tree', '-r', '--name-only', resolved.mb, 'knowledge/decisions'], {
+function existingAdrs(mb) {
+	return gitLines(['ls-tree', '-r', '--name-only', mb, 'knowledge/decisions'], {
 		required: true
-	}).filter((p) => p.endsWith('.md') && !p.endsWith('/README.md') && p !== 'knowledge/decisions/README.md');
+	}).filter((p) => p.endsWith('.md') && p !== 'knowledge/decisions/README.md');
+}
+
+function relFeature(file) {
+	return relative(ROOT, file).replaceAll('\\', '/');
+}
+
+function isExemptNewProposed(rel, feature, mb) {
+	if (!rel.startsWith('knowledge/features/') || !FEATURE_NAME.test(rel.split('/').pop() ?? '')) {
+		return false;
+	}
+	if (inMergeBase(mb, rel)) return false;
+	return (
+		feature.status === 'proposed' &&
+		feature.evidence?.adversarial_review !== 'approved' &&
+		feature.bootstrap !== true
+	);
+}
+
+function admitted(input) {
+	const deny = evalQuery('data.grow.admission.deny', input);
+	if (!Array.isArray(deny)) fail('grow.admission.deny did not return an array');
+	return { ok: deny.length === 0, deny };
 }
 
 function assertUnderFeatures(abs) {
 	const rel = relative(FEATURES, abs);
 	if (rel.startsWith('..') || rel.includes(':')) {
 		fail(`--admit path must be under knowledge/features/: ${abs}`);
+	}
+	if (!FEATURE_NAME.test(rel.split('/').pop() ?? '')) {
+		fail(`--admit filename must match F-NNNN-*.yaml`);
 	}
 }
 
@@ -145,65 +187,76 @@ if (wantsAdmit) {
 	if (!existsSync(abs)) fail(`--admit file not found: ${admitPath}`);
 	assertUnderFeatures(abs);
 	const feature = loadFeature(abs);
-	const deny = evalQuery('data.grow.admission.deny', { action: 'admit', feature }) ?? [];
-	const allow = evalQuery('data.grow.admission.allow', { action: 'admit', feature });
-	if (!allow) fail(`admit denied for ${admitPath}: ${JSON.stringify(deny)}`);
+	const { ok, deny } = admitted({ action: 'admit', feature });
+	if (!ok) fail(`admit denied for ${admitPath}: ${JSON.stringify(deny)}`);
 	console.log(`[feature-gate] admit allow ${feature.id}`);
 	process.exit(0);
 }
 
+const resolved = resolveMergeBase();
+if (!resolved) fail('cannot resolve merge-base against origin/main or main; refusing fail-open');
+
 const files = featureFiles();
 if (files.length === 0) fail('no knowledge/features/F-NNNN-*.yaml (正本が空)');
 
+const loaded = files.map((file) => ({ file, rel: relFeature(file), feature: loadFeature(file) }));
 const ids = new Set();
-for (const file of files) {
-	const feature = loadFeature(file);
-	const deny = evalQuery('data.feature.canon.deny', { feature }) ?? [];
-	if (deny.length) fail(`${file}: ${JSON.stringify(deny)}`);
+for (const { file, rel, feature } of loaded) {
+	const deny = evalQuery('data.feature.canon.deny', { feature });
+	if (!Array.isArray(deny) || deny.length) fail(`${file}: ${JSON.stringify(deny)}`);
 	if (ids.has(feature.id)) fail(`duplicate feature.id ${feature.id}`);
 	ids.add(feature.id);
-	const base = file.split('/').pop() ?? '';
-	if (!base.startsWith(`${feature.id}-`)) {
+	if (!rel.split('/').pop()?.startsWith(`${feature.id}-`)) {
 		fail(`${file}: filename must start with ${feature.id}-`);
 	}
 }
 
-const paths = diffPaths();
-const canonPaths = evalQuery('data.harness.canon.paths', { diff_paths: paths }) ?? [];
-const existing = existingAdrs();
+const paths = diffPaths(resolved);
+const f0001InBase = inMergeBase(resolved.mb, F0001);
+const allCanon = evalQuery('data.harness.canon.paths', { diff_paths: paths });
+if (!Array.isArray(allCanon)) fail('harness.canon.paths did not return an array');
+
+const canonPaths = allCanon.filter((p) => {
+	const hit = loaded.find((x) => x.rel === p);
+	if (hit && isExemptNewProposed(hit.rel, hit.feature, resolved.mb)) return false;
+	return true;
+});
+
+const existing = existingAdrs(resolved.mb);
 
 if (canonPaths.length > 0) {
 	/** @type {string[]} */
 	const reports = [];
 	for (const p of canonPaths) {
 		let covered = false;
-		for (const file of files) {
-			const feature = loadFeature(file);
+		for (const { rel, feature } of loaded) {
 			const input = {
 				action: 'apply',
 				feature,
 				diff_paths: paths,
 				cover_paths: [p],
-				existing_adrs: existing
+				existing_adrs: existing,
+				f0001_in_merge_base: f0001InBase,
+				feature_in_merge_base: inMergeBase(resolved.mb, rel)
 			};
-			const allow = evalQuery('data.grow.admission.allow', input);
-			if (allow) {
+			const { ok } = admitted(input);
+			if (ok) {
 				covered = true;
 				reports.push(`${p} <- ${feature.id}`);
 				break;
 			}
 		}
 		if (!covered) {
-			const detail = files.map((file) => {
-				const feature = loadFeature(file);
-				const deny =
-					evalQuery('data.grow.admission.deny', {
-						action: 'apply',
-						feature,
-						diff_paths: paths,
-						cover_paths: [p],
-						existing_adrs: existing
-					}) ?? [];
+			const detail = loaded.map(({ rel, feature }) => {
+				const { deny } = admitted({
+					action: 'apply',
+					feature,
+					diff_paths: paths,
+					cover_paths: [p],
+					existing_adrs: existing,
+					f0001_in_merge_base: f0001InBase,
+					feature_in_merge_base: inMergeBase(resolved.mb, rel)
+				});
 				return `${feature.id}: ${JSON.stringify(deny)}`;
 			});
 			fail(`canon path ${p} is not covered by any eligible Feature.\n  ${detail.join('\n  ')}`);
@@ -212,4 +265,6 @@ if (canonPaths.length > 0) {
 	console.log(`[feature-gate] covered:\n  ${reports.join('\n  ')}`);
 }
 
-console.log(`[feature-gate] pass (${files.length} feature(s), ${paths.length} diff path(s), ${canonPaths.length} canon)`);
+console.log(
+	`[feature-gate] pass (${loaded.length} feature(s), ${paths.length} diff path(s), ${canonPaths.length} canon)`
+);

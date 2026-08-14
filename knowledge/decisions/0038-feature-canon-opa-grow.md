@@ -15,15 +15,14 @@
      skill/ADR/criteria/Rego は入場後の適用先。
   3. **OPA/Rego は生成ではなく入場（admission）**。何を学ぶかは LLM、昇格してよいかは決定的ポリシー。
      学習した不変条件は `policy/learned/` に Rego として蓄積できる（kind=`harness-rule`）。
-  4. **機械ゲート** `node scripts/feature-gate.mjs` を DoD に追加。canon パス
-     （`.claude/skills|agents|CLAUDE.md|AGENTS.md` / `knowledge/decisions|criteria` / `policy/`）
-     を触る差分は、被覆する Feature に対する `grow.admission` allow が必須。
-  5. **導入自己参照**は `F-0001` + `source: human` + `bootstrap: true` かつ
-     `knowledge/features/F-0001-feature-canon-opa-grow.yaml` が **その差分に含まれる時だけ** apply 可。
-     マージ後に票を触らなければ bootstrap は発火しない。`status: done` の票は apply 不可。
-  6. **入場は fail-closed。** 必須キー欠落は deny（`not (x in set)` 直書き禁止）。
-     `mutates` は差分から導出。merge-base が解けなければ exit 1。
-     複数 Feature の被覆は和集合（`cover_paths`）。canon パス定義は `policy/canon.rego` のみ。
+  4. **機械ゲート** `node scripts/feature-gate.mjs`。canon パスの正本は `policy/canon.rego` のみ。
+     被覆判定は `deny` 集合が空であること（`allow` 完全ルールは信用しない）。
+     強制点: `pre_commit_guard` と `.github/workflows/feature-gate.yml`。
+     main にゲートが載った後、CI は **main の policy/scripts** で PR を判定する。
+  5. **導入自己参照**は merge-base に F-0001 が**存在しない**コミットだけ。票を後から触っても再武装しない。
+     新規 Feature を admitted / review-approved で生まれさせない。`status: done` は apply 不可。
+  6. **入場は fail-closed。** 必須キー欠落は deny。`mutates_canon` は必須 boolean。
+     merge-base 未解決は exit 1。複数票は和集合。`policy/learned` は判定 package を名乗れない。
 - Consequences: 自己改善が「日記への追記」から「正本起票 → 決定的入場 → 適用」になる。
   精度の主レバーは LLM を大きくすることではなく、昇格の可否をテスト可能なポリシーに置くこと
   （[[0026]] / [[0031]] と整合）。OPA に内省文生成を載せない（誤ツール）。GitHub Issue を正本に
