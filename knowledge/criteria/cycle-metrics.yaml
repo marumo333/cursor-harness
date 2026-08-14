@@ -1,0 +1,10 @@
+# サイクル3指標 — ADR 0039。実装は scripts/cycle-metrics.mjs / policy/cycle.rego
+thresholds:
+  node_skip_rate_max: 0
+  edge_skip_rate_max: 0
+  state_integrity_min: 1
+recurse:
+  require_human_approved: true
+  forbid_if_open_cycle_pr: true
+  forbid_if_metrics_green: true
+terminal_states: [used, skipped, failed, approved]

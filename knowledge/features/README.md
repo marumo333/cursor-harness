@@ -17,7 +17,7 @@ kind:
 | ------------- | ----------------------------------------- | ------------------------------ |
 | harness-grow  | 手順・判断の昇格                          | skill / CLAUDE / ADR / criteria |
 | harness-rule  | 学習した不変条件を決定的ルールにする      | `policy/learned/*.rego`        |
-| product       | 製品挙動（この切り出しリポでは稀）        | 製品コード                     |
+| product       | 製品リポ側で足す票（template では使わない） | 製品コード                     |
 | chore         | canon をmutateしない雑務                  | ドキュメント等                 |
 
 GitHub Issue は鏡にできるが、正本ではない（[[0033]]）。

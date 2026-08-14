@@ -100,6 +100,10 @@ function assertLearnedIsolation() {
 function runOpaTest() {
 	assertLearnedIsolation();
 	execFileSync(opa, ['test', POLICY, '-v'], { stdio: 'inherit', cwd: ROOT });
+	execFileSync(process.execPath, ['--test', join(ROOT, 'scripts/cycle-metrics.test.mjs')], {
+		stdio: 'inherit',
+		cwd: ROOT
+	});
 }
 
 function resolveMergeBase() {

@@ -1,48 +1,23 @@
-# モデルルーティング — 開発ハーネス側 と 製品LLM側 の2系統（ADR 0031 / 0033 / 0037）
-harness_agents: # Cursor ハーネス（Grok 親 + Opus 5 Task ゲート + 3ファミリーレビュー）
-  chat_orchestrator: grok-4.5-fast-xhigh # 親チャット常時。壁打ち・下書き・ディスパッチ・統合・HOTL手順
-  opus_gates: # named Task のみ（frontmatter model:）。成果物のみ入力。旧 fable_gates → [[0037]]
-    - plan-confirm # backend-architect・fan-out 前
-    - high_risk # auth-billing
-    - review_default # 単独敵対・security-reviewer 既定
-    - ux_reviewer
+# ハーネス席 — ADR 0031 / 0033 / 0037 / 0039
+harness_agents:
+  chat_orchestrator: grok-4.5-fast-xhigh
+  opus_gates:
+    - plan-confirm
+    - review_default
     - verifier
     - reflector
-    - hotl_diagnosis
-  bulk: grok-4.5-fast-xhigh # api/ui/migration/e2e-runner の fan-out（仕様明文化タスクのみ委譲）
-  e2e_runner: grok-4.5-fast-xhigh # hermetic Playwright 実行のみ（判定は verifier）
-  review_trio: # 高リスク3体多数決（adversarial-review skill モード2）— Claude席は1系統のみ
-    - model: claude-opus-5-thinking-high # レンズ: correctness（旧 Fable・[[0037]]）
-    - model: grok-4.5-fast-xhigh # レンズ: テナント越境・IDOR
-    - model: gpt-5.6-sol-medium # レンズ: secret漏れ・webhook冪等性（Sol はこの席のみ）
-  sonnet_pin: claude-sonnet-5-thinking-high # Sonnet を席に置く場合は一律 5 を明示（エイリアス sonnet は 4.6 に解決されるため禁止）
-  fable_exception: claude-fable-5-thinking-high # 既定ロースター外。使用可否は budget_guards.fable_seat を参照
+  review_trio:
+    - model: claude-opus-5-thinking-high
+    - model: grok-4.5-fast-xhigh
+    - model: gpt-5.6-sol-medium
+  sonnet_pin: claude-sonnet-5-thinking-high
+  fable_exception: claude-fable-5-thinking-high
   budget_guards:
-    parent_chat: grok-only # ピッカーで Opus/Fable に切り替えない
-    opus_input: artifacts-only # 計画 md / diff / 失敗ログ / ADR パス。会話履歴丸投げ禁止
-    sol_seat: review_trio_only # 親・実装・plan-confirm・モード1では使わない
-    fable_seat: explicit-ceiling-or-auth-billing-lens1-sub # ゲート常設代替禁止。天井判断 or auth-billing実装時のtrio lens1置換のみ
-    trio_when: high-risk-only # 認証/課金/セキュリティ/アーキ
+    parent_chat: grok-only
+    opus_input: artifacts-only
+    sol_seat: review_trio_only
+    fable_seat: explicit-ceiling-only
+    trio_when: high-risk-only
     plan_confirm_when: before-fanout-only
-    no_generic_task_as_gate: true # model 未指定の汎用 Task でゲート代替禁止
-    no_fable_opus_cohabit_trio: true # 同 Anthropic ファミリーを trio に二重載せしない
-  # モデル別の失敗モード・強みが learnings に蓄積されたら、タスク種別→席のルーティング規則をここに追記する
-
-product_llm: # プロダクトの頭脳（エンドユーザーに応答）— ADR 0035/0036 Proposed で二段化
-  # 移行中: 既定クラウドは当面 Qwen30B。Accepted 後は brain=GLM-5.2 / normal=Bonsai に切替。
-  default: '@cf/qwen/qwen3-30b-a3b-fp8' # 移行中の単一経路既定（ADR 0010）
-  normal_local:
-    family: prismml_ternary_bonsai
-    preferred: Ternary-Bonsai-27B
-    location: local
-  brain_cloud:
-    model: '@cf/zai-org/glm-5.2' # ADR 0036。Workers AI Neurons。ZDR バッジなし（要 DPA）
-    host: cloudflare_workers_ai
-    thinking_default: disabled
-  host_default: cloudflare_workers_ai # OPENAI_BASE_URL=.../accounts/<id>/ai/v1
-  host_fallback: modal_or_vllm # 文書上の実験用。Modal 製品回帰はしない（0035）
-  quantization: provider_managed # 既定は CF 管理。自前フォールバック時は awq-q4（ADR 0011）
-  claude_fallback:
-    enabled: false # ADR 0012（主権モードは常時オフ）
-    allow_in_cost_mode: true # コストモードでのみ任意オン可
-  # 詳細ゲート/切替: criteria/inference-routing.yaml
+    no_generic_task_as_gate: true
+    no_fable_opus_cohabit_trio: true

@@ -28,4 +28,4 @@
   （[[0026]] / [[0031]] と整合）。OPA に内省文生成を載せない（誤ツール）。GitHub Issue を正本に
   すると knowledge と二重化するのでやらない。
 - Links: [[0016-definition-of-done]] [[0033-harness-api-budget-routing]]
-  [[0034-architecture-fitness-gates]] [[0037-opus5-gate-routing]]
+  [[0037-opus5-gate-routing]] [[0039-harness-template-cycle-graph]]

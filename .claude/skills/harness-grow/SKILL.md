@@ -20,6 +20,7 @@ description: 入場済み Feature だけ skill/rule/Rego に昇格し、判断�
    - **決定的不変条件** → `policy/learned/*.rego` + `*_test.rego`（kind=`harness-rule`）。
 5. `node scripts/feature-gate.mjs` 緑を確認し、票を `done` にする。
 6. `harness-audit` を再実行しスコア変化を記録。
+7. 使った/飛ばした必須 skill を `cycle` に書く。
 
 ## 原則
 

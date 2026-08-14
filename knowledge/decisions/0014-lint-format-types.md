@@ -1,12 +1,11 @@
-# ADR 0014: lint / format / 型厳格度
+# ADR 0014: lint / format / 型
 
-- Status: Accepted
+- Status: Accepted（Amended by: [[0039]]）
 - Date: 2026-07-04
-- Context: 一貫したスタイルと型安全を自動強制し、レビュー負荷とバグを減らす。
+- Context: template に製品 src は無い。型ゲートを空の `npm run check` で偽装しない。
 - Decision:
-  - **TypeScript strict**（`strict: true`、`moduleResolution: bundler`）。`src/lib/server` と `domain` では
-    `any` 禁止（境界の外部データは zod 等で検証してから型付け）。
-  - **ESLint + Prettier + svelte-check**。コミット前に `npm run check`（型）＋ lint を通す（[[0016-definition-of-done]]）。
-  - `PUBLIC_` 以外の env をクライアントバンドルに出さない（lint/hook で検知・[[0015-errors-naming]] と併せる）。
-- Consequences: 初期セットアップコストはあるが、以後の一貫性と安全性で回収。CI/hook でゲート。
-- Links: [[0016-definition-of-done]] [[0015-errors-naming]]
+  - ハーネス scripts は ESM。挙動は `node --test` と `opa test` で見る。
+  - 製品リポに切ったあと、そのリポの TypeScript strict / lint を足す。
+  - `PUBLIC_` 以外の env をコミットしない（hook で検知）。
+- Consequences: 型緑の偽シグナルを置かない。
+- Links: [[0016-definition-of-done]] [[0039]]

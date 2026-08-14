@@ -1,0 +1,16 @@
+{
+	"nodes": [
+		{ "id": "skill:harness-api-budget", "kind": "skill" },
+		{ "id": "skill:adversarial-review", "kind": "skill" },
+		{ "id": "skill:verify", "kind": "skill" },
+		{ "id": "skill:reflect", "kind": "skill" }
+	],
+	"edges": [
+		{ "from": "skill:adversarial-review", "to": "skill:verify", "kind": "handoff" },
+		{ "from": "skill:verify", "to": "skill:reflect", "kind": "handoff" }
+	],
+	"optional_nodes": [
+		{ "id": "skill:plan-confirm", "kind": "skill", "when": "fanout" },
+		{ "id": "skill:harness-grow", "kind": "skill", "when": "feature_proposed" }
+	]
+}

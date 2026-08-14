@@ -24,4 +24,4 @@ merge-base 未解決は exit 1）。canon パスの正本は `policy/canon.rego`
 
 - GitHub Spec Kit / Issue を正本にする（[[0033]]）
 - 内省文や skill 本文を Rego で生成する
-- 製品 RLS/課金を OPA に移す（別判断）
+- 製品 RLS/課金を OPA に移す（template では製品を置かない・[[0039]]）

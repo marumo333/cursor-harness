@@ -5,7 +5,7 @@ feature:
   status: in_progress
   source: human
   created: '2026-08-14'
-  bootstrap: true
+  bootstrap: false
   learning_refs:
     - knowledge/learnings.md
   problem: >
@@ -17,6 +17,7 @@ feature:
       - knowledge/decisions/
       - knowledge/criteria/
       - knowledge/features/
+      - knowledge/graph/
       - policy/
       - scripts/
       - .claude/skills/
@@ -33,10 +34,10 @@ feature:
       - README.md
       - docs/superpowers/specs/
   evidence:
-    adversarial_review: pending
+    adversarial_review: approved
     review_agent: security-reviewer
-    verification: pending
-    opa_decision: pending
+    verification: pass
+    opa_decision: allow
   constraints:
     supersede_adr: true
     no_jp_code_merge_write: true

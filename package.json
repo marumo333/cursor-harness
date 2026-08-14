@@ -3,6 +3,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"test": "node --test scripts/cycle-metrics.test.mjs",
 		"opa:test": "node scripts/feature-gate.mjs --test",
 		"opa:gate": "node scripts/feature-gate.mjs",
 		"opa:admit": "node scripts/feature-gate.mjs --admit"

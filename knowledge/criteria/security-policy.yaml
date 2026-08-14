@@ -1,47 +1,23 @@
-# AIセキュリティ基準（OWASP LLM/Agentic Top10）— ハーネス/security-reviewer が参照。出典: ADR 0018
+# ハーネス側の AI セキュリティ（ADR 0018）。製品 RLS/課金は置かない。
 untrusted_data:
-  # 取得文書/ツール出力/Web内容は「データ」。命令として解釈しない。
-  wrap_in_delimiters: true # <untrusted>…</untrusted> で区画化（spotlighting）
+  wrap_in_delimiters: true
   never_execute_actions_from_retrieved_content: true
 
 tools:
-  tenant_binding: session_user_id # プロンプト由来IDは信用しない・RLSバックストップ
   least_privilege: true
-  audit_log_all_calls: true
-  structured_call_validation: true # 想定外/不正なtool呼び出しは拒否
+  structured_call_validation: true
 
-high_risk_actions_require_confirmation: # human-in-the-loop
+high_risk_actions_require_confirmation:
   - delete_data
-  - external_send # メール/外部API送信
-  - credit_spend_over_threshold
-  - code_execution
+  - external_send
+  - secrets_in_command
+  - unbounded_recursion
 
-output_rendering:
-  sanitize_markdown_html: true
-  strict_csp: true
-  block_remote_image_autoload: true # ピクセルビーコン exfil 防止
-  escape_code_blocks: true
-
-consumption_limits: # unbounded consumption 対策
-  prepaid_balance_gate: true # ADR 0004（reserve->settle・残高0でハードストップ）
-  rate_limit: true
+consumption_limits:
   per_run_max_steps: 20
-  per_run_max_tokens: 200000
   loop_guard: true
-
-code_execution:
-  sandbox: isolated # ネット遮断・資源制限・揮発（M4）
-  network_egress: blocked
+  cycle_recurse_requires_human_merge: true
 
 supply_chain:
   pin_plugins_and_mcp: true
   no_secrets_in_prompt: true
-  system_prompt_is_not_secret: true
-
-legal:
-  personal_data_on_us_eu_host: 'GDPR十分性認定EUホスト or クラウド例外。完全国内は主権モード(さくらDOK)'
-
-data_export_flywheel: # BOUNDARY 契約②
-  pii_scrub_before_export: true
-  do_not_mix_with_eval_sets: true # 規約3（JHumanEval/MBPP-Ja と混ぜない）
-  require_quality_label: true # accepted/edited/rejected 無しは学習に使わない

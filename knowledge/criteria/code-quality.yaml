@@ -1,22 +1,15 @@
-# コード品質バー（実用バランス）— ハーネス/hook が機械参照する。出典: ADR 0013-0016
+# コード品質バー — ハーネス template。出典: ADR 0013-0016 / 0038 / 0039
 level: pragmatic-balance
 
-typescript:
-  strict: true
-  no_any_in: ['src/lib/server', 'src/lib/**/domain']
-  validate_external_input_with: zod # 境界の外部データは検証してから型付け
-
-tdd_required_for: # test-first 必須（ADR 0013）
-  - auth/session
-  - authz/billing (reserve->settle)
-  - ports and repositories
-  - stripe webhook
-  - rls policies
-  - product_behavior_change # 観測可能挙動の feature / bugfix / 新規 e2e 契約
+tdd_required_for:
+  - feature_gate
+  - cycle_metrics
+  - opa_policy
+  - harness_behavior_change
 
 tdd_process:
   red_before_green: required
-  red_evidence: e2e_runner_or_vitest_fail_log
+  red_evidence: node_test_fail_log
 
 tdd_exceptions:
   - docs_only
@@ -26,28 +19,21 @@ tdd_exceptions:
   - retrofit_with_human_ack
 
 testing:
-  unit: vitest # 純ロジック domain/utils
-  integration: services # Supabase ローカル or モック
-  e2e: playwright # 主要ユーザーフロー
-  ui_components: light # 重要 widget のみ
+  unit: node:test
+  opa: policy/*_test.rego
 
-definition_of_done: # 全て真で「前進可能」（ADR 0016）
-  - typecheck_green
-  - lint_format_pass
-  - critical_tests_green
-  - e2e_green_if_flow_touched
-  - tdd_red_evidence_or_exception # 挙動変更は red 証跡、例外は tdd_exceptions
-  - secret_scan_pass # PUBLIC_ 以外の鍵がクライアント/コミットに無い
-  - arch_fitness_pass # npm run arch:fitness（ADR 0034）
-  - review_pass # 独立敵対レビュー（高リスクは Opus/Grok/Sol 3体・[[0037]]）
-  - plan_confirm_if_fanout # fan-out 時は plan-confirm 証跡（ADR 0033）
-  - learnings_appended # knowledge/learnings.md に内省
-  - feature_opa_gate # canon mutate 時は Feature 正本 + opa apply allow（ADR 0038）
+definition_of_done:
+  - feature_opa_gate # node scripts/feature-gate.mjs（ADR 0038）
+  - harness_tests_green # npm test（cycle 指標）
+  - tdd_red_evidence_or_exception
+  - secret_scan_pass
+  - review_pass # 独立敵対レビュー（高リスクは Opus/Grok/Sol 3体）
+  - plan_confirm_if_fanout
+  - learnings_appended
+  - cycle_skills_recorded # 必須 skill の used/skipped（ADR 0039）
 
 naming:
   files: kebab-case
   types: PascalCase
-  repositories: '*.repo.ts | *.client.ts'
-  ports: 'XxxPort'
-  services: '*.service.ts'
-  features: 'verb-noun (e.g. chat-send)'
+  features: 'F-NNNN-slug.yaml'
+  cycles: 'C-NNNN'
