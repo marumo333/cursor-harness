@@ -1,22 +1,23 @@
-# コード品質バー — ハーネス template。出典: ADR 0013-0016 / 0038 / 0039
-level: pragmatic-balance
+# コード品質バー — ハーネス テンプレート。出典: ADR 0013-0016 / 0038 / 0039
+# キー名は機械参照用。
+level: pragmatic-balance # 実用バランス
 
-tdd_required_for:
+tdd_required_for: # TDD 必須領域
   - feature_gate
   - cycle_metrics
   - opa_policy
-  - harness_behavior_change
+  - harness_behavior_change # ハーネスの観測可能挙動
 
 tdd_process:
-  red_before_green: required
+  red_before_green: required # 赤を先に観測
   red_evidence: node_test_fail_log
 
-tdd_exceptions:
-  - docs_only
-  - style_only_no_behavior
+tdd_exceptions: # 人間が明示する例外
+  - docs_only # 文書のみ
+  - style_only_no_behavior # 挙動なしの体裁
   - snapshot_baseline_import
-  - config_chore
-  - retrofit_with_human_ack
+  - config_chore # 設定の雑務
+  - retrofit_with_human_ack # 後付けを人間が認める
 
 testing:
   unit: node:test

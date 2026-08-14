@@ -8,7 +8,7 @@ import { computeMetrics, foldCycle, latestOpenCycle, nextCycleId } from './lib/c
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const required = JSON.parse(readFileSync(join(ROOT, 'knowledge/graph/required-cycle.json'), 'utf8'));
 
-test('all skipped → file feature', () => {
+test('全部省略なら Feature を起票する', () => {
 	const m = computeMetrics(required, {
 		nodes: Object.fromEntries(required.nodes.map((n) => [n.id, 'skipped'])),
 		edges: Object.fromEntries(required.edges.map((e) => [`${e.from}>${e.to}`, 'skipped']))
@@ -19,7 +19,7 @@ test('all skipped → file feature', () => {
 	assert.equal(m.should_file_feature, true);
 });
 
-test('all used → green', () => {
+test('全部使用なら緑', () => {
 	const m = computeMetrics(required, {
 		nodes: Object.fromEntries(required.nodes.map((n) => [n.id, 'used'])),
 		edges: Object.fromEntries(required.edges.map((e) => [`${e.from}>${e.to}`, 'taken']))
@@ -31,7 +31,7 @@ test('all used → green', () => {
 	assert.equal(m.should_file_feature, false);
 });
 
-test('all failed is not green', () => {
+test('全部失敗は緑ではない', () => {
 	const m = computeMetrics(required, {
 		nodes: Object.fromEntries(required.nodes.map((n) => [n.id, 'failed'])),
 		edges: Object.fromEntries(required.edges.map((e) => [`${e.from}>${e.to}`, 'failed']))
@@ -41,13 +41,13 @@ test('all failed is not green', () => {
 	assert.equal(m.should_file_feature, true);
 });
 
-test('missing state lowers integrity', () => {
+test('状態欠落は完全性を下げる', () => {
 	const m = computeMetrics(required, { nodes: { 'skill:verify': 'used' }, edges: {} });
 	assert.ok(m.state_integrity < 1);
 	assert.equal(m.should_file_feature, true);
 });
 
-test('foldCycle reads jsonl events', () => {
+test('foldCycle は jsonl を読む', () => {
 	const folded = foldCycle(
 		[
 			{ cycle: 'C-0001', type: 'node_state', node: 'skill:verify', state: 'used' },
@@ -62,7 +62,7 @@ test('foldCycle reads jsonl events', () => {
 	assert.equal(folded.human_approved, true);
 });
 
-test('latestOpenCycle skips approved ids', () => {
+test('latestOpenCycle は承認済み id を飛ばす', () => {
 	assert.equal(
 		latestOpenCycle([
 			{ type: 'cycle_open', cycle: 'C-0001' },

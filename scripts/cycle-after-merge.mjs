@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * After a human merges a PR: record approval, measure 3 metrics, maybe open the next cycle PR.
- * Does not start an agent (ADR 0033). Bounded by policy/cycle.rego.
+ * 人間が PR をマージしたあと: 承認を記録し、3指標を測り、必要なら次 cycle の PR を開く。
+ * エージェントは起動しない（ADR 0033）。上限は policy/cycle.rego。
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
@@ -29,7 +29,7 @@ function events() {
 		try {
 			out.push(JSON.parse(line));
 		} catch {
-			console.error('[cycle-after-merge] events.jsonl has a broken line; refusing to rewrite');
+			console.error('[cycle-after-merge] events.jsonl に壊れた行がある。書き換えを拒否する');
 			process.exit(1);
 		}
 	}
@@ -76,7 +76,7 @@ function evalDeny(input) {
 	});
 	const value = JSON.parse(out).result?.[0]?.expressions?.[0]?.value;
 	if (!Array.isArray(value)) {
-		console.error('[cycle-after-merge] cycle.admission.deny did not return an array; refusing fail-open');
+		console.error('[cycle-after-merge] cycle.admission.deny が配列を返さなかった。fail-open を拒否する');
 		process.exit(1);
 	}
 	return value;
@@ -141,13 +141,13 @@ if (humanApproved) next.push(rec);
 
 if (!recurse) {
 	writeFileSync(EVENTS, `${next.map((e) => JSON.stringify(e)).join('\n')}\n`);
-	console.error(`[cycle-after-merge] no recurse: ${JSON.stringify(deny)}`);
+	console.error(`[cycle-after-merge] 再起しない: ${JSON.stringify(deny)}`);
 	process.exit(0);
 }
 
 const nxt = nextCycleId(cycleId);
 if (!CYCLE_RE.test(nxt)) {
-	console.error(`[cycle-after-merge] invalid next cycle id ${nxt}`);
+	console.error(`[cycle-after-merge] 次 cycle id が不正: ${nxt}`);
 	process.exit(1);
 }
 next.push({
@@ -163,7 +163,7 @@ const id = nextFeatureId();
 const slug = `${id}-cycle-followup.yaml`;
 const body = `feature:
   id: ${id}
-  title: Cycle follow-up after human approve (${cycleId} to ${nxt})
+  title: 人間承認後のサイクル続き（${cycleId} から ${nxt}）
   kind: harness-grow
   status: proposed
   source: audit
@@ -171,10 +171,10 @@ const body = `feature:
   learning_refs:
     - knowledge/learnings.md
   problem: >
-    Previous cycle ${cycleId} was merged (sha ${mergeSha || 'unknown'}) with
-    node_skip_rate=${metrics.node_skip_rate} edge_skip_rate=${metrics.edge_skip_rate}
-    state_integrity=${metrics.state_integrity} has_failed=${metrics.has_failed}.
-    Re-run skipped or failed required skills.
+    前サイクル ${cycleId} がマージされた（sha ${mergeSha || '不明'}）。
+    ノード省略率=${metrics.node_skip_rate} 辺省略率=${metrics.edge_skip_rate}
+    状態完全性=${metrics.state_integrity} 失敗あり=${metrics.has_failed}。
+    省略または失敗した必須 skill を再実行する。
   proposed_change:
     mutates_canon: false
     paths:
@@ -191,4 +191,4 @@ const body = `feature:
     supersedes: []
 `;
 writeFileSync(join(FEATURES, slug), body);
-console.error(`[cycle-after-merge] filed ${slug} and opened ${nxt}`);
+console.error(`[cycle-after-merge] ${slug} を起票し ${nxt} を開いた`);

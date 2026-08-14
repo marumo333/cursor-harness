@@ -1,10 +1,10 @@
 # ADR 0033: ハーネス API 予算ルーティング＝Grok 親 + Claude Task ゲート
 
-- Status: Accepted（Amends: [[0031]]；Amended by: [[0037]] [[0039]]）
-- Date: 2026-07-13
-- Context: 親を常時 Claude thinking-high にすると API 枠が枯渇する。精度ゲートは維持したい。
+- 状態: 受理（改正対象: [[0031]]；改正: [[0037]] [[0039]]）
+- 日付: 2026-07-13
+- 背景: 親を常時 Claude thinking-high にすると API 枠が枯渇する。精度ゲートは維持したい。
   親チャットのモデルは設定ファイルでは固定できず、subagent の `model:` は Task 起動時に解決される。
-- Decision:
+- 決定:
   - **親チャット = 常時 Grok 4.5**。ピッカーで Opus/Fable に切り替えない。
   - **Claude ゲートは named Task の `model:` でのみ起動**。hooks からの Task 物理自動起動は不可。
   - **ゲート維持**: 単独敵対レビュー・高リスク3体多数決・verifier / reflector / grow 前レビュー。
@@ -14,5 +14,5 @@
   - **親の直接編集**: 明文化済みボイラーのみ。編集後も敵対レビュー必須。
   - **方法論**: superpowers（brainstorming / writing-plans）継続。GitHub Spec Kit / Issues は正本にしない。
   - Claude ゲート既定モデルは [[0037]] で Opus 5。
-- Consequences: API 枠はゲート・高リスク・内省に集中。席の詳細は `criteria/model-routing.yaml`。
-- Links: [[0031]] [[0016]] [[0037]] [[0038]] [[0039]]
+- 結果: API 枠はゲート・高リスク・内省に集中。席の詳細は `criteria/model-routing.yaml`。
+- 関連: [[0031]] [[0016]] [[0037]] [[0038]] [[0039]]

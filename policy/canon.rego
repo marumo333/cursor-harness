@@ -2,7 +2,7 @@ package harness.canon
 
 import rego.v1
 
-# Single source of canon paths (ADR 0038). JS gate must query this package.
+# canon パスの正本（ADR 0038）。JS ゲートはこの package を問い合わせる。
 
 canon_path(p) if startswith(p, ".claude/skills/")
 

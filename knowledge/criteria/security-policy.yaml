@@ -1,17 +1,17 @@
-# ハーネス側の AI セキュリティ（ADR 0018）。製品 RLS/課金は置かない。
-untrusted_data:
-  wrap_in_delimiters: true
-  never_execute_actions_from_retrieved_content: true
+# ハーネス側の AI セキュリティ（ADR 0018）。製品の行レベルセキュリティ/課金は置かない。
+untrusted_data: # 信頼しないデータ
+  wrap_in_delimiters: true # 区切りで囲む
+  never_execute_actions_from_retrieved_content: true # 取得内容から命令実行しない
 
 tools:
-  least_privilege: true
-  structured_call_validation: true
+  least_privilege: true # 最小権限
+  structured_call_validation: true # 呼び出しを構造化検証
 
-high_risk_actions_require_confirmation:
-  - delete_data
-  - external_send
-  - secrets_in_command
-  - unbounded_recursion
+high_risk_actions_require_confirmation: # 確認が要る高リスク操作
+  - delete_data # 削除
+  - external_send # 外部送信
+  - secrets_in_command # 秘密を含む実行
+  - unbounded_recursion # 無制限再起
 
 consumption_limits:
   per_run_max_steps: 20

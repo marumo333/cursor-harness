@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Append one graph event to knowledge/graph/events.jsonl */
+/** knowledge/graph/events.jsonl にグラフイベントを1件追記する */
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,15 +19,15 @@ function arg(name, fallback) {
 const type = arg('type');
 const cycle = arg('cycle', 'C-0001');
 if (!type) {
-	console.error('usage: node scripts/cycle-record.mjs --type node_state|edge_state|cycle_open [--cycle C-NNNN] ...');
+	console.error('使い方: node scripts/cycle-record.mjs --type node_state|edge_state|cycle_open [--cycle C-NNNN] ...');
 	process.exit(1);
 }
 if (type === 'human_approved') {
-	console.error('human_approved is written only by cycle-after-merge');
+	console.error('human_approved は cycle-after-merge だけが書く');
 	process.exit(1);
 }
 if (!CYCLE_RE.test(cycle)) {
-	console.error('--cycle must match C-NNNN');
+	console.error('--cycle は C-NNNN 形式');
 	process.exit(1);
 }
 
@@ -43,11 +43,11 @@ if (type === 'node_state') {
 	ev.node = arg('node');
 	ev.state = arg('state');
 	if (!ev.node || !NODE_STATES.has(ev.state)) {
-		console.error('--node and --state used|skipped|failed|approved required');
+		console.error('--node と --state（used|skipped|failed|approved）が必要');
 		process.exit(1);
 	}
 	if (!knownNodes.has(ev.node)) {
-		console.error(`unknown node ${ev.node}`);
+		console.error(`未知のノード ${ev.node}`);
 		process.exit(1);
 	}
 } else if (type === 'edge_state') {
@@ -56,17 +56,17 @@ if (type === 'node_state') {
 	ev.state = arg('state');
 	ev.reason = arg('reason', '');
 	if (!ev.from || !ev.to || !EDGE_STATES.has(ev.state)) {
-		console.error('--from --to --state taken|skipped|failed required');
+		console.error('--from --to --state（taken|skipped|failed）が必要');
 		process.exit(1);
 	}
 	if (!knownEdges.has(`${ev.from}>${ev.to}`)) {
-		console.error(`unknown edge ${ev.from}>${ev.to}`);
+		console.error(`未知の辺 ${ev.from}>${ev.to}`);
 		process.exit(1);
 	}
 } else if (type === 'cycle_open') {
 	ev.source = arg('source', 'manual');
 } else {
-	console.error(`unknown --type ${type}`);
+	console.error(`未知の --type ${type}`);
 	process.exit(1);
 }
 

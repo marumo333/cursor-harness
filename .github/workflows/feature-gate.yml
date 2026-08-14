@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Run feature-gate (main's policy after it exists)
+      - name: feature-gate を実行する（main に載った後は main の policy）
         run: |
           set -euo pipefail
           if git cat-file -e origin/main:policy/grow.rego 2>/dev/null; then
@@ -22,5 +22,5 @@ jobs:
           else
             node scripts/feature-gate.mjs
           fi
-      - name: Harness unit tests
+      - name: ハーネス単体テスト
         run: npm test

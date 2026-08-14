@@ -1,12 +1,13 @@
 # サイクル3指標 — ADR 0039。実装は scripts/cycle-metrics.mjs / policy/cycle.rego
+# キー名は機械参照用。意味は右のコメント。
 thresholds:
-  node_skip_rate_max: 0
-  edge_skip_rate_max: 0
-  state_integrity_min: 1
+  node_skip_rate_max: 0 # ノード省略率の上限
+  edge_skip_rate_max: 0 # 辺省略率の上限
+  state_integrity_min: 1 # 状態完全性の下限
 recurse:
-  require_human_approved: true
-  require_merged_env: true
-  forbid_if_open_cycle_pr: true
-  forbid_unless_skip_or_fail: true
-  forbid_if_pending_followup: true
-terminal_states: [used, skipped, failed, approved]
+  require_human_approved: true # 人間承認が必要
+  require_merged_env: true # MERGED=true が必要
+  forbid_if_open_cycle_pr: true # 未マージの cycle PR があれば止める
+  forbid_unless_skip_or_fail: true # 省略/失敗が無ければ止める
+  forbid_if_pending_followup: true # 未処理の続き票があれば止める
+terminal_states: [used, skipped, failed, approved] # 使用 / 省略 / 失敗 / 承認

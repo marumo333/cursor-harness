@@ -12,7 +12,7 @@
 | Task ゲート | Opus 5 | plan-confirm / 敵対レビュー / verifier / reflector / 設計 |
 | 第3レンズ | GPT-5.6 Sol | 高リスク3体多数決のみ |
 
-親は常時 Grok。Opus は named Task のみ。Sol は trio 以外禁止。
+親は常時 Grok。Opus は名前付き Task のみ。Sol は3体多数決以外禁止。
 
 ## 自己成長ループ（1周）
 

@@ -14,7 +14,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.merge_commit_sha }}
-      - name: Record approval and maybe file next Feature
+      - name: 承認を記録し、必要なら次 Feature を起票する
         env:
           MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -32,16 +32,16 @@ jobs:
             git add knowledge/features
             branch="cycle/followup-${{ github.event.pull_request.number }}"
             git checkout -b "$branch"
-            git commit -m "Record cycle approval and file follow-up Feature."
+            git commit -m "サイクル承認を記録し、続きの Feature を起票する。"
             git push -u origin "$branch"
             gh pr create --draft --base "${{ github.event.pull_request.base.ref }}" --head "$branch" \
-              --title "Cycle follow-up after #${{ github.event.pull_request.number }}" \
-              --body "Human merged #${{ github.event.pull_request.number }}. Bounded recurse (ADR 0039): next Feature is proposed. Execute it in a new agent session; this workflow does not start an agent."
+              --title "サイクル続き（#${{ github.event.pull_request.number }} マージ後）" \
+              --body "人間が #${{ github.event.pull_request.number }} をマージした。有界再起（ADR 0039）: 次 Feature は proposed。新しいエージェントセッションで実行すること。この workflow はエージェントを起動しない。"
           else
             if git diff --cached --quiet; then
-              echo "no event changes"
+              echo "イベントの変更なし"
               exit 0
             fi
-            git commit -m "Record cycle human_approved for #${{ github.event.pull_request.number }}."
+            git commit -m "サイクル #${{ github.event.pull_request.number }} の人間承認を記録する。"
             git push origin HEAD:"${{ github.event.pull_request.base.ref }}"
           fi

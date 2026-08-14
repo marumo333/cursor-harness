@@ -1,4 +1,4 @@
-/** Pure 3-metric calculator for harness cycles (ADR 0039). */
+/** ハーネス cycle の3指標（ADR 0039）。副作用なし。 */
 
 const TERMINAL = new Set(['used', 'skipped', 'failed', 'approved']);
 
@@ -46,7 +46,7 @@ export function computeMetrics(required, cycle) {
 }
 
 /**
- * Fold events.jsonl objects into a cycle snapshot.
+ * events.jsonl を1サイクル分のスナップショットに畳む。
  * @param {object[]} events
  * @param {string} cycleId
  */
@@ -64,7 +64,7 @@ export function foldCycle(events, cycleId) {
 	return cycle;
 }
 
-/** Latest cycle_open that has no human_approved yet. */
+/** まだ人間承認が無い、最新の cycle_open。 */
 export function latestOpenCycle(events, fallback = 'C-0001') {
 	const opens = [];
 	const approved = new Set();

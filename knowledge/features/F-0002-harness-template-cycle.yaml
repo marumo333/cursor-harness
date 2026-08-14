@@ -8,7 +8,7 @@ feature:
   learning_refs:
     - knowledge/learnings.md
   problem: >
-    製品 agent/skill が残り template にならない。自己改善は1周の手順だけで、
+    製品 agent/skill が残りテンプレートにならない。自己改善は1周の手順だけで、
     skip 指標も merge 後の有界再起も無い。
   proposed_change:
     mutates_canon: true
