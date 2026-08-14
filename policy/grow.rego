@@ -29,6 +29,24 @@ has_action if input.action in {"admit", "apply"}
 
 deny contains "action は admit または apply" if not has_action
 
+has_feature_in_base if input.feature_in_merge_base == true
+
+has_feature_in_base if input.feature_in_merge_base == false
+
+has_f0001_in_base if input.f0001_in_merge_base == true
+
+has_f0001_in_base if input.f0001_in_merge_base == false
+
+deny contains "feature_in_merge_base は真偽値" if {
+	has_action
+	not has_feature_in_base
+}
+
+deny contains "f0001_in_merge_base は真偽値" if {
+	has_action
+	not has_f0001_in_base
+}
+
 # 真の一回限り: merge-base に F-0001 がまだ無い導入コミットだけ。
 bootstrap_ok if {
 	feature.bootstrap == true

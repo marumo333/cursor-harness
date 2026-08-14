@@ -18,7 +18,12 @@ const CYCLE_RE = /^C-\d{4}$/;
 
 const dryRun = process.argv.includes('--dry-run');
 const assumeOpenPr = dryRun && process.argv.includes('--assume-open-pr');
-const mergeSha = process.env.MERGE_SHA || '';
+const rawMergeSha = String(process.env.MERGE_SHA || '');
+if (rawMergeSha && !/^[0-9a-f]{7,40}$/i.test(rawMergeSha)) {
+	console.error('[cycle-after-merge] MERGE_SHA は 7〜40 桁の十六進のみ');
+	process.exit(1);
+}
+const mergeSha = rawMergeSha;
 const prNumber = String(process.env.PR_NUMBER || '').replace(/[^\d]/g, '');
 const humanApproved = process.env.MERGED === 'true';
 

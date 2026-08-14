@@ -18,6 +18,7 @@ const GIT = ['-c', 'core.quotePath=false'];
 const F0001 = 'knowledge/features/F-0001-feature-canon-opa-grow.yaml';
 const FEATURE_NAME = /^F-\d{4}-.+\.ya?ml$/;
 const FORBIDDEN_LEARNED = /^\s*package\s+(grow\.admission|feature\.canon|harness\.canon|cycle\.admission)\b/m;
+const FORBIDDEN_LEARNED_BUILTIN = /\b(http\.send|opa\.runtime|net\.lookup_ip_addr|io\.jwt)\b/;
 
 const args = process.argv.slice(2);
 const testOnly = args.includes('--test');
@@ -94,11 +95,29 @@ function assertLearnedIsolation() {
 		if (FORBIDDEN_LEARNED.test(text)) {
 			fail(`policy/learned/${name} は package grow.admission|feature.canon|harness.canon|cycle.admission を名乗れない`);
 		}
+		if (FORBIDDEN_LEARNED_BUILTIN.test(text)) {
+			fail(`policy/learned/${name} は http.send / opa.runtime / net.lookup_ip_addr / io.jwt を使えない`);
+		}
+	}
+}
+
+function assertTestNoSideEffects() {
+	const dirs = [POLICY, LEARNED];
+	for (const dir of dirs) {
+		if (!existsSync(dir)) continue;
+		for (const name of readdirSync(dir)) {
+			if (!name.endsWith('_test.rego')) continue;
+			const text = readFileSync(join(dir, name), 'utf8');
+			if (FORBIDDEN_LEARNED_BUILTIN.test(text)) {
+				fail(`${relative(ROOT, join(dir, name))} は http.send / opa.runtime / net.lookup_ip_addr / io.jwt を使えない`);
+			}
+		}
 	}
 }
 
 function runOpaTest() {
 	assertLearnedIsolation();
+	assertTestNoSideEffects();
 	execFileSync(opa, ['test', POLICY, '-v'], { stdio: 'inherit', cwd: ROOT });
 }
 
@@ -187,7 +206,15 @@ if (wantsAdmit) {
 	if (!existsSync(abs)) fail(`--admit のファイルが無い: ${admitPath}`);
 	assertUnderFeatures(abs);
 	const feature = loadFeature(abs);
-	const { ok, deny } = admitted({ action: 'admit', feature });
+	const resolved = resolveMergeBase();
+	if (!resolved) fail('origin/main または main との merge-base が解けない。欠落で通すことを拒否する');
+	const rel = relative(ROOT, abs).replaceAll('\\', '/');
+	const { ok, deny } = admitted({
+		action: 'admit',
+		feature,
+		feature_in_merge_base: inMergeBase(resolved.mb, rel),
+		f0001_in_merge_base: inMergeBase(resolved.mb, F0001)
+	});
 	if (!ok) fail(`入場拒否 ${admitPath}: ${JSON.stringify(deny)}`);
 	console.log(`[feature-gate] 入場許可 ${feature.id}`);
 	process.exit(0);

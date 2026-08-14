@@ -17,13 +17,55 @@ base := {
 }
 
 test_admit_allow_after_review if {
-	admission.allow with input as {"action": "admit", "feature": base}
+	admission.allow with input as {
+		"action": "admit",
+		"feature": base,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
+	}
+}
+
+test_admit_new_born_admitted_denied if {
+	not admission.allow with input as {
+		"action": "admit",
+		"feature": base,
+		"feature_in_merge_base": false,
+		"f0001_in_merge_base": true,
+	}
+}
+
+test_admit_missing_feature_in_merge_base_denied if {
+	not admission.allow with input as {
+		"action": "admit",
+		"feature": base,
+		"f0001_in_merge_base": true,
+	}
+}
+
+test_admit_missing_f0001_in_merge_base_denied if {
+	not admission.allow with input as {
+		"action": "admit",
+		"feature": base,
+		"feature_in_merge_base": true,
+	}
+}
+
+test_apply_missing_feature_in_merge_base_denied if {
+	not admission.allow with input as {
+		"action": "apply",
+		"feature": base,
+		"f0001_in_merge_base": true,
+		"diff_paths": [".claude/skills/example/SKILL.md"],
+		"existing_adrs": [],
+	}
 }
 
 test_apply_allow_when_paths_covered if {
 	admission.allow with input as {
 		"action": "apply",
 		"feature": base,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md"],
 		"existing_adrs": [],
 	}
@@ -84,6 +126,8 @@ test_cover_paths_allows_partial_feature if {
 	admission.allow with input as {
 		"action": "apply",
 		"feature": base,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md", "knowledge/criteria/code-quality.yaml"],
 		"cover_paths": [".claude/skills/example/SKILL.md"],
 		"existing_adrs": [],
@@ -127,6 +171,8 @@ test_allow_adr_amend_when_flagged if {
 	admission.allow with input as {
 		"action": "apply",
 		"feature": feat,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": ["knowledge/decisions/0016-definition-of-done.md"],
 		"existing_adrs": ["knowledge/decisions/0016-definition-of-done.md"],
 	}
@@ -149,6 +195,7 @@ test_bootstrap_f0001_only_while_introducing if {
 	admission.allow with input as {
 		"action": "apply",
 		"feature": f0001,
+		"feature_in_merge_base": false,
 		"f0001_in_merge_base": false,
 		"diff_paths": [
 			"knowledge/features/F-0001-feature-canon-opa-grow.yaml",

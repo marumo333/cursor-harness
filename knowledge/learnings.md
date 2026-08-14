@@ -91,3 +91,18 @@
 **失敗 / リスク**
 
 - 用語を訳しすぎると、状態値（`skipped` 等）と説明文が食い違う。説明は日本語、値は英語で揃える。
+
+---
+
+## 2026-08-14 — 入場の欠落キーを閉じる
+
+**効いた**
+
+- `--admit` が `feature_in_merge_base` を渡さず、未定義だと出生 deny が発火しなかった。
+- admit/apply は両キーを必須にした。learned / `*_test.rego` は副作用付き builtin を拒否する。
+- `MERGE_SHA` は十六進だけ通す。
+
+**失敗 / リスク**
+
+- F-0001 の `adversarial_review: approved` 自己申告（C1）はこの PR では直さない。
+  同じ票で evidence 突合を入れると今回の apply が止まる。次 Feature で直す。
