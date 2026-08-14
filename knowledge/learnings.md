@@ -1,9 +1,34 @@
 # learnings.md — 自己成長ループの記憶（実行ごとに追記）
 
 各タスク完了時に「効いた / 失敗した / edge case」を追記する（CLAUDE.md 規約⑧ / `post_task_reflect` hook）。
-golden path は skill/rule に昇格し、判断は ADR/criteria に落とす。
+再現可能な改善は Feature 正本（`knowledge/features/`）に起票し、OPA 入場後に skill/rule/Rego へ昇格する（[[0038]]）。
 
 ---
+
+## 2026-08-14 — Feature 正本 + OPA grow 入場（ADR 0038 / F-0001）
+
+**問い**
+
+- 自己改善ループはあるが、Feature 正本としての起票は無かった（learnings 日記 + skill 直接書き換え）。
+- OPA は生成ではなく入場に使うと、昇格可否の揺れが減る。
+
+**worked**
+
+- 正本を `knowledge/features/F-NNNN-*.yaml` に置いた。GitHub Issue は正本にしない（[[0033]] 二重化回避）。
+- `policy/feature.rego` + `policy/grow.rego` + 14 test。`node scripts/feature-gate.mjs` が DoD。
+- reflector = 起票、grow = OPA allow の票だけ適用。F-0001 bootstrap は human + 1回限り。
+- 未追跡ファイルを gate の diff に含めないと新規 canon が抜けた → `git ls-files --others` を追加。
+
+**failed / リスク**
+
+- `post_task_reflect` は依然 stderr リマインダ。hooks から Task 物理起動は不可（[[0033]]）。
+- F-0001 は自己参照のため bootstrap。2枚目以降で bootstrap を真似ると deny（テスト済み）。
+- OPA に内省文を載せると誤ツール。learned/ はスロットのみ。
+
+**next**
+
+- 敵対レビュー後に F-0001 の `evidence.adversarial_review` を approved にし、bootstrap を外して done にできるか確認。
+- 最初の harness-rule Feature で `policy/learned/` に1本落とす。
 
 ## 2026-07-24 — Claude ゲート席 Fable 5 → Opus 5（ADR 0037）
 

@@ -16,7 +16,8 @@ description: ハーネス健全性を決定的にスコア化し履歴に記録�
 - **arch fitness 文書整合（[[0034]]）**: `arch:fitness` が verify/0016/code-quality に載っているか。
 - 検証網羅: クリティカル領域(認証/課金/認可)のテスト有無・e2e カバレッジ。
 - セキュリティ: security-policy.yaml 各項目の実装状況（OWASP LLM/Agentic Top10）。
-- 学習: learnings が更新され golden path が昇格されているか。
+- 学習: learnings が更新され、再現可能な改善が Feature 正本に起票され、OPA allow のうえ golden path が昇格されているか（[[0038]]）。
+- **feature/OPA 整合**: `opa test policy/` 緑、`knowledge/features/` が schema を満たす、canon 差分が票で被覆されているか。
 
 ## 実行席
 

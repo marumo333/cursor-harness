@@ -1,0 +1,12 @@
+{
+	"name": "cursor-harness",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"check": "node scripts/feature-gate.mjs --test",
+		"opa:test": "node scripts/feature-gate.mjs --test",
+		"opa:gate": "node scripts/feature-gate.mjs",
+		"opa:admit": "node scripts/feature-gate.mjs --admit",
+		"arch:fitness": "node scripts/arch-fitness.mjs"
+	}
+}

@@ -26,7 +26,10 @@ scripts/          arch-fitness 機械ゲート
 
 ## 自己成長ループ
 
-`計画 → plan-confirm → 実装(TDD) → 検証(敵対レビュー含む) → 内省 → harness-grow`
+`計画 → plan-confirm → 実装(TDD) → 検証(敵対レビュー含む) → 内省 → Feature正本起票 → OPA入場 → harness-grow`
+
+再現可能な改善の正本は `knowledge/features/F-NNNN-*.yaml`。入場は `node scripts/feature-gate.mjs`（OPA/Rego）。
+learnings は日記であり、GitHub Issue は正本にしない。
 
 ## 由来
 

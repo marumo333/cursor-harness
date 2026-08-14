@@ -1,0 +1,50 @@
+# Feature 正本 + OPA grow 入場 — ハーネス/reflector/verify が参照。出典: ADR 0038
+canon: knowledge/features
+id_pattern: '^F-[0-9]{4}$'
+kinds: [harness-grow, harness-rule, product, chore]
+statuses: [proposed, admitted, denied, in_progress, done, rejected]
+sources: [human, reflector, audit]
+
+opa:
+  packages:
+    feature_canon: feature.canon
+    grow_admission: grow.admission
+  test: 'node scripts/feature-gate.mjs --test'
+  gate: 'node scripts/feature-gate.mjs'
+  admit: 'node scripts/feature-gate.mjs --admit <feature.yaml>'
+
+actions:
+  admit: # 起票票を入場させる
+    require:
+      - feature_canon.valid
+      - review_ok_if_mutates_canon
+  apply: # skill/ADR/criteria/policy を実際に書き換える
+    require:
+      - feature_canon.valid
+      - status_in: [admitted, in_progress, done]
+      - review_ok_if_mutates_canon
+      - diff_paths_covered_by_proposed_change
+      - no_silent_adr_rewrite_unless_supersede_adr
+
+canon_paths:
+  - .claude/skills/
+  - .claude/agents/
+  - .claude/CLAUDE.md
+  - .claude/AGENTS.md
+  - knowledge/decisions/
+  - knowledge/criteria/
+  - policy/
+
+not_canon:
+  - knowledge/learnings.md # 日記
+  - knowledge/features/ # 起票そのもの
+  - knowledge/benchmarks/
+
+bootstrap:
+  id: F-0001
+  source: human
+  once: true
+
+accuracy_split:
+  generate: llm # reflector が学びを言語化し起票する
+  admit: opa # 昇格してよいかは決定的。LLM 解釈にしない

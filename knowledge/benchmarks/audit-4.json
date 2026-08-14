@@ -1,0 +1,33 @@
+{
+	"audit": 4,
+	"context": "cursor-harness: Feature 正本 + OPA grow admission (ADR 0038 / F-0001)",
+	"scores": {
+		"rules_coverage": {
+			"score": 86,
+			"note": "canon mutate を feature-gate で機械強制。post_task_reflect はリマインダのまま（Task 物理起動は 0033 で不可）。"
+		},
+		"knowledge_sufficiency": {
+			"score": 93,
+			"note": "ADR 0038 Accepted。features/ 正本と criteria/grow-admission.yaml。0035/36 は本リポ対象外。"
+		},
+		"routing_integrity": {
+			"score": 90,
+			"note": "席は不変。reflector を起票のみに縮小し grow と分離。"
+		},
+		"verification_coverage": {
+			"score": 90,
+			"note": "opa test 14/14 + feature-gate pass。製品 e2e はこの切り出しリポに無い（既知・非回帰）。"
+		},
+		"security": {
+			"score": 86,
+			"note": "製品面は不変。OPA バイナリは .tools/ 隔離・gitignore。ポリシーに秘密を置かない。"
+		},
+		"learning": {
+			"score": 95,
+			"note": "自己改善が日記+直接昇格から Feature 起票 + OPA 入場になった。F-0001 で dogfood。"
+		}
+	},
+	"total": 90,
+	"delta_from_previous": 2,
+	"notes": "前回88→90。rules/knowledge/learning が寄与。下降なし。残: 敵対レビュー後に F-0001 evidence 更新、learned/ 初回ルールは次 Feature。"
+}

@@ -12,7 +12,8 @@ description: タスク後の内省（効いた/失敗/edge case を言語化し 
 
 1. 実行結果を評価: worked / failed / edge cases を箇条書き。
 2. `knowledge/learnings.md` に日付付きで追記。
-3. 再現可能な判断は `harness-grow` へ渡す（skill/rule 昇格・ADR/criteria 更新）。
+3. 再現可能な判断は `knowledge/features/F-NNNN-*.yaml` に **proposed で起票**する（正本・[[0038]]）。
+   起票後に `harness-grow` へ渡す。skill/ADR/criteria/Rego はここでは書き換えない。
 
 ## モデル別観点（[[0031-model-strategy-cursor-multi-family]]）
 
@@ -24,4 +25,5 @@ description: タスク後の内省（効いた/失敗/edge case を言語化し 
 ## 原則
 
 - 具体的に（「認証が失敗した」でなく「safeGetSession が getUser 未検証で 500」）。
-- 既存 ADR を覆す時は新 ADR＋`Supersedes`。
+- 既存 ADR を覆す時は新 ADR＋`Supersedes`（Feature の `constraints.supersede_adr: true`）。
+- 正本は Feature。learnings は日記。GitHub Issue は鏡にできるが正本にしない。
