@@ -13,12 +13,20 @@ import { ensureOpa } from './ensure-opa.mjs';
 const ROOT = process.env.HARNESS_ROOT || join(dirname(fileURLToPath(import.meta.url)), '..');
 const POLICY = process.env.OPA_POLICY_DIR || join(ROOT, 'policy');
 const FEATURES = join(ROOT, 'knowledge', 'features');
-const LEARNED = join(POLICY, 'learned');
 const GIT = ['-c', 'core.quotePath=false'];
 const F0001 = 'knowledge/features/F-0001-feature-canon-opa-grow.yaml';
 const FEATURE_NAME = /^F-\d{4}-.+\.ya?ml$/;
-const FORBIDDEN_LEARNED = /^\s*package\s+(grow\.admission|feature\.canon|harness\.canon|cycle\.admission)\b/m;
 const FORBIDDEN_LEARNED_BUILTIN = /\b(http\.send|opa\.runtime|net\.lookup_ip_addr|io\.jwt)\b/;
+const PACKAGE_HOME = {
+	'grow.admission': 'grow.rego',
+	'grow.admission_test': 'grow_test.rego',
+	'feature.canon': 'feature.rego',
+	'feature.canon_test': 'feature_test.rego',
+	'harness.canon': 'canon.rego',
+	'harness.canon_test': 'canon_test.rego',
+	'cycle.admission': 'cycle.rego',
+	'cycle.admission_test': 'cycle_test.rego'
+};
 
 const args = process.argv.slice(2);
 const testOnly = args.includes('--test');
@@ -87,37 +95,46 @@ function featureFiles() {
 		.sort();
 }
 
-function assertLearnedIsolation() {
-	if (!existsSync(LEARNED)) return;
-	for (const name of readdirSync(LEARNED)) {
-		if (!name.endsWith('.rego')) continue;
-		const text = readFileSync(join(LEARNED, name), 'utf8');
-		if (FORBIDDEN_LEARNED.test(text)) {
-			fail(`policy/learned/${name} は package grow.admission|feature.canon|harness.canon|cycle.admission を名乗れない`);
-		}
-		if (FORBIDDEN_LEARNED_BUILTIN.test(text)) {
-			fail(`policy/learned/${name} は http.send / opa.runtime / net.lookup_ip_addr / io.jwt を使えない`);
-		}
+function walkRego(dir, fn) {
+	if (!existsSync(dir)) return;
+	for (const ent of readdirSync(dir, { withFileTypes: true })) {
+		const p = join(dir, ent.name);
+		if (ent.isDirectory()) walkRego(p, fn);
+		else if (ent.name.endsWith('.rego')) fn(p);
 	}
 }
 
-function assertTestNoSideEffects() {
-	const dirs = [POLICY, LEARNED];
-	for (const dir of dirs) {
-		if (!existsSync(dir)) continue;
-		for (const name of readdirSync(dir)) {
-			if (!name.endsWith('_test.rego')) continue;
-			const text = readFileSync(join(dir, name), 'utf8');
-			if (FORBIDDEN_LEARNED_BUILTIN.test(text)) {
-				fail(`${relative(ROOT, join(dir, name))} は http.send / opa.runtime / net.lookup_ip_addr / io.jwt を使えない`);
+function assertPolicyIsolation() {
+	walkRego(POLICY, (abs) => {
+		const rel = relative(POLICY, abs).replaceAll('\\', '/');
+		const text = readFileSync(abs, 'utf8');
+		if (FORBIDDEN_LEARNED_BUILTIN.test(text)) {
+			fail(`policy/${rel} は http.send / opa.runtime / net.lookup_ip_addr / io.jwt を使えない`);
+		}
+		for (const m of text.matchAll(/^\s*package\s+(\S+)/gm)) {
+			const pkg = m[1];
+			if (rel.startsWith('learned/')) {
+				if (!pkg.startsWith('learned.')) {
+					fail(`policy/${rel} は package learned.* だけ名乗れる`);
+				}
+				continue;
+			}
+			const home = PACKAGE_HOME[pkg];
+			if (home && rel !== home) {
+				fail(`policy/${rel} は package ${pkg} を名乗れない（正本は policy/${home}）`);
+			}
+			if (
+				!home &&
+				/^(grow|feature|harness|cycle)\./.test(pkg)
+			) {
+				fail(`policy/${rel} は未知の判定 package ${pkg} を名乗れない`);
 			}
 		}
-	}
+	});
 }
 
 function runOpaTest() {
-	assertLearnedIsolation();
-	assertTestNoSideEffects();
+	assertPolicyIsolation();
 	execFileSync(opa, ['test', POLICY, '-v'], { stdio: 'inherit', cwd: ROOT });
 }
 

@@ -106,3 +106,5 @@
 
 - F-0001 の `adversarial_review: approved` 自己申告（C1）はこの PR では直さない。
   同じ票で evidence 突合を入れると今回の apply が止まる。次 Feature で直す。
+- 欠落キー deny を足したあと、既存の拒否テストにキーを足さず 14 本が空振りした。
+  全拒否テストにキーを明示し、policy 配下は再帰走査＋ package 正本固定にした。
