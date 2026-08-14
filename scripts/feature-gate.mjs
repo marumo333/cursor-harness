@@ -95,12 +95,52 @@ function featureFiles() {
 		.sort();
 }
 
+const PACKAGE_HOME_FILES = new Set(Object.values(PACKAGE_HOME));
+const RESOLVED_NS = {
+	'data.grow.admission': 'grow.rego',
+	'data.grow.admission_test': 'grow_test.rego',
+	'data.feature.canon': 'feature.rego',
+	'data.feature.canon_test': 'feature_test.rego',
+	'data.harness.canon': 'canon.rego',
+	'data.harness.canon_test': 'canon_test.rego',
+	'data.cycle.admission': 'cycle.rego',
+	'data.cycle.admission_test': 'cycle_test.rego'
+};
+
 function walkRego(dir, fn) {
 	if (!existsSync(dir)) return;
 	for (const ent of readdirSync(dir, { withFileTypes: true })) {
 		const p = join(dir, ent.name);
+		if (ent.isSymbolicLink()) {
+			fail(`policy 配下の symlink は拒否: ${relative(POLICY, p)}`);
+		}
 		if (ent.isDirectory()) walkRego(p, fn);
 		else if (ent.name.endsWith('.rego')) fn(p);
+	}
+}
+
+function fileBase(p) {
+	return String(p).replaceAll('\\', '/').split('/').pop();
+}
+
+function assertResolvedNamespaces() {
+	let parsed;
+	try {
+		parsed = opaJson(['inspect', '-f', 'json', POLICY]);
+	} catch (e) {
+		fail(`opa inspect が失敗: ${e.message || e}`);
+	}
+	const ns = parsed.namespaces || {};
+	for (const [name, home] of Object.entries(RESOLVED_NS)) {
+		const files = (ns[name] || []).map(fileBase);
+		if (files.length !== 1 || files[0] !== home) {
+			fail(`名前空間 ${name} の正本は ${home} のみ（実際 ${JSON.stringify(ns[name] || [])}）`);
+		}
+	}
+	for (const [name, files] of Object.entries(ns)) {
+		if (name.startsWith('data.learned.')) continue;
+		if (RESOLVED_NS[name]) continue;
+		fail(`未知の名前空間 ${name}: ${JSON.stringify(files)}`);
 	}
 }
 
@@ -111,31 +151,20 @@ function assertPolicyIsolation() {
 		if (FORBIDDEN_LEARNED_BUILTIN.test(text)) {
 			fail(`policy/${rel} は http.send / opa.runtime / net.lookup_ip_addr / io.jwt を使えない`);
 		}
-		for (const m of text.matchAll(/^\s*package\s+(\S+)/gm)) {
-			const pkg = m[1];
-			if (rel.startsWith('learned/')) {
-				if (!pkg.startsWith('learned.')) {
-					fail(`policy/${rel} は package learned.* だけ名乗れる`);
-				}
-				continue;
-			}
-			const home = PACKAGE_HOME[pkg];
-			if (home && rel !== home) {
-				fail(`policy/${rel} は package ${pkg} を名乗れない（正本は policy/${home}）`);
-			}
-			if (
-				!home &&
-				/^(grow|feature|harness|cycle)\./.test(pkg)
-			) {
-				fail(`policy/${rel} は未知の判定 package ${pkg} を名乗れない`);
-			}
+		if (!rel.startsWith('learned/') && !PACKAGE_HOME_FILES.has(rel)) {
+			fail(`policy/${rel} は許可された正本ファイルではない`);
 		}
 	});
+	assertResolvedNamespaces();
 }
 
 function runOpaTest() {
 	assertPolicyIsolation();
-	execFileSync(opa, ['test', POLICY, '-v'], { stdio: 'inherit', cwd: ROOT });
+	try {
+		execFileSync(opa, ['test', POLICY, '-v'], { stdio: 'inherit', cwd: ROOT });
+	} catch (e) {
+		fail(`opa test が失敗（終了コード ${e.status ?? '不明'}）`);
+	}
 }
 
 function resolveMergeBase() {

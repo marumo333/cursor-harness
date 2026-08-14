@@ -108,3 +108,5 @@
   同じ票で evidence 突合を入れると今回の apply が止まる。次 Feature で直す。
 - 欠落キー deny を足したあと、既存の拒否テストにキーを足さず 14 本が空振りした。
   全拒否テストにキーを明示し、policy 配下は再帰走査＋ package 正本固定にした。
+- package 名の文字列判定は `grow["admission"]` と symlink で抜けた。
+  `opa inspect` の解決済み名前空間と、正本 8 ファイル以外の拒否で閉じた。
