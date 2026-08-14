@@ -119,8 +119,14 @@ function walkRego(dir, fn) {
 	}
 }
 
-function fileBase(p) {
-	return String(p).replaceAll('\\', '/').split('/').pop();
+function relToPolicy(p) {
+	const raw = String(p).replaceAll('\\', '/');
+	const candidates = [raw.startsWith('/') ? raw : resolve(ROOT, raw), join(POLICY, raw), resolve(POLICY, raw)];
+	for (const abs of candidates) {
+		const rel = relative(POLICY, abs).replaceAll('\\', '/');
+		if (rel && !rel.startsWith('..') && !rel.startsWith('/')) return rel;
+	}
+	fail(`opa inspect のパスが policy 配下に無い: ${p}`);
 }
 
 function assertResolvedNamespaces() {
@@ -132,13 +138,17 @@ function assertResolvedNamespaces() {
 	}
 	const ns = parsed.namespaces || {};
 	for (const [name, home] of Object.entries(RESOLVED_NS)) {
-		const files = (ns[name] || []).map(fileBase);
+		const files = (ns[name] || []).map(relToPolicy);
 		if (files.length !== 1 || files[0] !== home) {
-			fail(`名前空間 ${name} の正本は ${home} のみ（実際 ${JSON.stringify(ns[name] || [])}）`);
+			fail(`名前空間 ${name} の正本は ${home} のみ（実際 ${JSON.stringify(files)}）`);
 		}
 	}
 	for (const [name, files] of Object.entries(ns)) {
-		if (name.startsWith('data.learned.')) continue;
+		if (name.startsWith('data.learned.')) {
+			const leaked = (files || []).map(relToPolicy).filter((rel) => !rel.startsWith('learned/'));
+			if (leaked.length) fail(`learned 名前空間 ${name} が learned/ 外: ${JSON.stringify(leaked)}`);
+			continue;
+		}
 		if (RESOLVED_NS[name]) continue;
 		fail(`未知の名前空間 ${name}: ${JSON.stringify(files)}`);
 	}

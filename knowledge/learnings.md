@@ -110,3 +110,5 @@
   全拒否テストにキーを明示し、policy 配下は再帰走査＋ package 正本固定にした。
 - package 名の文字列判定は `grow["admission"]` と symlink で抜けた。
   `opa inspect` の解決済み名前空間と、正本 8 ファイル以外の拒否で閉じた。
+- 名前空間照合をファイル名だけにすると `learned/grow.rego` へ正本を移して抜けた。
+  policy 相対パスで突き合わせる。
