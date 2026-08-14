@@ -27,7 +27,18 @@ test('all used → green', () => {
 	assert.equal(m.node_skip_rate, 0);
 	assert.equal(m.edge_skip_rate, 0);
 	assert.equal(m.state_integrity, 1);
+	assert.equal(m.has_failed, false);
 	assert.equal(m.should_file_feature, false);
+});
+
+test('all failed is not green', () => {
+	const m = computeMetrics(required, {
+		nodes: Object.fromEntries(required.nodes.map((n) => [n.id, 'failed'])),
+		edges: Object.fromEntries(required.edges.map((e) => [`${e.from}>${e.to}`, 'failed']))
+	});
+	assert.equal(m.has_failed, true);
+	assert.equal(m.node_skip_rate, 0);
+	assert.equal(m.should_file_feature, true);
 });
 
 test('missing state lowers integrity', () => {

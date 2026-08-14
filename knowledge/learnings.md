@@ -20,6 +20,10 @@
 - 再起は人間の PR マージ後だけ。hooks から Task は起動しない。metrics 緑なら止める。
 - `events.jsonl` は canon 外（追記ログ）。必須集合は `required-cycle.json` だけ。
 - cycle.rego はキー欠落を deny。`gh pr list` 失敗は open 扱い（fail-closed）。
+- 再起は skip/fail がある周だけ。空サイクルの integrity=0 では量産しない。
+- feature-gate は PR ツリーの `*.test.mjs` を実行しない（信頼ゲート内 RCE 回避）。
+- `cycle-record` は node/state を検証し、`human_approved` は after-merge 専用。
+- `cycle.admission.deny` が配列でなければ exit 1。壊れた events.jsonl は書き換えない。
 
 **failed / リスク**
 

@@ -17,7 +17,7 @@ const LEARNED = join(POLICY, 'learned');
 const GIT = ['-c', 'core.quotePath=false'];
 const F0001 = 'knowledge/features/F-0001-feature-canon-opa-grow.yaml';
 const FEATURE_NAME = /^F-\d{4}-.+\.ya?ml$/;
-const FORBIDDEN_LEARNED = /^\s*package\s+(grow\.admission|feature\.canon|harness\.canon)\b/m;
+const FORBIDDEN_LEARNED = /^\s*package\s+(grow\.admission|feature\.canon|harness\.canon|cycle\.admission)\b/m;
 
 const args = process.argv.slice(2);
 const testOnly = args.includes('--test');
@@ -92,7 +92,7 @@ function assertLearnedIsolation() {
 		if (!name.endsWith('.rego')) continue;
 		const text = readFileSync(join(LEARNED, name), 'utf8');
 		if (FORBIDDEN_LEARNED.test(text)) {
-			fail(`policy/learned/${name} must not declare package grow.admission|feature.canon|harness.canon`);
+			fail(`policy/learned/${name} must not declare package grow.admission|feature.canon|harness.canon|cycle.admission`);
 		}
 	}
 }
@@ -100,10 +100,6 @@ function assertLearnedIsolation() {
 function runOpaTest() {
 	assertLearnedIsolation();
 	execFileSync(opa, ['test', POLICY, '-v'], { stdio: 'inherit', cwd: ROOT });
-	execFileSync(process.execPath, ['--test', join(ROOT, 'scripts/cycle-metrics.test.mjs')], {
-		stdio: 'inherit',
-		cwd: ROOT
-	});
 }
 
 function resolveMergeBase() {

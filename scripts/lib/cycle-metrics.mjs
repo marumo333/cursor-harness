@@ -13,29 +13,35 @@ export function computeMetrics(required, cycle) {
 	const edges = required.edges ?? [];
 
 	let nodeSkipped = 0;
+	let nodeFailed = 0;
 	let nodeTerminal = 0;
 	for (const n of nodes) {
 		const st = nodeStates[n.id];
 		if (st === 'skipped') nodeSkipped += 1;
+		if (st === 'failed') nodeFailed += 1;
 		if (TERMINAL.has(st)) nodeTerminal += 1;
 	}
 
 	let edgeSkipped = 0;
+	let edgeFailed = 0;
 	for (const e of edges) {
 		const key = `${e.from}>${e.to}`;
 		if (edgeStates[key] === 'skipped') edgeSkipped += 1;
+		if (edgeStates[key] === 'failed') edgeFailed += 1;
 	}
 
 	const node_skip_rate = nodes.length === 0 ? 0 : nodeSkipped / nodes.length;
 	const edge_skip_rate = edges.length === 0 ? 0 : edgeSkipped / edges.length;
 	const state_integrity = nodes.length === 0 ? 1 : nodeTerminal / nodes.length;
+	const has_failed = nodeFailed > 0 || edgeFailed > 0;
 
 	return {
 		node_skip_rate,
 		edge_skip_rate,
 		state_integrity,
+		has_failed,
 		human_approved: cycle.human_approved === true,
-		should_file_feature: node_skip_rate > 0 || edge_skip_rate > 0 || state_integrity < 1
+		should_file_feature: node_skip_rate > 0 || edge_skip_rate > 0 || has_failed || state_integrity < 1
 	};
 }
 

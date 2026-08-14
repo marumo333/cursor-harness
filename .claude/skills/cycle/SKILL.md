@@ -29,5 +29,6 @@ hooks から Task は起動しない。親が各 skill のあと（または Sto
 
 ## 再起
 
-人間が PR をマージしたあと `cycle-after-merge` が次票を起票する。metrics 緑なら止める。
-未マージの `cycle/*` PR がある、または `gh` で確認できないときも止める。
+人間が PR をマージしたあと `cycle-after-merge` が次票を起票する。
+skip/fail が無い、未マージの `cycle/*` PR がある、follow-up Feature が残っている、
+または `gh` で確認できないときは止める。`human_approved` は CLI から書かない。

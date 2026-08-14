@@ -27,7 +27,10 @@
 	"permissions": {
 		"allow": [
 			"Bash(npm run:*)",
-			"Bash(node scripts/:*)",
+			"Bash(node scripts/feature-gate.mjs:*)",
+			"Bash(node scripts/cycle-record.mjs:*)",
+			"Bash(node scripts/cycle-metrics.mjs:*)",
+			"Bash(node scripts/cycle-after-merge.mjs --dry-run:*)",
 			"Bash(git add:*)",
 			"Bash(git commit:*)",
 			"Bash(git status)",

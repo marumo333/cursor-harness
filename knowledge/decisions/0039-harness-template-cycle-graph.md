@@ -12,9 +12,10 @@
      正本イベントは `knowledge/graph/events.jsonl`。案件×お金グラフは置かない（[[0031]] 製品頭脳分離）。
   3. **3指標。** node_skip_rate / edge_skip_rate / state_integrity。閾値超過で Feature を proposed 起票。
   4. **再起は有界。** hooks から Task は起動しない（[[0033]]）。人間が PR をマージしたあとだけ
-     `cycle-after-merge` が次サイクル用の draft PR（鏡）を開く。metrics 緑なら開かない
-     （未処理 Feature は既にある票で進める。cycle PR を量産しない）。
-     未マージの cycle PR が既にあれば開かない。キー欠落は deny。
+     `cycle-after-merge` が次サイクル用の draft PR（鏡）を開く。
+     skip/fail が無い周、未マージの cycle PR、未処理の cycle-followup Feature、
+     または MERGED≠true なら開かない。空サイクルの integrity=0 だけでは再起しない。
+     キー欠落は deny。`human_approved` は after-merge だけが書く。
   5. **clone 先の正本**は clone 先の `knowledge/features/`。GitHub PR は鏡。template の使い方は `TEMPLATE.md`。
 - Consequences: 空リポに clone/push して人間がマージすると、skip が残っている限り次票が起票される。
   エージェント実行そのものは人間または Cloud Agent 起動が必要（Task 自動点火はしない）。

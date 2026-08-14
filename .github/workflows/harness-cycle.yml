@@ -2,38 +2,46 @@ name: harness-cycle
 on:
   pull_request:
     types: [closed]
-permissions:
-  contents: write
-  pull-requests: write
 jobs:
   after-merge:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
       - name: Record approval and maybe file next Feature
         env:
           MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          MERGED: 'true'
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           out="$(node scripts/cycle-after-merge.mjs)"
           echo "$out"
           recurse="$(node -e 'const o=JSON.parse(process.argv[1]); process.stdout.write(String(o.recurse))' "$out")"
-          if [ "$recurse" != "true" ]; then
-            echo "no recurse"
-            exit 0
-          fi
           git config user.name "harness-cycle"
           git config user.email "harness-cycle@users.noreply.github.com"
-          branch="cycle/followup-${{ github.event.pull_request.number }}"
-          git checkout -b "$branch"
-          git add knowledge/graph/events.jsonl knowledge/features
-          git commit -m "Record cycle approval and file follow-up Feature."
-          git push -u origin "$branch"
-          gh pr create --draft --base "${{ github.event.pull_request.base.ref }}" --head "$branch" \
-            --title "Cycle follow-up after #${{ github.event.pull_request.number }}" \
-            --body "Human merged #${{ github.event.pull_request.number }}. Bounded recurse (ADR 0039): next Feature is proposed. Execute it in a new agent session; this workflow does not start an agent."
+          git add knowledge/graph/events.jsonl
+          if [ "$recurse" = "true" ]; then
+            git add knowledge/features
+            branch="cycle/followup-${{ github.event.pull_request.number }}"
+            git checkout -b "$branch"
+            git commit -m "Record cycle approval and file follow-up Feature."
+            git push -u origin "$branch"
+            gh pr create --draft --base "${{ github.event.pull_request.base.ref }}" --head "$branch" \
+              --title "Cycle follow-up after #${{ github.event.pull_request.number }}" \
+              --body "Human merged #${{ github.event.pull_request.number }}. Bounded recurse (ADR 0039): next Feature is proposed. Execute it in a new agent session; this workflow does not start an agent."
+          else
+            if git diff --cached --quiet; then
+              echo "no event changes"
+              exit 0
+            fi
+            git commit -m "Record cycle human_approved for #${{ github.event.pull_request.number }}."
+            git push origin HEAD:"${{ github.event.pull_request.base.ref }}"
+          fi

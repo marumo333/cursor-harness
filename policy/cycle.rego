@@ -23,10 +23,17 @@ has_open_pr if input.open_cycle_pr == false
 
 has_pending if is_number(input.pending_features)
 
+has_pending_followups if is_number(input.pending_followups)
+
+has_failed if input.metrics.has_failed == true
+
+has_failed if input.metrics.has_failed == false
+
 has_metrics if {
 	is_number(input.metrics.node_skip_rate)
 	is_number(input.metrics.edge_skip_rate)
 	is_number(input.metrics.state_integrity)
+	has_failed
 }
 
 deny contains "action must be open_next" if not has_action
@@ -46,7 +53,12 @@ deny contains "pending_features must be a number" if {
 	not has_pending
 }
 
-deny contains "metrics.node_skip_rate/edge_skip_rate/state_integrity must be numbers" if {
+deny contains "pending_followups must be a number" if {
+	input.action == "open_next"
+	not has_pending_followups
+}
+
+deny contains "metrics.node_skip_rate/edge_skip_rate/state_integrity/has_failed must be present" if {
 	input.action == "open_next"
 	not has_metrics
 }
@@ -62,15 +74,29 @@ deny contains "cannot open next cycle while another cycle PR is open" if {
 	input.open_cycle_pr == true
 }
 
-metrics_green if {
-	has_metrics
-	input.metrics.node_skip_rate == 0
-	input.metrics.edge_skip_rate == 0
-	input.metrics.state_integrity == 1
+deny contains "cycle follow-up Feature already pending: do not recurse" if {
+	input.action == "open_next"
+	input.pending_followups > 0
 }
 
-# 緑なら止める。未処理 Feature は既にある票で進める（cycle PR の量産をしない）。
-deny contains "metrics green: do not recurse" if {
+need_rerun if {
+	has_metrics
+	input.metrics.node_skip_rate > 0
+}
+
+need_rerun if {
+	has_metrics
+	input.metrics.edge_skip_rate > 0
+}
+
+need_rerun if {
+	has_metrics
+	input.metrics.has_failed == true
+}
+
+# skip/fail が無い周は再起しない（空サイクルの integrity=0 で量産しない）。
+deny contains "no skipped or failed required skills: do not recurse" if {
 	input.action == "open_next"
-	metrics_green
+	has_metrics
+	not need_rerun
 }

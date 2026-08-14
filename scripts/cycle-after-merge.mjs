@@ -14,25 +14,41 @@ const ROOT = process.env.HARNESS_ROOT || join(dirname(fileURLToPath(import.meta.
 const FEATURES = join(ROOT, 'knowledge', 'features');
 const EVENTS = join(ROOT, 'knowledge', 'graph', 'events.jsonl');
 const POLICY = process.env.OPA_POLICY_DIR || join(ROOT, 'policy');
+const CYCLE_RE = /^C-\d{4}$/;
 
 const dryRun = process.argv.includes('--dry-run');
-const assumeOpenPr = process.argv.includes('--assume-open-pr');
-const assumeNoOpenPr = process.argv.includes('--assume-no-open-pr');
+const assumeOpenPr = dryRun && process.argv.includes('--assume-open-pr');
 const mergeSha = process.env.MERGE_SHA || '';
-const prNumber = process.env.PR_NUMBER || '';
+const prNumber = String(process.env.PR_NUMBER || '').replace(/[^\d]/g, '');
+const humanApproved = process.env.MERGED === 'true';
 
 function events() {
 	if (!existsSync(EVENTS)) return [];
-	return readFileSync(EVENTS, 'utf8')
-		.split('\n')
-		.filter(Boolean)
-		.map((l) => JSON.parse(l));
+	const out = [];
+	for (const line of readFileSync(EVENTS, 'utf8').split('\n').filter(Boolean)) {
+		try {
+			out.push(JSON.parse(line));
+		} catch {
+			console.error('[cycle-after-merge] events.jsonl has a broken line; refusing to rewrite');
+			process.exit(1);
+		}
+	}
+	return out;
 }
 
 function pendingFeatures() {
 	if (!existsSync(FEATURES)) return 0;
 	return readdirSync(FEATURES).filter((n) => {
 		if (!/^F-\d{4}-.+\.ya?ml$/.test(n)) return false;
+		const text = readFileSync(join(FEATURES, n), 'utf8');
+		return /^\s*status:\s*(proposed|admitted|in_progress)\s*$/m.test(text);
+	}).length;
+}
+
+function pendingFollowups() {
+	if (!existsSync(FEATURES)) return 0;
+	return readdirSync(FEATURES).filter((n) => {
+		if (!/^F-\d{4}-cycle-followup\.ya?ml$/.test(n)) return false;
 		const text = readFileSync(join(FEATURES, n), 'utf8');
 		return /^\s*status:\s*(proposed|admitted|in_progress)\s*$/m.test(text);
 	}).length;
@@ -58,43 +74,51 @@ function evalDeny(input) {
 	const out = execFileSync(opa, ['eval', '-f', 'json', '-d', POLICY, '--input', inputFile, 'data.cycle.admission.deny'], {
 		encoding: 'utf8'
 	});
-	return JSON.parse(out).result?.[0]?.expressions?.[0]?.value ?? [];
+	const value = JSON.parse(out).result?.[0]?.expressions?.[0]?.value;
+	if (!Array.isArray(value)) {
+		console.error('[cycle-after-merge] cycle.admission.deny did not return an array; refusing fail-open');
+		process.exit(1);
+	}
+	return value;
 }
 
 function openCyclePrExists() {
 	if (assumeOpenPr) return true;
-	if (assumeNoOpenPr || dryRun) return false;
+	if (dryRun) return false;
 	try {
-		const out = execFileSync('gh', ['pr', 'list', '--state', 'open', '--json', 'headRefName'], {
-			encoding: 'utf8',
-			cwd: ROOT
-		});
+		const out = execFileSync(
+			'gh',
+			['pr', 'list', '--state', 'open', '--limit', '1000', '--json', 'headRefName'],
+			{ encoding: 'utf8', cwd: ROOT }
+		);
 		const prs = JSON.parse(out);
 		return prs.some((p) => String(p.headRefName || '').startsWith('cycle/'));
 	} catch {
-		// fail closed: cannot prove there is no open cycle PR
 		return true;
 	}
 }
 
 const evs = events();
-const cycleId = process.env.CYCLE_ID || latestOpenCycle(evs);
+const rawCycle = process.env.CYCLE_ID || latestOpenCycle(evs);
+const cycleId = CYCLE_RE.test(rawCycle) ? rawCycle : 'C-0001';
 const required = JSON.parse(readFileSync(join(ROOT, 'knowledge/graph/required-cycle.json'), 'utf8'));
 const folded = foldCycle(evs, cycleId);
-folded.human_approved = true;
 const metrics = computeMetrics(required, folded);
 const pending = pendingFeatures();
+const followups = pendingFollowups();
 const openPr = openCyclePrExists();
 
 const deny = evalDeny({
 	action: 'open_next',
-	current_cycle: { human_approved: true },
+	current_cycle: { human_approved: humanApproved },
 	open_cycle_pr: openPr,
 	pending_features: pending,
+	pending_followups: followups,
 	metrics: {
 		node_skip_rate: metrics.node_skip_rate,
 		edge_skip_rate: metrics.edge_skip_rate,
-		state_integrity: metrics.state_integrity
+		state_integrity: metrics.state_integrity,
+		has_failed: metrics.has_failed
 	}
 });
 
@@ -107,13 +131,13 @@ const rec = {
 };
 
 const recurse = deny.length === 0;
-console.log(JSON.stringify({ cycle: cycleId, metrics, pending, openPr, deny, recurse }, null, 2));
+console.log(JSON.stringify({ cycle: cycleId, metrics, pending, followups, openPr, deny, recurse }, null, 2));
 
 if (dryRun) process.exit(0);
 
 mkdirSync(dirname(EVENTS), { recursive: true });
-const next = [];
-next.push(...evs, rec);
+const next = [...evs];
+if (humanApproved) next.push(rec);
 
 if (!recurse) {
 	writeFileSync(EVENTS, `${next.map((e) => JSON.stringify(e)).join('\n')}\n`);
@@ -122,6 +146,10 @@ if (!recurse) {
 }
 
 const nxt = nextCycleId(cycleId);
+if (!CYCLE_RE.test(nxt)) {
+	console.error(`[cycle-after-merge] invalid next cycle id ${nxt}`);
+	process.exit(1);
+}
 next.push({
 	t: new Date().toISOString(),
 	type: 'cycle_open',
@@ -135,7 +163,7 @@ const id = nextFeatureId();
 const slug = `${id}-cycle-followup.yaml`;
 const body = `feature:
   id: ${id}
-  title: Cycle follow-up after human approve (${cycleId} → ${nxt})
+  title: Cycle follow-up after human approve (${cycleId} to ${nxt})
   kind: harness-grow
   status: proposed
   source: audit
@@ -145,7 +173,8 @@ const body = `feature:
   problem: >
     Previous cycle ${cycleId} was merged (sha ${mergeSha || 'unknown'}) with
     node_skip_rate=${metrics.node_skip_rate} edge_skip_rate=${metrics.edge_skip_rate}
-    state_integrity=${metrics.state_integrity}. Re-run skipped required skills.
+    state_integrity=${metrics.state_integrity} has_failed=${metrics.has_failed}.
+    Re-run skipped or failed required skills.
   proposed_change:
     mutates_canon: false
     paths:

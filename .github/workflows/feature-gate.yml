@@ -2,6 +2,8 @@ name: feature-gate
 on:
   push:
   pull_request:
+permissions:
+  contents: read
 jobs:
   opa:
     runs-on: ubuntu-latest
@@ -20,3 +22,5 @@ jobs:
           else
             node scripts/feature-gate.mjs
           fi
+      - name: Harness unit tests
+        run: npm test
