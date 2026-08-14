@@ -1,4 +1,4 @@
-# AGENTS.md — ハーネス template（モデル戦略・自己成長ループ）
+# AGENTS.md — ハーネス テンプレート（モデル戦略・自己成長ループ）
 
 製品コードは置かない。ハーネスは **Cursor**。使い方は `TEMPLATE.md`。
 
@@ -16,12 +16,12 @@
 
 ## 自己成長ループ（1周）
 
-1. 自走（親 Grok）: knowledge 読込 → brainstorming / writing-plans。fan-out 前は plan-confirm。
+1. 自走（親 Grok）: knowledge 読込 → brainstorming / writing-plans。並列展開前は plan-confirm。
 2. 実装: TDD。親の直接編集は明文化ボイラーのみ。
 3. 検証: feature-gate → 独立敵対レビュー。高リスクは 3ファミリー多数決。
 4. 内省: reflector が learnings 追記 + Feature 起票。cycle に used/skipped を書く。
 5. 成長: OPA allow の Feature だけ skill/ADR/criteria/Rego に適用。
-6. ガード: budget_guards / observer-loop 防止。metrics 緑なら再起しない（[[0039]]）。
+6. ガード: budget_guards / 無制限再起防止。metrics 緑なら再起しない（[[0039]]）。
 
 ## ロースター
 
@@ -32,4 +32,4 @@
 | `verifier` | Opus 5 | feature-gate / テスト / 前進判定 |
 | `reflector` | Opus 5 | 内省・Feature 起票 |
 
-製品 builder（api/ui/db/e2e/auth-billing）は template に置かない。製品リポ側で足す。
+製品の構築役（api/ui/db/e2e/auth-billing）はテンプレートに置かない。製品リポ側で足す。

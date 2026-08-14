@@ -40,7 +40,7 @@ if (hit && inSrc) {
 		'[block_secret_write] 規約1: シークレットらしき値をソース(' +
 			fp +
 			')に埋め込もうとしています。' +
-			' PUBLIC_ 以外は server(`$env/static/private`)/Worker secret のみ。'
+			' PUBLIC_ 以外は server(`$env/static/private`)/Worker の秘密のみ。'
 	);
 	process.exit(2);
 }

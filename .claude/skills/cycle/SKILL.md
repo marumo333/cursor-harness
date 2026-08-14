@@ -1,6 +1,6 @@
 ---
 name: cycle
-description: 1周の skill 使用/skip をグラフに記録し、3指標を出す。ループ終了時に必ず使う。
+description: 1周の skill 使用/省略をグラフに記録し、3指標を出す。ループ終了時に必ず使う。
 ---
 
 # cycle skill（[[0039]]）
@@ -17,7 +17,7 @@ hooks から Task は起動しない。親が各 skill のあと（または Sto
 
 使わなかったら `--state skipped`。失敗は `--state failed`。
 
-辺（handoff）:
+辺（受け渡し）:
 
 `node scripts/cycle-record.mjs --type edge_state --cycle C-0001 --from skill:verify --to skill:reflect --state taken|skipped --reason '...'`
 
@@ -30,5 +30,5 @@ hooks から Task は起動しない。親が各 skill のあと（または Sto
 ## 再起
 
 人間が PR をマージしたあと `cycle-after-merge` が次票を起票する。
-skip/fail が無い、未マージの `cycle/*` PR がある、follow-up Feature が残っている、
+省略/失敗が無い、未マージの `cycle/*` PR がある、続きの Feature が残っている、
 または `gh` で確認できないときは止める。`human_approved` は CLI から書かない。

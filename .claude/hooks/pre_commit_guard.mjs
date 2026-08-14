@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// PreToolUse(Bash): git commit 前に 規約6 — 型チェック緑 + secret スキャンを強制。
+// PreToolUse(Bash): git commit 前に 規約6 — 型チェック緑 + 秘密スキャンを強制。
 // 依存未インストール時は型チェックをスキップ（基盤未準備で全 commit を止めない）。
 import { readFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';

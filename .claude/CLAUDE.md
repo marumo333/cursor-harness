@@ -1,4 +1,4 @@
-# CLAUDE.md — ハーネス template 運用規約
+# CLAUDE.md — ハーネス テンプレート運用規約
 
 製品定義は置かない。このリポはプロダクトを作る前に切る Cursor ハーネス（[[0039]]）。
 判断は `knowledge/decisions/`、基準は `knowledge/criteria/`、作業正本は `knowledge/features/`。
@@ -15,11 +15,11 @@
 
 ## 作業の型
 
-`自走(親=Grok) → plan-confirm(fan-out時) → 実装(TDD) → 検証(敵対レビュー) →
+`自走(親=Grok) → plan-confirm(並列展開時) → 実装(TDD) → 検証(敵対レビュー) →
 内省(起票) → OPA入場 → grow`。失敗・未レビューは前進不可。
 
 ## やらないこと
 
-- この template に製品（認証/課金/UI/DB/配信）を混ぜない。
-- 無制限の skill 自動再起（observer-loop）。
+- このテンプレートに製品（認証/課金/UI/DB/配信）を混ぜない。
+- 無制限の skill 自動再起。
 - GitHub Issue / Spec Kit を正本にする（[[0033]]）。

@@ -8,7 +8,7 @@ description: 入場済み Feature だけ skill/rule/Rego に昇格し、判断�
 ## 手順
 
 1. `knowledge/features/` の `proposed` / `admitted` / `in_progress` を読む。learnings 生メモは正本ではない。
-2. 敵対レビュー（Opus 5・fresh context、`adversarial-review` skill）を通し、
+2. 敵対レビュー（Opus 5・新しい文脈、`adversarial-review` skill）を通し、
    `evidence.adversarial_review: approved` を票に書く。grow 前の確定判断は Opus Task
    （親 Grok のまま規約化しない・[[0033]] / [[0037]]）。
 3. `node scripts/feature-gate.mjs --admit knowledge/features/F-NNNN-….yaml` が allow なら
@@ -26,4 +26,4 @@ description: 入場済み Feature だけ skill/rule/Rego に昇格し、判断�
 
 - 昇格は**検証済みかつ OPA allow のみ**（learnings の生メモをそのまま規約化しない）。
 - Feature が正本（[[0038]]）。GitHub Issue / Spec Kit は正本にしない（[[0033]]）。
-- ECC 由来の自己学習を lean に運用。OPA に内省文を生成させない。
+- ECC 由来の自己学習を薄く運用する。OPA に内省文を生成させない。

@@ -29,7 +29,7 @@ has_action if input.action in {"admit", "apply"}
 
 deny contains "action は admit または apply" if not has_action
 
-# True one-shot: merge-base に F-0001 がまだ無い導入コミットだけ。
+# 真の一回限り: merge-base に F-0001 がまだ無い導入コミットだけ。
 bootstrap_ok if {
 	feature.bootstrap == true
 	feature.id == "F-0001"

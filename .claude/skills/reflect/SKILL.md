@@ -1,6 +1,6 @@
 ---
 name: reflect
-description: タスク後の内省（効いた/失敗/edge case を言語化し learnings に追記）。自己成長ループ④の入口。
+description: タスク後の内省（効いた/失敗/境界事例を言語化し learnings に追記）。自己成長ループ④の入口。
 ---
 
 # reflect skill（= reflector agent・Opus Task）
@@ -10,7 +10,7 @@ description: タスク後の内省（効いた/失敗/edge case を言語化し 
 
 ## 手順（3相）
 
-1. 実行結果を評価: worked / failed / edge cases を箇条書き。
+1. 実行結果を評価: 効いた / 失敗した / 境界事例 を箇条書き。
 2. `knowledge/learnings.md` に日付付きで追記（製品日記は書かない）。
 3. 再現可能な判断は `knowledge/features/F-NNNN-*.yaml` に **proposed で起票**する（正本・[[0038]]）。
    起票後に `harness-grow` へ渡す。skill/ADR/criteria/Rego はここでは書き換えない。

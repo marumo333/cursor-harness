@@ -76,7 +76,7 @@ function evalDeny(input) {
 	});
 	const value = JSON.parse(out).result?.[0]?.expressions?.[0]?.value;
 	if (!Array.isArray(value)) {
-		console.error('[cycle-after-merge] cycle.admission.deny が配列を返さなかった。fail-open を拒否する');
+		console.error('[cycle-after-merge] cycle.admission.deny が配列を返さなかった。欠落で通すことを拒否する');
 		process.exit(1);
 	}
 	return value;

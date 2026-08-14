@@ -111,7 +111,7 @@ function resolveMergeBase() {
 			}).trim();
 			if (mb) return { base, mb };
 		} catch {
-			// try next
+			// 次の基準ブランチを試す
 		}
 	}
 	return null;
@@ -194,10 +194,10 @@ if (wantsAdmit) {
 }
 
 const resolved = resolveMergeBase();
-if (!resolved) fail('origin/main または main との merge-base が解けない。fail-open を拒否する');
+if (!resolved) fail('origin/main または main との merge-base が解けない。欠落で通すことを拒否する');
 
 const files = featureFiles();
-if (files.length === 0) fail('no knowledge/features/F-NNNN-*.yaml (正本が空)');
+if (files.length === 0) fail('knowledge/features/F-NNNN-*.yaml が無い（正本が空）');
 
 const loaded = files.map((file) => ({ file, rel: relFeature(file), feature: loadFeature(file) }));
 const ids = new Set();

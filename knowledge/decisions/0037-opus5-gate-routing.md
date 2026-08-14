@@ -8,9 +8,9 @@
     対象: `backend-architect` / `security-reviewer` / `verifier` / `reflector` /
     単独敵対レビュー・grow 前レビュー・plan-confirm。
   - **親チャット＝Grok 4.5 据え置き**。
-  - **実装 fan-out＝Grok 4.5 据え置き**。
+  - **実装の並列展開＝Grok 4.5 据え置き**。
   - **`review_trio`＝Opus 5 / Grok 4.5 / GPT-5.6 Sol**。Fable と Opus を同一 trio に同居させない。
   - **Fable 5 は既定ロースターから外す**。許可は天井判断の追加レビューのみ。ゲート既定代替には使わない。
-  - **不変条件**: 独立 fresh context・敵対的レビュー、named agent 必須、Opus Task 入力は成果物のみ。
-- 結果: 製品 agent（auth-billing / ux-reviewer）は template に置かない（[[0039]]）。
+  - **不変条件**: 独立した新しい文脈・敵対的レビュー、名前付き agent 必須、Opus Task 入力は成果物のみ。
+- 結果: 製品 agent（auth-billing / ux-reviewer）はテンプレートに置かない（[[0039]]）。
 - 関連: [[0031]] [[0033]] [[0026]] [[0016]] [[0018]] [[0039]]

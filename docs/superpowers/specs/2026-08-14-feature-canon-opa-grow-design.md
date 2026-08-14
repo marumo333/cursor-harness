@@ -17,11 +17,11 @@ harness-grow: opa apply allow の票だけ skill/ADR/criteria/Rego に適用
 verify: node scripts/feature-gate.mjs
 ```
 
-入場は fail-closed（キー欠落 deny、mutates は差分導出、bootstrap は導入ファイルが差分にある時だけ、
+入場は欠落で拒否（キー欠落は deny、mutates は差分導出、bootstrap は導入ファイルが差分にある時だけ、
 merge-base 未解決は exit 1）。canon パスの正本は `policy/canon.rego`。複数票は和集合。
 
 ## 非目標
 
 - GitHub Spec Kit / Issue を正本にする（[[0033]]）
 - 内省文や skill 本文を Rego で生成する
-- 製品 RLS/課金を OPA に移す（template では製品を置かない・[[0039]]）
+- 製品の行レベル権限/課金を OPA に移す（テンプレートでは製品を置かない・[[0039]]）

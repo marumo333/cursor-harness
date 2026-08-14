@@ -6,7 +6,7 @@ import data.grow.admission
 
 base := {
 	"id": "F-0002",
-	"title": "promote a skill",
+	"title": "skill を昇格する",
 	"kind": "harness-grow",
 	"status": "admitted",
 	"source": "reflector",
@@ -134,7 +134,7 @@ test_allow_adr_amend_when_flagged if {
 
 f0001 := {
 	"id": "F-0001",
-	"title": "introduce the gate",
+	"title": "ゲートを導入する",
 	"kind": "harness-grow",
 	"status": "in_progress",
 	"source": "human",
@@ -190,7 +190,7 @@ test_bootstrap_other_id_denied if {
 test_omit_mutates_canon_denied if {
 	omit_pc := {
 		"id": "F-0002",
-		"title": "promote a skill",
+		"title": "skill を昇格する",
 		"kind": "harness-grow",
 		"status": "admitted",
 		"source": "reflector",
@@ -230,7 +230,7 @@ test_empty_cover_paths_denied if {
 test_c3_bypass_ticket_denied if {
 	bypass := {
 		"id": "F-0099",
-		"title": "bypass",
+		"title": "迂回",
 		"kind": "chore",
 		"status": "admitted",
 		"source": "human",

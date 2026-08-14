@@ -38,12 +38,12 @@ has_metrics if {
 
 deny contains "action は open_next" if not has_action
 
-deny contains "current_cycle.human_approved は boolean" if {
+deny contains "current_cycle.human_approved は真偽値" if {
 	input.action == "open_next"
 	not has_human_approved
 }
 
-deny contains "open_cycle_pr は boolean" if {
+deny contains "open_cycle_pr は真偽値" if {
 	input.action == "open_next"
 	not has_open_pr
 }
@@ -94,8 +94,8 @@ need_rerun if {
 	input.metrics.has_failed == true
 }
 
-# skip/fail が無い周は再起しない（空サイクルの integrity=0 で量産しない）。
-deny contains "必須 skill の skip/fail が無いので再起しない" if {
+# 省略/失敗が無い周は再起しない（空サイクルの integrity=0 で量産しない）。
+deny contains "必須 skill の省略/失敗が無いので再起しない" if {
 	input.action == "open_next"
 	has_metrics
 	not need_rerun

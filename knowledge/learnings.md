@@ -13,7 +13,7 @@
 **問い**
 
 - プロダクトを作る前に切るテンプレートに、製品 agent/skill が残っていた。
-- 自己改善は1周の手順だけで、skill skip の3指標も merge 後の再起も無かった。
+- 自己改善は1周の手順だけで、skill 省略の3指標もマージ後の再起も無かった。
 
 **効いた**
 
@@ -21,11 +21,11 @@
 - 必須ノードの used/skipped を `knowledge/graph/events.jsonl` に書き、node/edge/state を出す。
 - 再起は人間の PR マージ後だけ。hooks から Task は起動しない。metrics 緑なら止める。
 - `events.jsonl` は canon 外（追記ログ）。必須集合は `required-cycle.json` だけ。
-- cycle.rego はキー欠落を deny。`gh pr list` 失敗は open 扱い（fail-closed）。
-- 再起は skip/fail がある周だけ。空サイクルの integrity=0 では量産しない。
-- feature-gate は PR ツリーの `*.test.mjs` を実行しない（信頼ゲート内 RCE 回避）。
+- cycle.rego はキー欠落を deny。`gh pr list` 失敗は未処理扱い（欠落で拒否）。
+- 再起は省略/失敗がある周だけ。空サイクルの integrity=0 では量産しない。
+- feature-gate は PR ツリーの `*.test.mjs` を実行しない（信頼ゲート内の遠隔コード実行を回避）。
 - `cycle-record` は node/state を検証し、`human_approved` は after-merge 専用。
-- `cycle.admission.deny` が配列でなければ exit 1。壊れた events.jsonl は書き換えない。
+- `cycle.admission.deny` が配列でなければ終了コード 1。壊れた events.jsonl は書き換えない。
 
 **失敗 / リスク**
 
@@ -74,3 +74,20 @@
 **失敗 / リスク**
 
 - deny 文を変えたので、英語文字列を固定していたテストも追従が必要。
+
+---
+
+## 2026-08-14 — 残っていた人が読む英語を洗い出して直す
+
+**問い**
+
+- 見出しと操作者向け文は日本語化済みだったが、説明文・コメント・用語に英語が残っていた。
+
+**効いた**
+
+- skill/agent の説明、ADR 本文、コメント、deny の「真偽値」を日本語にした。
+- 機械キー・コマンド・パス・状態値・パッケージ名は英語のまま。
+
+**失敗 / リスク**
+
+- 用語を訳しすぎると、状態値（`skipped` 等）と説明文が食い違う。説明は日本語、値は英語で揃える。

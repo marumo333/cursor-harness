@@ -1,6 +1,6 @@
 ---
 name: parallel-dispatch
-description: 実装 fan-out の並列化判断と起動手順（Task並列 / worktree分離 / 読み取り専用）。親Grokが計画を subagent に配る時に使う。
+description: 実装の並列展開判断と起動手順（Task並列 / 作業ツリー分離 / 読み取り専用）。親Grokが計画を subagent に配る時に使う。
 ---
 
 # parallel-dispatch skill（[[0031]] / [[0033]]）
@@ -9,7 +9,7 @@ description: 実装 fan-out の並列化判断と起動手順（Task並列 / wor
 
 ## 前提ゲート
 
-1. **`plan-confirm` approve 証跡**があること（fan-out 必須・[[0033]]）。無ければ起動しない。
+1. **`plan-confirm` 承認証跡**があること（並列展開必須・[[0033]]）。無ければ起動しない。
 2. **C トリガ**（正本/OPA/cycle/hooks の横断変更）は plan-confirm 同一 Task で
    `backend-architect` 設計レビュー済みであること。
 
@@ -20,7 +20,7 @@ description: 実装 fan-out の並列化判断と起動手順（Task並列 / wor
 2. **書き込みタスク同士が独立か？**（触るファイル群が重ならない）
    → **同一ワークスペースで Task 並列起動**。1メッセージで複数 subagent を同時に起動する。
 3. **同じファイル群に触る可能性がある / 同一タスクの複数試行（best-of-N）か？**
-   → **worktree 分離**（best-of-n-runner）。採用しなかった側の学びは learnings に記録してから破棄する。
+   → **作業ツリー分離**（best-of-n-runner）。採用しなかった側の学びは learnings に記録してから破棄する。
    採用後のレビューは通常どおり Opus 敵対。
 4. **依存関係があるか？** → 並列にしない。逐次ディスパッチ、または境界を先に確定してから並列化する。
 
@@ -31,11 +31,11 @@ description: 実装 fan-out の並列化判断と起動手順（Task並列 / wor
 3. 仕様が明文化できたタスクのみ Grok に委譲する（曖昧なタスク・非自明ロジックは Opus Task）。
 4. subagent への指示に必ず含める: 対象ファイル / 完了条件 / 読むべき ADR・criteria / 禁止事項。
 5. 起動は 1メッセージにまとめる。完了後、**親 Grok が統合** → `adversarial-review` → `verify`。
-   **fan-out の出力をレビューなしでマージしない。**
+   **並列展開の出力をレビューなしでマージしない。**
 
 ## アンチパターン
 
-- plan-confirm なしの fan-out。
+- plan-confirm なしの並列展開。
 - 粒度が大きすぎる委譲。
 - 同じファイルを触る2体を同一ワークスペースで並列起動。
 - model 未指定の汎用 Task で Opus ゲートを代替すること。

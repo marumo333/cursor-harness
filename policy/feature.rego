@@ -84,7 +84,7 @@ deny contains "harness-rule は policy/ 配下のパスが必要" if {
 
 deny contains "adversarial_review は approved|pending|not_required" if not has_review_state
 
-deny contains "mutates_canon は boolean" if not has_mutates_flag
+deny contains "mutates_canon は真偽値" if not has_mutates_flag
 
 deny contains "chore は mutates_canon=true にできない" if {
 	feature.kind == "chore"

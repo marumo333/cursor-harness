@@ -70,7 +70,7 @@ test_reject_missing_mutates_flag if {
 		"proposed_change": {"paths": ["policy/learned/example.rego"]},
 		"evidence": {"adversarial_review": "pending"},
 	}
-	"mutates_canon は boolean" in canon.deny with input as {"feature": missing_mutates}
+	"mutates_canon は真偽値" in canon.deny with input as {"feature": missing_mutates}
 }
 
 test_reject_chore_mutating_canon if {
