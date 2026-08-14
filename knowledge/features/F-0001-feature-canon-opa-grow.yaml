@@ -1,0 +1,43 @@
+feature:
+  id: F-0001
+  title: Feature 正本と OPA grow 入場
+  kind: harness-grow
+  status: in_progress
+  source: human
+  created: '2026-08-14'
+  bootstrap: true
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    自己成長ループは learnings 追記と skill/ADR の直接書き換えで閉じており、
+    作業項目の正本が無い。昇格可否は LLM が YAML/Markdown を解釈するため揺れる。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - knowledge/decisions/
+      - knowledge/criteria/
+      - knowledge/features/
+      - policy/
+      - scripts/
+      - .claude/skills/
+      - .claude/agents/
+      - .claude/hooks/
+      - .cursor/hooks.json
+      - .cursor/hooks/
+      - .cursor/log_subagent_model.mjs
+      - .github/workflows/
+      - .claude/settings.json
+      - .claude/CLAUDE.md
+      - .claude/AGENTS.md
+      - package.json
+      - README.md
+      - docs/superpowers/specs/
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: true
+    no_jp_code_merge_write: true
+    supersedes: []

@@ -1,9 +1,50 @@
 # learnings.md — 自己成長ループの記憶（実行ごとに追記）
 
 各タスク完了時に「効いた / 失敗した / edge case」を追記する（CLAUDE.md 規約⑧ / `post_task_reflect` hook）。
-golden path は skill/rule に昇格し、判断は ADR/criteria に落とす。
+再現可能な改善は Feature 正本（`knowledge/features/`）に起票し、OPA 入場後に skill/rule/Rego へ昇格する（[[0038]]）。
 
 ---
+
+## 2026-08-14 — Feature 正本 + OPA grow 入場（ADR 0038 / F-0001）
+
+**問い**
+
+- 自己改善ループはあるが、Feature 正本としての起票は無かった（learnings 日記 + skill 直接書き換え）。
+- OPA は生成ではなく入場に使うと、昇格可否の揺れが減る。
+
+**worked**
+
+- 正本を `knowledge/features/F-NNNN-*.yaml` に置いた。GitHub Issue は正本にしない（[[0033]] 二重化回避）。
+- `policy/feature.rego` + `policy/grow.rego` + 14 test。`node scripts/feature-gate.mjs` が DoD。
+- reflector = 起票、grow = OPA allow の票だけ適用。F-0001 bootstrap は human + 1回限り。
+- 未追跡ファイルを gate の diff に含めないと新規 canon が抜けた → `git ls-files --others` を追加。
+
+**failed / リスク（敵対レビューで CONFIRMED → 修正）**
+
+- `not (x in set)` はキー欠落を hoisting で素通りした。helper 完全ルールに直した。
+- `mutates_canon` 自己申告と、scripts/hooks/package.json が canon 外 → ゲート無効化。差分導出 + `policy/canon.rego` 一本化。
+- F-0001 bootstrap が恒久ワイルドカード。導入ファイルが差分に含まれる時だけ apply。
+- merge-base 失敗は fail-open だった。origin/main|main が解けなければ exit 1。
+- `npm run check` を opa test に上書きしていた（型緑の偽シグナル）。削除。
+- `post_task_reflect` は依然 stderr リマインダ。hooks から Task 物理起動は不可（[[0033]]）。
+- OPA に内省文を載せると誤ツール。learned/ はスロットのみ。
+
+**再レビュー Critical → 追加修正**
+
+- bootstrap は merge-base に F-0001 が無い時だけ（票を後から触っても再武装しない）。
+- 新規 Feature を admitted / approved で生まれさせない（同一 PR 自己承認を遮断）。
+- `mutates_canon` 必須 boolean。省略は deny。
+- JS は `allow` を見ず `deny` 空だけ。`policy/learned` の判定 package 名乗りを禁止。
+- `.cursor/hooks` と `.github/workflows` を canon に追加。OPA_BIN / 未ピン arch を拒否。
+- 強制点: pre_commit_guard + GitHub Actions（main に載った後は main の policy で判定）。
+
+**既知の限界**
+
+- `adversarial_review: approved` は 2PR 目ではまだ自己申告。レビュー成果物ハッシュとの突合は次 Feature。
+
+**next**
+
+- 最初の harness-rule Feature で `policy/learned/` に1本落とす。
 
 ## 2026-07-24 — Claude ゲート席 Fable 5 → Opus 5（ADR 0037）
 

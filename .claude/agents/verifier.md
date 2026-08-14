@@ -13,6 +13,7 @@ tools: Read, Grep, Glob, Bash
 
 ## 手順
 1. `npm run check`（型緑）。2. lint/format。3. **`npm run arch:fitness`**（[[0034]]）。
+3b. **`node scripts/feature-gate.mjs`**（[[0038]]）。Feature 正本 + OPA grow 入場。
 4. クリティカル領域のテスト。
 4b. **TDD red 証跡**（[[0013]]）: 挙動変更があれば FAIL ログ、または `tdd_exceptions` 明示。無ければ前進不可。
 5. hermetic e2e: **`e2e-runner` の実行結果を判定**（flaky と実バグの弁別・差し戻し先特定）。自身が長い e2e を回してもよいが判定は本席。

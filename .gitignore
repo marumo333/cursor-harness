@@ -6,5 +6,6 @@
 !.cursor/log_subagent_model.mjs
 .claude/settings.local.json
 knowledge/state.sqlite
+.tools/
 .env
 .env.*

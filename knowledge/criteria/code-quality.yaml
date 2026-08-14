@@ -42,6 +42,7 @@ definition_of_done: # 全て真で「前進可能」（ADR 0016）
   - review_pass # 独立敵対レビュー（高リスクは Opus/Grok/Sol 3体・[[0037]]）
   - plan_confirm_if_fanout # fan-out 時は plan-confirm 証跡（ADR 0033）
   - learnings_appended # knowledge/learnings.md に内省
+  - feature_opa_gate # canon mutate 時は Feature 正本 + opa apply allow（ADR 0038）
 
 naming:
   files: kebab-case

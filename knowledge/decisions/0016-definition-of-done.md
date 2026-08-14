@@ -1,6 +1,6 @@
 # ADR 0016: Definition of Done（完了の定義）
 
-- Status: Accepted（Amended by: [[0037-opus5-gate-routing]]）
+- Status: Accepted（Amended by: [[0037-opus5-gate-routing]] [[0038-feature-canon-opa-grow]]）
 - Date: 2026-07-04
 - Context: 自己成長ループの「検証」段が何を満たせば前進可能かを機械的に定義する（`criteria/code-quality.yaml`）。
 - Decision: あるタスクが **Done** とみなせるのは全て満たす時:
@@ -16,8 +16,12 @@
      **自己レビューは前進段を満たさない**（[[0031-model-strategy-cursor-multi-family]] / [[0037-opus5-gate-routing]]）。
   8. **fan-out（`parallel-dispatch`）を行う場合は plan-confirm approve 証跡**が計画ファイルにあること
      （[[0033-harness-api-budget-routing]]）。
-  9. **`knowledge/learnings.md` に内省を追記**（判断に触れた場合は ADR/criteria も更新）。
+  9. **`knowledge/learnings.md` に内省を追記**（判断に触れた場合は Feature 正本を起票し、
+     OPA 入場後に ADR/criteria/skill/Rego を更新・[[0038]]）。
+  10. **canon を mutate する変更は `node scripts/feature-gate.mjs` が緑**（被覆 Feature +
+     `grow.admission` allow）。
 - Consequences: 「動いた"つもり"」で前進しない。ループの前進ガードとして hook/skill が参照。
 - Links: [[0013-test-strategy]] [[0014-lint-format-types]] [[0015-errors-naming]]
   [[0031-model-strategy-cursor-multi-family]] [[0033-harness-api-budget-routing]]
   [[0034-architecture-fitness-gates]] [[0037-opus5-gate-routing]]
+  [[0038-feature-canon-opa-grow]]

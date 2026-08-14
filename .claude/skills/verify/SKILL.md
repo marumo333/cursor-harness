@@ -12,6 +12,7 @@ description: Definition of Done を機械判定（型/lint/arch-fitness/Playwrig
 1. `npm run check`（型緑）。
 2. lint/format（ESLint/Prettier/svelte-check）— `npm run lint`。
 3. **`npm run arch:fitness`**（[[0034]]）。
+3b. **`node scripts/feature-gate.mjs`**（[[0038]]）。canon 変更は被覆 Feature の OPA apply allow 必須。
 4. クリティカル領域テスト（認証/課金/認可/ports・vitest）。
    4b. **TDD red 証跡**（[[0013]] / `code-quality.yaml`）: 観測可能挙動の変更がある場合、
    `e2e-runner` または vitest の**失敗ログ**が検証記録にあること。無い場合は `tdd_exceptions`

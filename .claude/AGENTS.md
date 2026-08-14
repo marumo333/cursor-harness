@@ -50,7 +50,9 @@ N 体の多数決は盲点が相関する）。**ファミリー多様性は実�
    **独立敵対レビュー(Opus・全変更・arch レンズ)** → 高リスクは `security-reviewer` 3体・3ファミリー多数決。
    **独立レビュー未通過・失敗は差し戻し・前進不可**（[[0016]]）。
 4. **内省(Opus Task / reflector)**: 効いた/失敗/edge case を言語化。**モデル別の失敗モード・強みも記録**。
-5. **成長(harness-grow)**: learnings 追記・golden path 昇格・ADR/criteria 更新・`harness-audit` 再スコア。
+   再現可能な改善は `knowledge/features/F-NNNN-*.yaml` に**正本起票**する（直接昇格しない・[[0038]]）。
+5. **成長(harness-grow)**: OPA `grow.admission` allow の Feature だけ skill/ADR/criteria/`policy/learned` に適用。
+   `node scripts/feature-gate.mjs` 緑・`harness-audit` 再スコア。
 6. **ガード**: budget_guards / observer-loop 防止 / 検証失敗停止。
    → 1周ごとに knowledge/skills が増え、次周が前回の学びを前提に走る＝**複利成長**。
 
@@ -78,7 +80,7 @@ N 体の多数決は盲点が相関する）。**ファミリー多様性は実�
 | `ux-reviewer`       | Opus 5        | UI 意味レビュー（ADR0017 / ux-quality。主観美は見ない）                                        | —                                          |
 | `security-reviewer` | Opus 5(既定)※ | OWASP LLM/Agentic Top10（間接注入/過剰agency/出力/テナント越境/IDOR/secret）。**独立・敵対的** | —                                          |
 | `verifier`          | Opus 5        | 型・lint・arch:fitness・e2e-runner 結果判定・ux-reviewer 確認・敵対レビューの前進判定          | —                                          |
-| `reflector`         | Opus 5        | 内省→harness-grow（learnings/ADR/criteria 更新）                                               | —                                          |
+| `reflector`         | Opus 5        | 内省→learnings 追記＋Feature 正本起票（適用は OPA 入場後の harness-grow）                       | —                                          |
 
 HOTL（実機 e2e/デバッグ/運用）は **親 Grok 直轄**（`hotl-ops` skill）。診断は Opus Task。`ops-runner` は置かない（[[0032]] / [[0033]]）。
 

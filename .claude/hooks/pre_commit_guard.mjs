@@ -33,8 +33,8 @@ try {
 	}
 } catch {}
 
-// 2) 型チェック（依存があれば）
-if (existsSync('node_modules') && existsSync('package.json')) {
+// 2) 型チェック（製品 src と依存があるときだけ）
+if (existsSync('node_modules') && existsSync('package.json') && existsSync('src')) {
 	try {
 		execSync('npm run check', { stdio: 'pipe', encoding: 'utf8' });
 	} catch (e) {
@@ -44,9 +44,14 @@ if (existsSync('node_modules') && existsSync('package.json')) {
 		);
 		process.exit(2);
 	}
-} else {
-	console.error(
-		'[pre_commit_guard] 注意: node_modules 未検出のため型チェックをスキップ（`npm install` 後は必須）。'
-	);
+}
+
+// 3) Feature 正本 + OPA 入場（[[0038]]）。stdout は hook JSON を汚さない。
+try {
+	execSync('node scripts/feature-gate.mjs', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+} catch (e) {
+	console.error('[pre_commit_guard] feature-gate が失敗。canon 変更は Feature + OPA allow が必要。');
+	console.error(String((e && (e.stderr || e.stdout || e.message)) || '').slice(0, 4000));
+	process.exit(2);
 }
 process.exit(0);
