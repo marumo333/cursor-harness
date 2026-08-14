@@ -22,8 +22,10 @@ feature:
       - .claude/skills/
       - .claude/agents/
       - .claude/hooks/
+      - .claude/settings.json
       - .claude/CLAUDE.md
       - .claude/AGENTS.md
+      - package.json
       - README.md
       - docs/superpowers/specs/
   evidence:

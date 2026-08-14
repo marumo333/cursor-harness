@@ -1,33 +1,33 @@
 {
 	"audit": 4,
-	"context": "cursor-harness: Feature 正本 + OPA grow admission (ADR 0038 / F-0001)",
+	"context": "cursor-harness: Feature 正本 + OPA grow admission (ADR 0038 / F-0001); after first adversarial review fixes",
 	"scores": {
 		"rules_coverage": {
-			"score": 86,
-			"note": "canon mutate を feature-gate で機械強制。post_task_reflect はリマインダのまま（Task 物理起動は 0033 で不可）。"
+			"score": 84,
+			"note": "canon mutate を feature-gate で機械強制。初回レビューで fail-open を検出して修正。post_task_reflect はリマインダのまま。"
 		},
 		"knowledge_sufficiency": {
-			"score": 93,
-			"note": "ADR 0038 Accepted。features/ 正本と criteria/grow-admission.yaml。0035/36 は本リポ対象外。"
+			"score": 92,
+			"note": "ADR 0038 に fail-closed / bootstrap 限定 / canon.rego 単一正本を追記。"
 		},
 		"routing_integrity": {
 			"score": 90,
 			"note": "席は不変。reflector を起票のみに縮小し grow と分離。"
 		},
 		"verification_coverage": {
-			"score": 90,
-			"note": "opa test 14/14 + feature-gate pass。製品 e2e はこの切り出しリポに無い（既知・非回帰）。"
+			"score": 88,
+			"note": "opa test 27/27（欠落キー・C3 bypass・bootstrap 再利用を否定テスト化）。製品 e2e は切り出し対象外。"
 		},
 		"security": {
 			"score": 86,
-			"note": "製品面は不変。OPA バイナリは .tools/ 隔離・gitignore。ポリシーに秘密を置かない。"
+			"note": "OPA は digest pin + バージョン assert。PATH フォールバック削除。OPA_BIN はバージョン検査のみ。"
 		},
 		"learning": {
-			"score": 95,
-			"note": "自己改善が日記+直接昇格から Feature 起票 + OPA 入場になった。F-0001 で dogfood。"
+			"score": 93,
+			"note": "自己改善を Feature 起票 + OPA 入場に変更。初回レビューの Critical を回帰テストに固定した。"
 		}
 	},
-	"total": 90,
-	"delta_from_previous": 2,
-	"notes": "前回88→90。rules/knowledge/learning が寄与。下降なし。残: 敵対レビュー後に F-0001 evidence 更新、learned/ 初回ルールは次 Feature。"
+	"total": 89,
+	"delta_from_previous": 1,
+	"notes": "初回 audit 案（90）はレビュー前の自己採点だったため取り下げ。修正後 88→89。再レビュー待ち。"
 }

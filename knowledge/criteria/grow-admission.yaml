@@ -26,14 +26,20 @@ actions:
       - diff_paths_covered_by_proposed_change
       - no_silent_adr_rewrite_unless_supersede_adr
 
+# 正本は policy/canon.rego の harness.canon.canon_path。ここは説明用ミラー。
+canon_paths_source: policy/canon.rego
 canon_paths:
   - .claude/skills/
   - .claude/agents/
+  - .claude/hooks/
   - .claude/CLAUDE.md
   - .claude/AGENTS.md
+  - .claude/settings.json
   - knowledge/decisions/
   - knowledge/criteria/
   - policy/
+  - scripts/
+  - package.json
 
 not_canon:
   - knowledge/learnings.md # 日記

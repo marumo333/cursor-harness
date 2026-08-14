@@ -18,7 +18,12 @@
   4. **機械ゲート** `node scripts/feature-gate.mjs` を DoD に追加。canon パス
      （`.claude/skills|agents|CLAUDE.md|AGENTS.md` / `knowledge/decisions|criteria` / `policy/`）
      を触る差分は、被覆する Feature に対する `grow.admission` allow が必須。
-  5. **導入自己参照**は `F-0001` + `source: human` + `bootstrap: true` の1回限り。以降の bootstrap は deny。
+  5. **導入自己参照**は `F-0001` + `source: human` + `bootstrap: true` かつ
+     `knowledge/features/F-0001-feature-canon-opa-grow.yaml` が **その差分に含まれる時だけ** apply 可。
+     マージ後に票を触らなければ bootstrap は発火しない。`status: done` の票は apply 不可。
+  6. **入場は fail-closed。** 必須キー欠落は deny（`not (x in set)` 直書き禁止）。
+     `mutates` は差分から導出。merge-base が解けなければ exit 1。
+     複数 Feature の被覆は和集合（`cover_paths`）。canon パス定義は `policy/canon.rego` のみ。
 - Consequences: 自己改善が「日記への追記」から「正本起票 → 決定的入場 → 適用」になる。
   精度の主レバーは LLM を大きくすることではなく、昇格の可否をテスト可能なポリシーに置くこと
   （[[0026]] / [[0031]] と整合）。OPA に内省文生成を載せない（誤ツール）。GitHub Issue を正本に

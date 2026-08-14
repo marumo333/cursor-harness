@@ -19,6 +19,33 @@ test_valid_harness_rule if {
 	canon.valid with input as {"feature": good_feature}
 }
 
+test_reject_empty_feature if {
+	not canon.valid with input as {"feature": {}}
+	count(canon.deny) > 0 with input as {"feature": {}}
+}
+
+test_reject_missing_id if {
+	"feature.id must match F-NNNN" in canon.deny with input as {"feature": object.remove(good_feature, {"id"})}
+}
+
+test_reject_missing_kind if {
+	"feature.kind must be harness-grow|harness-rule|product|chore" in canon.deny with input as {"feature": object.remove(good_feature, {"kind"})}
+}
+
+test_reject_missing_review if {
+	missing_review := {
+		"id": "F-0002",
+		"title": "pin a learned invariant",
+		"kind": "harness-rule",
+		"status": "proposed",
+		"source": "reflector",
+		"learning_refs": ["knowledge/learnings.md"],
+		"proposed_change": {"mutates_canon": true, "paths": ["policy/learned/example.rego"]},
+		"evidence": {},
+	}
+	"feature.evidence.adversarial_review must be approved|pending|not_required" in canon.deny with input as {"feature": missing_review}
+}
+
 test_reject_bad_id if {
 	"feature.id must match F-NNNN" in canon.deny with input as {"feature": object.union(good_feature, {"id": "feat-1"})}
 }

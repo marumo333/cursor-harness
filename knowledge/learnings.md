@@ -19,15 +19,19 @@
 - reflector = 起票、grow = OPA allow の票だけ適用。F-0001 bootstrap は human + 1回限り。
 - 未追跡ファイルを gate の diff に含めないと新規 canon が抜けた → `git ls-files --others` を追加。
 
-**failed / リスク**
+**failed / リスク（敵対レビューで CONFIRMED → 修正）**
 
+- `not (x in set)` はキー欠落を hoisting で素通りした。helper 完全ルールに直した。
+- `mutates_canon` 自己申告と、scripts/hooks/package.json が canon 外 → ゲート無効化。差分導出 + `policy/canon.rego` 一本化。
+- F-0001 bootstrap が恒久ワイルドカード。導入ファイルが差分に含まれる時だけ apply。
+- merge-base 失敗は fail-open だった。origin/main|main が解けなければ exit 1。
+- `npm run check` を opa test に上書きしていた（型緑の偽シグナル）。削除。
 - `post_task_reflect` は依然 stderr リマインダ。hooks から Task 物理起動は不可（[[0033]]）。
-- F-0001 は自己参照のため bootstrap。2枚目以降で bootstrap を真似ると deny（テスト済み）。
 - OPA に内省文を載せると誤ツール。learned/ はスロットのみ。
 
 **next**
 
-- 敵対レビュー後に F-0001 の `evidence.adversarial_review` を approved にし、bootstrap を外して done にできるか確認。
+- 再レビュー後に F-0001 の evidence を更新。bootstrap は導入差分限定のまま残す（マージ後は発火しない）。
 - 最初の harness-rule Feature で `policy/learned/` に1本落とす。
 
 ## 2026-07-24 — Claude ゲート席 Fable 5 → Opus 5（ADR 0037）
