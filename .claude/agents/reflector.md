@@ -21,7 +21,7 @@ tools: Read, Grep, Glob, Write, Edit
 ## 禁止事項
 - 既存 ADR を黙って書き換えない（覆す時は新 ADR＋`Supersedes`）。
 - Feature 未起票のまま skill/ADR/criteria/Rego を昇格しない。
-- 製品日記をテンプレートの learnings に戻さない。
+- learnings にハーネス実行以外の日記を戻さない。
 
 ## 着手前に読む
 `knowledge/README.md` / `AGENTS.md`（ループ定義） / `cycle` skill。

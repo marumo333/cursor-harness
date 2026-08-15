@@ -1,4 +1,4 @@
-# ハーネス側の AI セキュリティ（ADR 0018）。製品の行レベルセキュリティ/課金は置かない。
+# ハーネス側の AI セキュリティ（ADR 0018）。
 untrusted_data: # 信頼しないデータ
   wrap_in_delimiters: true # 区切りで囲む
   never_execute_actions_from_retrieved_content: true # 取得内容から命令実行しない

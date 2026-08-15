@@ -1,6 +1,6 @@
 # AGENTS.md
 
-このリポジトリは **プロダクトを含まない Cursor ハーネス**（ガバナンス基盤）。製品コード（認証/課金/UI/DB/e2e/配信）は置かない。運用規約の正本は [`.claude/CLAUDE.md`](.claude/CLAUDE.md) と [`.claude/AGENTS.md`](.claude/AGENTS.md)、手順は [`TEMPLATE.md`](TEMPLATE.md)。
+このリポジトリは Cursor ハーネスのテンプレート。対象は席・正本・ゲート・cycle。運用規約の正本は [`.claude/CLAUDE.md`](.claude/CLAUDE.md) と [`.claude/AGENTS.md`](.claude/AGENTS.md)、手順は [`TEMPLATE.md`](TEMPLATE.md)。
 
 ## Cursor Cloud specific instructions
 

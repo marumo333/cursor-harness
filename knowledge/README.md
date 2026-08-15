@@ -17,7 +17,7 @@ benchmarks/   ハーネス監査スコア履歴
 - ループの各タスク完了時に `learnings.md` へ追記し、必須 skill を `graph/events.jsonl` に記録する。
 - **再現可能な改善・canon 変更は Feature を正本として起票**してから適用する（[[0038]]）。
 - 判断が再現可能な閾値・ルールなら `criteria/*.yaml` に落とす。入場条件と不変条件は `policy/*.rego`。
-- 製品の要求定義や案件グラフは置かない（[[0039]]）。
+- グラフは skill / Feature / cycle（[[0039]]）。
 
 ## ADR フォーマット
 

@@ -1,6 +1,6 @@
 # knowledge/graph/ — ハーネス改善グラフ（[[0039]]）
 
-製品の案件グラフではない。skill / Feature / cycle の実行だけを持つ。
+skill / Feature / cycle の実行だけを持つ。
 
 | 指標 | 定義 |
 | --- | --- |

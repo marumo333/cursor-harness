@@ -16,7 +16,7 @@
 		},
 		"verification_coverage": {
 			"score": 88,
-			"note": "opa test 27/27（欠落キー・C3 bypass・bootstrap 再利用を否定テスト化）。製品 e2e は切り出し対象外。"
+			"note": "opa test 27/27（欠落キー・C3 bypass・bootstrap 再利用を否定テスト化）。"
 		},
 		"security": {
 			"score": 86,

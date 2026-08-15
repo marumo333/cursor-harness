@@ -1,6 +1,6 @@
 # CLAUDE.md — ハーネス テンプレート運用規約
 
-製品定義は置かない。このリポはプロダクトを作る前に切る Cursor ハーネス（[[0039]]）。
+このリポは Cursor ハーネスのテンプレート。対象は席・正本・ゲート・cycle（[[0039]]）。
 判断は `knowledge/decisions/`、基準は `knowledge/criteria/`、作業正本は `knowledge/features/`。
 
 ## 絶対に守ること
@@ -21,6 +21,5 @@
 
 ## やらないこと
 
-- このテンプレートに製品（認証/課金/UI/DB/配信）を混ぜない。
 - 無制限の skill 自動再起。
 - GitHub Issue / Spec Kit を正本にする（[[0033]]）。

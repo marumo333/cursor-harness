@@ -1,6 +1,6 @@
 # AGENTS.md — ハーネス テンプレート（モデル戦略・自己成長ループ）
 
-製品コードは置かない。ハーネスは **Cursor**。使い方は `TEMPLATE.md`。
+ハーネスは **Cursor**。対象は席・正本・ゲート・cycle（[[0039]]）。使い方は `TEMPLATE.md`。
 
 ## モデル戦略（[[0040]] / [[0037]] / [[0033]] / [[0031]]）
 
@@ -32,5 +32,3 @@ commit は hook 必須。主語は `feat:` / `fix:` / `docs:` 等 + 日本語（
 | `security-reviewer` | Opus 5 既定 | 独立敵対レビュー。高リスクは Grok / Sol も割当 |
 | `verifier` | Opus 5 | feature-gate / テスト / 前進判定 |
 | `reflector` | Opus 5 | 内省・Feature 起票 |
-
-製品の構築役（api/ui/db/e2e/auth-billing）はテンプレートに置かない。製品リポ側で足す。
