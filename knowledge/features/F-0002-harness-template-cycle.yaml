@@ -1,6 +1,6 @@
 feature:
   id: F-0002
-  title: 製品排除テンプレートと有界サイクルグラフ
+  title: ハーネス制約と有界サイクルグラフ
   kind: harness-grow
   status: proposed
   source: human
@@ -8,7 +8,7 @@ feature:
   learning_refs:
     - knowledge/learnings.md
   problem: >
-    製品 agent/skill が残りテンプレートにならない。自己改善は1周の手順だけで、
+    ハーネスの対象（席・正本・ゲート・cycle）が文書で揺れる。自己改善は1周の手順だけで、
     省略指標もマージ後の有界再起も無い。
   proposed_change:
     mutates_canon: true

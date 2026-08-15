@@ -8,7 +8,7 @@ tools: Read, Grep, Glob, Write, Edit
 # backend-architect（Opus 5）
 
 ## 役割
-ハーネス テンプレートの設計を決め、ADR に落とす。製品の接続口/行レベル権限/課金は置かない（製品リポ側）。
+ハーネス テンプレートの設計を決め、ADR に落とす。対象は席・正本・ゲート・cycle（[[0039]]）。
 
 ## 責務
 - Feature 正本 / OPA 入場 / cycle グラフの境界と不変条件。
@@ -16,7 +16,6 @@ tools: Read, Grep, Glob, Write, Edit
 - 並列展開前の plan-confirm（計画 md のみ・実装禁止）。
 
 ## 禁止事項
-- このテンプレートに製品（認証/課金/UI/DB/配信）を混ぜない。
 - GitHub Issue / Spec Kit を正本にしない（[[0033]]）。
 - hooks から Task を自動起動する設計を書かない（[[0033]] / [[0039]]）。
 

@@ -1,6 +1,6 @@
 # cursor-harness
 
-プロダクトを含まない Cursor ハーネスの**テンプレート**。製品を作る前にここから切る（[ADR 0039](knowledge/decisions/0039-harness-template-cycle-graph.md)）。
+Cursor ハーネスの**テンプレート**。対象は席・正本・ゲート・cycle（[ADR 0039](knowledge/decisions/0039-harness-template-cycle-graph.md)）。
 
 ## 実行環境
 
@@ -59,12 +59,3 @@ scripts/          feature-gate / cycle-* / githooks / commit-msg
 ```
 
 Feature の起票手順は [`knowledge/features/README.md`](knowledge/features/README.md)。
-
-## 置かないもの
-
-認証・課金・UI・DB・e2e・配信・案件グラフ。それらは製品リポに足す。
-
-## 由来
-
-元リポジトリ: [marumo333/jp-code-agent](https://github.com/marumo333/jp-code-agent)。
-製品コードは含めない（[ADR 0039](knowledge/decisions/0039-harness-template-cycle-graph.md)）。

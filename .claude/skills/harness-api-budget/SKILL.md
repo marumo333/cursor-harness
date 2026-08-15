@@ -14,8 +14,6 @@ description: Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus T
 | Task **Grok 4.6**       | 明文化済みの実装並列展開 / 複数試行                                 |
 | Task **GPT-5.6 Sol** | **高リスク3体の第3レンズのみ**（secret）。他では使わない             |
 
-製品の構築役（auth-billing / ui / db / e2e）はテンプレートに置かない。
-
 ## budget_guards（必ず守る）
 
 1. 親を Opus/Fable にピッカー切替しない。

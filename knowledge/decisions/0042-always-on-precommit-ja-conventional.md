@@ -25,8 +25,8 @@
      先端検査では日本語レガシー免除を使わない。範囲指定のときだけ日本語レガシー主語を許容する。
      `git log` に任意 argv は渡さない。
      main に検査スクリプトがあるときは CI は main の copy を使う（PR 側でゲートを緩めない）。
-  4. **pre-commit 本体**は staged `.env` 禁止 +（製品 `src` があるとき）`pnpm run check` +
-     `node scripts/feature-gate.mjs`。hooks から Task は起動しない（[[0033]]）。
+  4. **pre-commit 本体**は staged `.env` 禁止 + `node scripts/feature-gate.mjs`。
+     hooks から Task は起動しない（[[0033]]）。
   5. clone 後は `node scripts/install-git-hooks.mjs`（`pnpm` の `prepare` でも同じ）。
 - 結果: 実装後の commit がゲートを飛ばせない。トークン節約の本体は席への再注入削減（[[0033]]）であり、
   この hook 自体は入力トークンを減らさない。

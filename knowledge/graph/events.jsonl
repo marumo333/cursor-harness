@@ -24,3 +24,8 @@
 {"t":"2026-08-15T07:06:59.552Z","type":"human_approved","cycle":"C-0001","merge_sha":"488473b67f7f01db7edcb712a2327543eae32bf9","pr":"4"}
 {"t":"2026-08-15T07:28:54.024Z","type":"human_approved","cycle":"C-0003","merge_sha":"3334cf61bf875d5bd0d7fbf3d3f422e23119939f","pr":"5"}
 {"t":"2026-08-15T07:35:48.084Z","type":"human_approved","cycle":"C-0003","merge_sha":"3e8b34eecbbeba1b2c946e5e4dbc9d039862eb2b","pr":"6"}
+{"t":"2026-08-15T07:56:21.502Z","type":"cycle_open","cycle":"C-0004","source":"manual"}
+{"t":"2026-08-15T07:56:21.522Z","type":"node_state","cycle":"C-0004","node":"skill:harness-api-budget","state":"used"}
+{"t":"2026-08-15T07:56:21.544Z","type":"node_state","cycle":"C-0004","node":"skill:adversarial-review","state":"skipped"}
+{"t":"2026-08-15T07:56:21.563Z","type":"edge_state","cycle":"C-0004","from":"skill:adversarial-review","to":"skill:verify","state":"skipped","reason":"docs_only"}
+{"t":"2026-08-15T07:56:21.582Z","type":"node_state","cycle":"C-0004","node":"skill:reflect","state":"used"}
