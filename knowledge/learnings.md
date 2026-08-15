@@ -27,7 +27,12 @@
 
 - Cursor ヘルプの available-models はまだ flagship=4.5、Router 必須も 4.5。文書遅れを理由に戻さない。
 - F-0003 は `proposed`。同一 PR で admitted にしない。canon 適用は merge-base の F-0001 で被覆。
-- Task に 4.6 非 Fast / xhigh-fast が無い。親 UI と Task スラッグを同一にすると起動が落ちる。
+- Task に 4.6 非 Fast / xhigh-fast が無い。親 UI スラッグを Task に渡すと静かにフォールバックし、3ファミリーが壊れる。
+- 旧ピン `grok-4.5-fast-xhigh` は 4.5 に無い努力段を含んでおり、改名前から無効だった。
+- help の 4.5 Fast 出力 $18 と Models & Pricing の $12 が食い違う。価格差は差し替え理由に使わない。
+- 敵対レビュー: F-0003 の `supersedes: [0031,0033,0037]` は骨格廃止に読めるので空にした。
+  `chat_orchestrator` と `grok_task` を分けた。旧 ADR 決定箇条に「旧・0040」を打った。
+  F-0001 広域被覆は既知 C1 の続きなのでこの票では直さない。
 
 **次**
 

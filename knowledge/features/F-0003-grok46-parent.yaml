@@ -9,7 +9,8 @@ feature:
     - knowledge/learnings.md
   problem: >
     親チャットの実体は Grok 4.6 なのに、文書と model-routing が 4.5 / 旧スラッグのまま。
-    0037 の「4.5 据え置き」が陳腐化している。
+    0037 の「4.5 据え置き」が陳腐化している。骨格 ADR（0031/0033/0037）は廃止せず、
+    世代ピンだけ [[0040]] で改正する。
   proposed_change:
     mutates_canon: true
     paths:
@@ -23,7 +24,4 @@ feature:
   constraints:
     supersede_adr: true
     no_jp_code_merge_write: true
-    supersedes:
-      - '0031'
-      - '0033'
-      - '0037'
+    supersedes: []

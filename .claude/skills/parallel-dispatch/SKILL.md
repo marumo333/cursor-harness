@@ -3,7 +3,7 @@ name: parallel-dispatch
 description: 実装の並列展開判断と起動手順（Task並列 / 作業ツリー分離 / 読み取り専用）。親Grokが計画を subagent に配る時に使う。
 ---
 
-# parallel-dispatch skill（[[0031]] / [[0033]]）
+# parallel-dispatch skill（[[0031]] / [[0033]] / [[0040]]）
 
 頭（**親 Grok**）が計画を subagent に配るときの判断基準と手順。
 
@@ -28,7 +28,8 @@ description: 実装の並列展開判断と起動手順（Task並列 / 作業ツ
 
 1. superpowers `writing-plans` で **2-5分粒度**にタスクを分解し、各タスクの「触るファイル群」を明記する。
 2. `plan-confirm` を通す。
-3. 仕様が明文化できたタスクのみ Grok に委譲する（曖昧なタスク・非自明ロジックは Opus Task）。
+3. 仕様が明文化できたタスクのみ `grok_task`（[[0040]] / `model-routing.yaml`）に委譲する。
+   親 UI スラッグ（`chat_orchestrator`）を Task に渡さない。曖昧なタスク・非自明ロジックは Opus Task。
 4. subagent への指示に必ず含める: 対象ファイル / 完了条件 / 読むべき ADR・criteria / 禁止事項。
 5. 起動は 1メッセージにまとめる。完了後、**親 Grok が統合** → `adversarial-review` → `verify`。
    **並列展開の出力をレビューなしでマージしない。**
