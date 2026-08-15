@@ -58,3 +58,8 @@ scripts/          feature-gate / cycle-* / githooks / commit-msg
 ## 置かないもの
 
 認証・課金・UI・DB・e2e・配信・案件グラフ。それらは製品リポに足す。
+
+## 由来
+
+元リポジトリ: [marumo333/jp-code-agent](https://github.com/marumo333/jp-code-agent)。
+製品コードは含めない（[[0039]]）。
