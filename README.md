@@ -2,6 +2,12 @@
 
 プロダクトを含まない Cursor ハーネスの**テンプレート**。製品を作る前にここから切る（[ADR 0039](knowledge/decisions/0039-harness-template-cycle-graph.md)）。
 
+## 実行環境
+
+開発の正は **Cursor のクラウド**（Cloud Agent）と GitHub Actions（`ubuntu-latest`）。
+ゲート（`feature-gate` / OPA）は Linux amd64 にピン留めする。macOS / Windows / Linux arm64 では動かない。
+手元の clone は閲覧と空リポへの載せに使う。commit とゲートはクラウドまたは Actions で通す。
+
 ## 何をするか
 
 - 席: 親 Grok 4.6 / Opus 5 ゲート / Sol は**高リスク3体多数決のみ**
@@ -17,15 +23,14 @@
 
 ## 最初にやること
 
-clone の直後は実装に入らない。hook を入れてから ADR → Feature 起票へ進む。
+Cursor のクラウドでリポを開き、実装には入らない。hook を入れてから ADR → Feature 起票へ進む。
 
 ```bash
-git clone https://github.com/marumo333/cursor-harness.git
-cd cursor-harness
 node scripts/install-git-hooks.mjs
 ```
 
-前進の確認は `node scripts/feature-gate.mjs`（[ADR 0016](knowledge/decisions/0016-definition-of-done.md)）。ハーネスにテストがある変更は `pnpm test`。
+空リポへ載せる手順は [TEMPLATE.md](TEMPLATE.md)。
+前進の確認はクラウドまたは Actions 上で `node scripts/feature-gate.mjs`（[ADR 0016](knowledge/decisions/0016-definition-of-done.md)）。ハーネスにテストがある変更は `pnpm test`。
 
 ## アーキテクチャ
 
