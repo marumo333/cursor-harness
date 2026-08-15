@@ -27,58 +27,21 @@ node scripts/install-git-hooks.mjs
 
 前進の確認は `node scripts/feature-gate.mjs`（[ADR 0016](knowledge/decisions/0016-definition-of-done.md)）。ハーネスにテストがある変更は `pnpm test`。
 
-## 設計概要
+## アーキテクチャ
 
-### 通常のモデルフロー
+手順の流れ図ではなく、層と正本の境界を示す。元ファイルは [`docs/architecture/`](docs/architecture/)。
 
-1周の席。親は常時 Grok。Claude は名前付き Task のみ。plan-confirm は並列展開前だけ。trio は高リスクのときだけ。Fable は天井判断だけでこの図に入れない。
+### ランタイム
 
-```mermaid
-flowchart LR
-  parent["親 Grok 4.6"]
-  opus["Opus 5 ゲート"]
-  trio["高リスク trio"]
-  parent -->|"壁打ち / 統合 / cycle"| opus
-  opus -->|"plan-confirm / レビュー / verify / reflect"| parent
-  parent -.->|"高リスクだけ"| trio
-  trio --> o2["Opus 5"]
-  trio --> g2["Grok 4.6"]
-  trio --> sol["GPT-5.6 Sol"]
-```
+人間が PR をマージすることだけが再起の点火。席の下に hook / CI、その下に feature-gate と OPA、最下が正本。製品の認証・課金・UI は置かない。
 
-### 設計フロー
+![cursor-harness ランタイム](docs/architecture/harness-runtime-architecture.png)
 
-製品もハーネス改善も、実装から入らない直線の1周（[ADR 0039](knowledge/decisions/0039-harness-template-cycle-graph.md)）。同一 PR で admitted にしない。再起は次の図。
+### 正本・入場・有界再起
 
-```mermaid
-flowchart TD
-  clone["clone テンプレート"] --> hooks["hook を入れる"]
-  hooks --> adr["ADR で技術選定"]
-  adr --> feat["Feature を proposed 起票"]
-  feat --> merge1["起票 PR をマージ"]
-  merge1 --> admit["次 PR で admitted"]
-  admit --> impl["実装"]
-  impl --> gate["feature-gate"]
-  gate --> review["敵対レビュー"]
-  review --> verify["verify"]
-  verify --> reflect["reflect"]
-  reflect --> pr["人間が PR マージ"]
-```
+Feature YAML が正本。GitHub PR は鏡。apply は deny が空のときだけ。再起は人間マージ後の下書き PR までで、エージェントは自動起動しない。
 
-### 再起的フロー
-
-人間がマージしたあとだけ回る。hooks から Task は起動しない。省略も失敗も無い周、および空サイクルの integrity=0 だけでは止める。clone と最初の ADR 選定は繰り返さない。
-
-```mermaid
-flowchart TD
-  merge["人間が PR をマージ"] --> check{"省略 / 失敗が残る?"}
-  check -->|no| stop["止める"]
-  check -->|yes| guard{"未マージの cycle PR / 未処理 followup / MERGED≠true?"}
-  guard -->|yes| stop
-  guard -->|no| draft["次 Feature を proposed 起票<br/>下書き PR を開く"]
-  draft --> wait["エージェントは自動起動しない"]
-  wait --> back["人間が新しいセッションで<br/>Feature を proposed 起票する"]
-```
+![正本・入場・有界再起](docs/architecture/harness-canon-cycle-architecture.png)
 
 ## 構成
 
