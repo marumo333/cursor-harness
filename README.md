@@ -18,7 +18,7 @@ scripts/          arch-fitness 機械ゲート
 
 | 席 | モデル | 役割 |
 | --- | --- | --- |
-| 親チャット | Grok 4.5 | 壁打ち・ディスパッチ・統合・HOTL |
+| 親チャット | Grok 4.6 | 壁打ち・ディスパッチ・統合・HOTL |
 | Task ゲート | Opus 5 | plan-confirm / 敵対レビュー / verifier / reflector / 高リスク実装 |
 | 第3レンズ | GPT-5.6 Sol | 高リスク3体多数決のみ |
 
