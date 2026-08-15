@@ -14,7 +14,8 @@
      git 生成の `Merge` / `Revert` / `fixup!` / `squash!` は例外。
      連鎖コマンド（`&&` / `;`）と `--no-veri` 略記、`GIT_CONFIG_*` / `git config core.hooksPath` /
      `chmod … githooks` / `scripts/githooks` 以外の hooksPath は拒否。
-     CI は `scripts/lint-commit-range.mjs` で英語主語を落とす（0042 以前の日本語レガシー主語は許容）。
+     CI は先端1件だけ検査する（`git log -1`。`git log HEAD` は全履歴になるので使わない）。
+     0042 以前の履歴は書き換えない。日本語レガシー主語は許容。
   4. **pre-commit 本体**は staged `.env` 禁止 +（製品 `src` があるとき）`pnpm run check` +
      `node scripts/feature-gate.mjs`。hooks から Task は起動しない（[[0033]]）。
   5. clone 後は `node scripts/install-git-hooks.mjs`（`pnpm` の `prepare` でも同じ）。

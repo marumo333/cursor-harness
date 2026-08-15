@@ -31,6 +31,7 @@
 			"Bash(node --test scripts/git-commit-cmd.test.mjs)",
 			"Bash(node --test scripts/commit-guard.test.mjs)",
 			"Bash(node --test scripts/blocked-env.test.mjs)",
+			"Bash(node --test scripts/lint-commit-range.test.mjs)",
 			"Bash(node scripts/lint-commit-range.mjs:*)",
 			"Bash(node scripts/commit-msg-lint.mjs:*)",
 			"Bash(node scripts/run-pre-commit.mjs)",
