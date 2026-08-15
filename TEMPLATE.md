@@ -7,6 +7,7 @@
 ```bash
 git clone https://github.com/marumo333/cursor-harness.git
 cd cursor-harness
+corepack enable
 # リモートを新しい空リポに向ける
 git remote set-url origin https://github.com/<you>/<new-repo>.git
 git push -u origin main
@@ -22,7 +23,9 @@ git push -u origin main
 2. `knowledge/decisions/` に **技術選定 ADR** を起票する（言語 / 実行基盤 / データ / 認証など）。
    テンプレートの既存 ADR を正本の型として使い、製品側の決定で更新する。
 3. その ADR を指す `knowledge/features/F-NNNN-*.yaml` を **proposed** で起票する。
-4. 入場（`node scripts/feature-gate.mjs`）のあと実装に入る。
+   同一 PR で `admitted` / `approved` にしない（出生規則）。
+4. 起票 PR を人間がマージしたあと、次の PR で実装する。
+   `node scripts/feature-gate.mjs` の apply は merge-base に載った票だけが被覆する。
 5. 席は親 Grok 4.6 / Opus ゲート / Sol は3体のみ。必須 skill は `cycle` に記録する。
 
 GitHub Issue / Spec Kit は正本にしない（[[0033]]）。

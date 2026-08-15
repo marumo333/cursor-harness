@@ -8,7 +8,9 @@
 - 決定:
   - **パッケージマネージャ＝pnpm**（`packageManager` をピン留め）。
   - ハーネスのテスト起動は `pnpm test`（中身は `node --test`）。
-  - 型ゲートを空の `pnpm check` で偽装しない（[[0014]]）。製品 src が無い間は check を置かない。
-  - hooks / CI / 完了の定義の文書は npm を残さない。
+  - 型ゲートを空の `pnpm run check` で偽装しない（[[0014]]）。製品 src が無い間は check を置かない。
+    `pnpm check` は script 欠落時に PATH 上の `check` を実行するので使わない。
+  - ローカルのテスト起動は `pnpm test`。CI は第三者 Action を足さず `node --test` を直接呼ぶ。
+  - hooks / 完了の定義の文書は npm を残さない。allow は `pnpm test` / `pnpm run` に閉じる。
 - 結果: 複製先も pnpm を継承する。`node scripts/*` はそのまま。
 - 関連: [[0014]] [[0016]] [[0039]]

@@ -5,3 +5,10 @@
 {"t":"2026-08-14T09:04:56.871Z","type":"edge_state","cycle":"C-0001","from":"skill:adversarial-review","to":"skill:verify","state":"taken","reason":""}
 {"t":"2026-08-14T09:04:56.890Z","type":"node_state","cycle":"C-0001","node":"skill:reflect","state":"used"}
 {"t":"2026-08-14T09:04:56.911Z","type":"edge_state","cycle":"C-0001","from":"skill:verify","to":"skill:reflect","state":"taken","reason":""}
+{"t":"2026-08-15T02:37:52.407Z","type":"cycle_open","cycle":"C-0002","source":"review-followup"}
+{"t":"2026-08-15T02:37:52.430Z","type":"node_state","cycle":"C-0002","node":"skill:harness-api-budget","state":"used"}
+{"t":"2026-08-15T02:37:52.452Z","type":"node_state","cycle":"C-0002","node":"skill:adversarial-review","state":"used"}
+{"t":"2026-08-15T02:37:52.472Z","type":"edge_state","cycle":"C-0002","from":"skill:adversarial-review","to":"skill:verify","state":"taken","reason":""}
+{"t":"2026-08-15T02:37:52.494Z","type":"node_state","cycle":"C-0002","node":"skill:verify","state":"used"}
+{"t":"2026-08-15T02:37:52.514Z","type":"edge_state","cycle":"C-0002","from":"skill:verify","to":"skill:reflect","state":"taken","reason":""}
+{"t":"2026-08-15T02:37:52.536Z","type":"node_state","cycle":"C-0002","node":"skill:reflect","state":"used"}

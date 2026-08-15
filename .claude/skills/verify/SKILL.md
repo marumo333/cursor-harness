@@ -10,7 +10,7 @@ description: 完了の定義を機械判定（feature-gate / opa test / cycle �
 ## チェック（全項目合格で「前進可能」・ADR0016）
 
 1. **`node scripts/feature-gate.mjs`**（[[0038]]）。canon 変更は被覆 Feature の OPA apply allow 必須。opa test と cycle 指標テストを含む。
-2. ハーネスにテストがある変更は `pnpm test`。製品 src が無いので `pnpm check` / e2e / arch:fitness は置かない。
+2. ハーネスにテストがある変更は `pnpm test`。製品 src が無いので `pnpm run check` / e2e / arch:fitness は置かない。
 3. **TDD 赤の証跡**（[[0013]] / `code-quality.yaml`）: 観測可能挙動の変更がある場合、
    `node --test` の**失敗ログ**が検証記録にあること。無い場合は `tdd_exceptions`
    （docs_only / style_only_no_behavior / snapshot_baseline_import / config_chore /

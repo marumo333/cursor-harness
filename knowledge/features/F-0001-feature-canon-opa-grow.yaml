@@ -31,7 +31,9 @@ feature:
       - .claude/CLAUDE.md
       - .claude/AGENTS.md
       - package.json
+      - pnpm-lock.yaml
       - README.md
+      - TEMPLATE.md
       - docs/superpowers/specs/
   evidence:
     adversarial_review: approved

@@ -37,6 +37,12 @@ canon_path(p) if startswith(p, "scripts/")
 
 canon_path(p) if p == "package.json"
 
+canon_path(p) if p == "pnpm-lock.yaml"
+
+canon_path(p) if p == "README.md"
+
+canon_path(p) if p == "TEMPLATE.md"
+
 canon_path(p) if startswith(p, ".github/workflows/")
 
 paths contains p if {

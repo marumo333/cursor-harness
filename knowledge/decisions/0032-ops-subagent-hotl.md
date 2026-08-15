@@ -1,7 +1,7 @@
 # ADR 0032: 検証・UX・HOTL の subagent 化（廃止）
 
 - 状態: 廃止（後継 [[0039-harness-template-cycle-graph]]）
-- 現行注記: 製品を始める順は `TEMPLATE.md`（clone → ADR 技術選定 → Feature → 実装）。HOTL は置かない。
+- 現行注記: 製品を始める順は `TEMPLATE.md`（clone → ADR 技術選定 → Feature 起票 → マージ → 次 PR で実装）。HOTL は置かない。
 - 日付: 2026-07-12
 - 背景: 製品 e2e / UX / HOTL をハーネスループに載せていた。テンプレートは製品を持たない。
 - 決定: **撤回。** 隔離 e2e・ux-reviewer・hotl-ops はテンプレートに置かない。

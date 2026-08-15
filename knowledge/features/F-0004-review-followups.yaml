@@ -13,10 +13,17 @@ feature:
   proposed_change:
     mutates_canon: true
     paths:
-      - knowledge/
-      - .claude/
+      - knowledge/decisions/
+      - knowledge/criteria/
+      - knowledge/features/
+      - .claude/skills/
+      - .claude/agents/
+      - .claude/hooks/
+      - .claude/settings.json
       - .github/workflows/
+      - policy/
       - package.json
+      - pnpm-lock.yaml
       - README.md
       - TEMPLATE.md
   evidence:

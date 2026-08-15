@@ -26,6 +26,10 @@
 **failed**
 
 - F-0004 は `proposed`。canon 適用は F-0001 被覆（既知 C1）。
+- `Bash(pnpm *:*)` は `pnpm exec` で任意実行になるので `pnpm test` / `pnpm run` に閉じた。
+- `pnpm check` は script 欠落時に PATH の `check` を実行するので `pnpm run check` にした。
+- TEMPLATE の「起票直後に入場」は出生規則と衝突するので、起票 PR マージ → 次 PR 実装に直した。
+- README / TEMPLATE / pnpm-lock.yaml を canon に入れた。CI は `node --test` 直呼び（第三者 Action なし）。
 
 **edge cases**
 

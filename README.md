@@ -32,8 +32,8 @@ flowchart LR
 flowchart TD
   clone["clone テンプレート"] --> adr["ADR で技術選定"]
   adr --> feat["Feature を proposed 起票"]
-  feat --> gate["feature-gate 入場"]
-  gate --> impl["実装"]
+  feat --> merge1["起票 PR をマージ"]
+  merge1 --> impl["次 PR で実装"]
   impl --> review["敵対レビュー"]
   review --> verify["verify"]
   verify --> reflect["reflect"]

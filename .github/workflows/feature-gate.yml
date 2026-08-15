@@ -22,8 +22,5 @@ jobs:
           else
             node scripts/feature-gate.mjs
           fi
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.33.3
       - name: ハーネス単体テスト
-        run: pnpm test
+        run: node --test scripts/cycle-metrics.test.mjs
