@@ -15,7 +15,11 @@
      連鎖コマンド（`&&` / `;`）と `--no-veri` 略記、`GIT_CONFIG_*` / `git config core.hooksPath` /
      `chmod … githooks` / `scripts/githooks` 以外の hooksPath は拒否。
      CI は先端1件だけ検査する（`git log -1`。`git log HEAD` は全履歴になるので使わない）。
-     0042 以前の履歴は書き換えない。日本語レガシー主語は許容。
+     pull_request では merge commit（主語が `Merge …` で lint 免除）ではなく
+     `github.event.pull_request.head.sha` を `--tip` に渡す。
+     範囲 `origin/main..HEAD` は 0042 以前の英語主語を含むので使わない（履歴は書き換えない）。
+     先端検査では日本語レガシー免除を使わない。範囲指定のときだけ日本語レガシー主語を許容する。
+     `git log` に任意 argv は渡さない。
   4. **pre-commit 本体**は staged `.env` 禁止 +（製品 `src` があるとき）`pnpm run check` +
      `node scripts/feature-gate.mjs`。hooks から Task は起動しない（[[0033]]）。
   5. clone 後は `node scripts/install-git-hooks.mjs`（`pnpm` の `prepare` でも同じ）。

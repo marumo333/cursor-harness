@@ -25,4 +25,13 @@ jobs:
       - name: ハーネス単体テスト
         run: node --test scripts/cycle-metrics.test.mjs scripts/commit-msg-lint.test.mjs scripts/git-commit-cmd.test.mjs scripts/commit-guard.test.mjs scripts/blocked-env.test.mjs scripts/lint-commit-range.test.mjs
       - name: コミット主語を検査する
-        run: node scripts/lint-commit-range.mjs --tip
+        env:
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [ -n "${PR_HEAD}" ]; then
+            node scripts/lint-commit-range.mjs --tip "${PR_HEAD}"
+          else
+            node scripts/lint-commit-range.mjs --tip
+          fi
+
