@@ -39,11 +39,12 @@
     - Composer 2.5 は親にしない（日常コーディング用。0033 の「親は Grok」と衝突）。
     - Auto/Router を親にしない（クロスファミリー検証の席が消える）。
 - 決定:
-  - **親チャット＝Grok 4.6**。criteria の `chat_orchestrator` は UI 実体
-    `cursor-grok-4.6-xhigh-fast`。努力は xhigh を推奨（4.6 固有）。
+  - **親チャット＝Grok 4.6**。criteria の `chat_orchestrator` と `grok_task` は
+    Task 実在スラッグ `cursor-grok-4.6-high-fast` に揃える。
+    xhigh は 4.6 の努力段として存在するが、Task allowlist に `cursor-grok-4.6-xhigh-fast` は無い。
+    親 UI で xhigh を選ぶのは任意。criteria には書かない（Task に渡すと静かに落ちる）。
   - **実装の並列展開 / `review_trio` 第2席＝Grok 4.6**。
-    criteria の `grok_task` と trio 第2は Task 実在スラッグ `cursor-grok-4.6-high-fast`。
-    親 UI スラッグを Task に渡さない（未掲載 ID は互換モデルへ静かに落ち、3ファミリーが壊れる）。
+    `grok_task` と trio 第2も `cursor-grok-4.6-high-fast`。
   - **第1席 Opus 5・第3席 GPT-5.6 Sol は据え置き。**
   - **0031 / 0033 / 0037 は廃止しない。** 世代ピンだけ改正。`supersedes` に載せない。
   - **不変条件**: 親は常時 Grok。Claude は名前付き Task のみ。Sol は 3体多数決以外禁止。

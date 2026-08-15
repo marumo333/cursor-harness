@@ -1,7 +1,7 @@
 # ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040
-# chat_orchestrator = 親 UI 実体。grok_task = 並列展開 / trio 第2の Task スラッグ。
+# 親も Task も high-fast。xhigh は 4.6 の努力段だが Task allowlist に無い。
 harness_agents:
-  chat_orchestrator: cursor-grok-4.6-xhigh-fast
+  chat_orchestrator: cursor-grok-4.6-high-fast
   grok_task: cursor-grok-4.6-high-fast
   opus_gates:
     - plan-confirm

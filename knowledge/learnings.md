@@ -2,9 +2,34 @@
 
 <!-- 人が読む文は日本語。機械キー・コマンド・パスは英語のまま。 -->
 
-各タスク完了時に「効いた / 失敗した / 境界事例」を追記する。
+各タスク完了時に `worked` / `failed` / `edge cases` を追記する（人が読む本文は日本語）。
 再現可能な改善は Feature 正本（`knowledge/features/`）に起票し、OPA 入場後に昇格する（[[0038]]）。
 製品日記は置かない（[[0039]]）。
+
+---
+
+## 2026-08-15 — PR レビュー指摘の再修正（F-0004）
+
+**問い**
+
+- 受理 ADR の決定文がまだ 4.5。親スラッグが Task に無い xhigh。npm 前提。
+- clone 直後に実装へ飛ぶ。README に設計図が無い。0026 が Sonnet/Haiku 委譲のまま。
+
+**worked**
+
+- 0031/0033/0037 の決定文を Grok 4.6 にした。0026 に現行注記（実装は Grok 4.6、Sonnet/Haiku 委譲は廃止）。
+- criteria の親/Task を `cursor-grok-4.6-high-fast` に揃えた。xhigh は努力段として残し、ピンにはしない。
+- パッケージマネージャを pnpm に固定（ADR 0041）。
+- TEMPLATE/0039 に clone → ADR 技術選定 → Feature → 実装。README に Mermaid。
+- reflect の評価トークンを `worked` / `failed` / `edge cases` に戻した。
+
+**failed**
+
+- F-0004 は `proposed`。canon 適用は F-0001 被覆（既知 C1）。
+
+**edge cases**
+
+- xhigh は 4.6 に存在する。Task allowlist に xhigh-fast が無いので criteria には書かない。
 
 ---
 

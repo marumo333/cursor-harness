@@ -36,10 +36,10 @@ try {
 // 2) 型チェック（製品 src と依存があるときだけ）
 if (existsSync('node_modules') && existsSync('package.json') && existsSync('src')) {
 	try {
-		execSync('npm run check', { stdio: 'pipe', encoding: 'utf8' });
+		execSync('pnpm check', { stdio: 'pipe', encoding: 'utf8' });
 	} catch (e) {
 		console.error(
-			'[pre_commit_guard] 規約6: 型チェック(npm run check)が失敗。緑にしてから commit してください。\n' +
+			'[pre_commit_guard] 規約6: 型チェック(pnpm check)が失敗。緑にしてから commit してください。\n' +
 				String((e && (e.stdout || e.message)) || '').slice(0, 2000)
 		);
 		process.exit(2);

@@ -17,6 +17,8 @@
      または MERGED≠true なら開かない。空サイクルの integrity=0 だけでは再起しない。
      キー欠落は deny。`human_approved` は after-merge だけが書く。
   5. **複製先の正本**は複製先の `knowledge/features/`。GitHub PR は鏡。テンプレートの使い方は `TEMPLATE.md`。
+  6. **製品を始める順。** clone → ADR で技術選定（テンプレート ADR を型に更新）→ Feature を proposed 起票
+     → 入場のあと実装。実装から入らない。
 - 結果: 空リポに複製/送信して人間がマージすると、省略が残っている限り次票が起票される。
   エージェント実行そのものは人間または Cloud Agent 起動が必要（Task 自動点火はしない）。
 - 関連: [[0033-harness-api-budget-routing]] [[0038-feature-canon-opa-grow]] [[0016-definition-of-done]]

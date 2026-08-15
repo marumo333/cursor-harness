@@ -6,7 +6,7 @@
 decisions/    ADR（1ファイル1決定）
 features/     自己改善の作業正本（F-NNNN YAML・[[0038]]）
 graph/        必須 skill の使用/省略と cycle 3指標（[[0039]]）
-learnings.md  実行ごとの「効いた / 失敗した / 境界事例」（日記。正本ではない）
+learnings.md  実行ごとの worked / failed / edge cases（日記。正本ではない）
 criteria/     判断基準 YAML
 benchmarks/   ハーネス監査スコア履歴
 ```

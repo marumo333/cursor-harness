@@ -13,7 +13,7 @@ tools: Read, Grep, Glob, Bash
 
 ## 手順
 1. **`node scripts/feature-gate.mjs`**（[[0038]]）。Feature 正本 + OPA grow 入場 + opa test + cycle 指標テスト。
-2. ハーネスにテストがある変更は `npm test`（`node --test`）。製品 src が無いので型/e2e/arch:fitness は置かない。
+2. ハーネスにテストがある変更は `pnpm test`（`node --test`）。製品 src が無いので型/e2e/arch:fitness は置かない。
 3. **TDD 赤の証跡**（[[0013]]）: 挙動変更があれば失敗ログ、または `tdd_exceptions` 明示。無ければ前進不可。
 4. 秘密スキャン（hook と二重）。
 5. 並列展開案件: 計画ファイルに `plan_confirm.status: approved` 証跡があるか（[[0033]]）。

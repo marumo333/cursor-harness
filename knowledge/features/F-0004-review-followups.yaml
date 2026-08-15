@@ -1,0 +1,30 @@
+feature:
+  id: F-0004
+  title: レビュー指摘の再修正（4.6 本文・pnpm・起動手順）
+  kind: harness-grow
+  status: proposed
+  source: human
+  created: '2026-08-15'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    PR レビューで、受理 ADR の決定文がまだ 4.5、親スラッグが Task に無い xhigh、
+    npm 前提、起動手順が clone 直後に実装へ飛び、README に設計図が無い、と指摘された。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - knowledge/
+      - .claude/
+      - .github/workflows/
+      - package.json
+      - README.md
+      - TEMPLATE.md
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: true
+    no_jp_code_merge_write: true
+    supersedes: []

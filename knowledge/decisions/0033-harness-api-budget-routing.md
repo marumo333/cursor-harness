@@ -6,7 +6,7 @@
 - 背景: 親を常時 Claude thinking-high にすると API 枠が枯渇する。精度ゲートは維持したい。
   親チャットのモデルは設定ファイルでは固定できず、subagent の `model:` は Task 起動時に解決される。
 - 決定:
-  - **親チャット = 常時 Grok 4.5**（旧。現行は [[0040]] の Grok 4.6）。ピッカーで Opus/Fable に切り替えない。
+  - **親チャット = 常時 Grok 4.6**（[[0040]]）。ピッカーで Opus/Fable に切り替えない。
   - **Claude ゲートは名前付き Task の `model:` でのみ起動**。hooks からの Task 物理自動起動は不可。
   - **ゲート維持**: 単独敵対レビュー・高リスク3体多数決・verifier / reflector / grow 前レビュー。
   - **`review_trio`（Opus + Grok + GPT-5.6 Sol）は維持**。Sol は高リスクモード2の第3レンズのみ。

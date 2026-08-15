@@ -26,7 +26,7 @@
 	},
 	"permissions": {
 		"allow": [
-			"Bash(npm run:*)",
+			"Bash(pnpm *:*)",
 			"Bash(node scripts/feature-gate.mjs:*)",
 			"Bash(node scripts/cycle-record.mjs:*)",
 			"Bash(node scripts/cycle-metrics.mjs:*)",

@@ -25,7 +25,7 @@ testing:
 
 definition_of_done:
   - feature_opa_gate # node scripts/feature-gate.mjs（ADR 0038）
-  - harness_tests_green # npm test（cycle 指標）
+  - harness_tests_green # pnpm test（cycle 指標）
   - tdd_red_evidence_or_exception
   - secret_scan_pass
   - review_pass # 独立敵対レビュー（高リスクは Opus/Grok/Sol 3体）
