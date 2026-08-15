@@ -17,11 +17,13 @@ export const COMMIT_TYPES = [
 const PREFIX = new RegExp(`^(${COMMIT_TYPES.join('|')})(\\([a-z0-9/_-]+\\))?:\\s+(.+)$`);
 const JP = /[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]/;
 
-export function subjectLine(raw) {
+export function subjectLine(raw, opts = {}) {
+	const skipHashComments = opts.skipHashComments !== false;
 	const text = String(raw ?? '');
 	for (const line of text.split(/\r?\n/)) {
 		const t = line.trim();
-		if (!t || t.startsWith('#')) continue;
+		if (!t) continue;
+		if (skipHashComments && t.startsWith('#')) continue;
 		return t;
 	}
 	return '';
@@ -32,7 +34,7 @@ export function subjectLine(raw) {
  * @param {{ isMerge?: boolean, parentCount?: number, allowFixup?: boolean }} [ctx]
  */
 export function lintCommitMessage(raw, ctx = {}) {
-	const subject = subjectLine(raw);
+	const subject = subjectLine(raw, { skipHashComments: ctx.skipHashComments !== false });
 	const errors = [];
 	if (!subject) {
 		errors.push('コミットメッセージが空です。');
@@ -52,7 +54,9 @@ export function lintCommitMessage(raw, ctx = {}) {
 	}
 	const revert = subject.match(/^Revert "(.+)"$/);
 	if (revert) {
-		if (/^Merge\b/.test(revert[1])) return { ok: true, errors: [] };
+		if (/^Merge (?:branch|pull request|remote-tracking)\b/.test(revert[1])) {
+			return { ok: true, errors: [] };
+		}
 		return lintCommitMessage(revert[1], { isMerge: false, allowFixup: false, parentCount: 0 });
 	}
 	const m = subject.match(PREFIX);

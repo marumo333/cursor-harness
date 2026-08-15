@@ -34,7 +34,7 @@ test('メッセージ無しの commit も pre-commit を走らせる', () => {
 });
 
 test('githooks は実行ビットが付いている', () => {
-	for (const name of ['pre-commit', 'commit-msg']) {
+	for (const name of ['pre-commit', 'pre-merge-commit', 'commit-msg']) {
 		const st = statSync(join(ROOT, 'scripts/githooks', name));
 		assert.ok((st.mode & 0o111) !== 0, name);
 	}

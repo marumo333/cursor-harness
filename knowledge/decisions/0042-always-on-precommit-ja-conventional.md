@@ -15,7 +15,8 @@
      `Revert "…"` は引用内の主語を再検査する。`fixup!` / `squash!` は rebase 中だけ。
      連鎖コマンド（`&&` / `;`）と `--no-veri` 略記、`GIT_CONFIG_*` / `git config core.hooksPath` /
      `chmod … githooks` / `scripts/githooks` 以外の hooksPath は拒否。
-     CI は先端の非 merge 1件だけ検査する（`git log -1 --no-merges`。
+     CI は先端1件だけ検査する（`git log -1`。`--no-merges` は使わない。
+     merge を飛ばすと祖先のレガシー主語や英語 merge 主語を見誤る。
      `git log HEAD` は全履歴になるので使わない。revision は `--` の前）。
      主語は `%B` の1行目（`%s` の段落折り畳みは使わない）。
      pull_request では Actions の merge commit ではなく

@@ -16,10 +16,10 @@ import {
 const SCRIPT = fileURLToPath(new URL('./lint-commit-range.mjs', import.meta.url));
 const FORMAT = '%B%x00%P%x1e';
 
-test('引数なしと HEAD は先端の非 merge 1件', () => {
-	assert.deepEqual(commitLogArgs([]), ['log', '-1', '--no-merges', `--format=${FORMAT}`]);
-	assert.deepEqual(commitLogArgs(['HEAD']), ['log', '-1', '--no-merges', `--format=${FORMAT}`]);
-	assert.deepEqual(commitLogArgs(['--tip']), ['log', '-1', '--no-merges', `--format=${FORMAT}`]);
+test('引数なしと HEAD は先端1件', () => {
+	assert.deepEqual(commitLogArgs([]), ['log', '-1', `--format=${FORMAT}`]);
+	assert.deepEqual(commitLogArgs(['HEAD']), ['log', '-1', `--format=${FORMAT}`]);
+	assert.deepEqual(commitLogArgs(['--tip']), ['log', '-1', `--format=${FORMAT}`]);
 });
 
 test('範囲指定はそのまま使う', () => {
@@ -30,7 +30,6 @@ test('--tip の SHA は revision であり -- の後ろに置かない', () => {
 	assert.deepEqual(commitLogArgs(['--tip', 'abc1234def']), [
 		'log',
 		'-1',
-		'--no-merges',
 		`--format=${FORMAT}`,
 		'abc1234def'
 	]);
@@ -102,6 +101,27 @@ test('一時リポ: --tip SHA は指定コミットを読み、手書き Merge �
 		const fakeMerge = commitFile(dir, 'b.txt', 'Merge whatever i want here');
 		assert.equal(runLint(dir, ['--tip', fakeMerge]), 1);
 		assert.equal(runLint(dir, ['--tip', good]), 0);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+});
+
+test('一時リポ: 実 merge の英語主語は落とし、Merge branch は通す', () => {
+	const dir = initRepo();
+	try {
+		commitFile(dir, 'a.txt', 'feat: 土台を作る。');
+		execFileSync('git', ['checkout', '-q', '-b', 'side'], { cwd: dir });
+		commitFile(dir, 's.txt', 'feat: 枝で作業する。');
+		execFileSync('git', ['checkout', '-q', 'main'], { cwd: dir });
+		commitFile(dir, 'm.txt', 'feat: main を進める。');
+		execFileSync('git', ['checkout', '-q', 'side'], { cwd: dir });
+		execFileSync('git', ['merge', '--no-ff', '-m', 'pwned english subject, no prefix', 'main'], { cwd: dir });
+		const badMerge = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: dir, encoding: 'utf8' }).trim();
+		assert.equal(runLint(dir, ['--tip', badMerge]), 1);
+		execFileSync('git', ['reset', '--hard', '-q', 'HEAD~1'], { cwd: dir });
+		execFileSync('git', ['merge', '--no-ff', '-m', "Merge branch 'main' into side", 'main'], { cwd: dir });
+		const goodMerge = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: dir, encoding: 'utf8' }).trim();
+		assert.equal(runLint(dir, ['--tip', goodMerge]), 0);
 	} finally {
 		rmSync(dir, { recursive: true, force: true });
 	}

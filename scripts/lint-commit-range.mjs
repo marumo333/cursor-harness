@@ -34,7 +34,8 @@ for (const rec of records) {
 	}
 	const r = lintCommitMessage(rec.subject, {
 		parentCount: rec.parentCount,
-		allowFixup: false
+		allowFixup: false,
+		skipHashComments: false
 	});
 	if (r.ok) continue;
 	if (shouldSkipLegacyJa(rec.subject, parsed.mode)) continue;

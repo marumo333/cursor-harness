@@ -2,7 +2,7 @@
  * CI / 手元のコミット主語検査が読む git log 引数。
  *
  * `git log HEAD` は先端1件ではなく到達可能な全履歴を出す。
- * 先端は `-1 --no-merges`（merge を tip にしても直近の非 merge を見る）。
+ * 先端は `-1`（その commit 自身。`--no-merges` は祖先のレガシー主語を引き戻す）。
  * revision は `--` の前に置く（後ろだと pathspec になり出力が空になる）。
  * `%B` の1行目を主語にする（`%s` は段落を折り畳むので使わない）。
  *
@@ -48,7 +48,7 @@ export function parseCommitLogRecords(log) {
 		const body = nul === -1 ? chunk : chunk.slice(0, nul);
 		const parentLine = nul === -1 ? '' : chunk.slice(nul + 1);
 		return {
-			subject: subjectLine(body),
+			subject: subjectLine(body, { skipHashComments: false }),
 			parentCount: parentLine.trim().split(/\s+/).filter(Boolean).length
 		};
 	});
@@ -63,7 +63,7 @@ export function parseCommitLogRequest(argv = []) {
 	if (extra.some((a) => a.startsWith('-') && a !== '--tip')) {
 		return { ok: false, reason: 'git log の任意オプションは拒否する。' };
 	}
-	const tipArgs = ['log', '-1', '--no-merges', `--format=${RECORD_FORMAT}`];
+	const tipArgs = ['log', '-1', `--format=${RECORD_FORMAT}`];
 	if (extra.length === 0 || (extra.length === 1 && extra[0] === 'HEAD')) {
 		return { ok: true, args: tipArgs, mode: 'tip' };
 	}

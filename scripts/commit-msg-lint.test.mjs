@@ -81,4 +81,13 @@ test('Revert は引用内の主語を再検査する', () => {
 	assert.equal(lintCommitMessage('Revert "feat: 本流。"').ok, true);
 	assert.equal(lintCommitMessage('Revert "Update README.md"').ok, false);
 	assert.equal(lintCommitMessage("Revert \"Merge branch 'topic'\"").ok, true);
+	assert.equal(lintCommitMessage('Revert "Merge do whatever i want in english"').ok, false);
+});
+
+test('1行目が # の確定済み主語はスキップしない', () => {
+	assert.equal(
+		lintCommitMessage('# pwned english subject\nfeat: 日本語の主語。', { skipHashComments: false }).ok,
+		false
+	);
+	assert.equal(lintCommitMessage('# Please enter the commit message\nfeat: 日本語の主語。').ok, true);
 });
