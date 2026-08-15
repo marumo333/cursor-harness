@@ -80,4 +80,5 @@ test('git 生成の Merge / rebase 中の fixup は通す', () => {
 test('Revert は引用内の主語を再検査する', () => {
 	assert.equal(lintCommitMessage('Revert "feat: 本流。"').ok, true);
 	assert.equal(lintCommitMessage('Revert "Update README.md"').ok, false);
+	assert.equal(lintCommitMessage("Revert \"Merge branch 'topic'\"").ok, true);
 });

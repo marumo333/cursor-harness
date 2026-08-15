@@ -52,6 +52,7 @@ export function lintCommitMessage(raw, ctx = {}) {
 	}
 	const revert = subject.match(/^Revert "(.+)"$/);
 	if (revert) {
+		if (/^Merge\b/.test(revert[1])) return { ok: true, errors: [] };
 		return lintCommitMessage(revert[1], { isMerge: false, allowFixup: false, parentCount: 0 });
 	}
 	const m = subject.match(PREFIX);

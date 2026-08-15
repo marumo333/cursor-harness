@@ -32,7 +32,7 @@ jobs:
             git add knowledge/features
             branch="cycle/followup-${{ github.event.pull_request.number }}"
             git checkout -b "$branch"
-            git commit -m "サイクル承認を記録し、続きの Feature を起票する。"
+            git commit -m "chore: サイクル承認を記録し、続きの Feature を起票する。"
             git push -u origin "$branch"
             gh pr create --draft --base "${{ github.event.pull_request.base.ref }}" --head "$branch" \
               --title "サイクル続き（#${{ github.event.pull_request.number }} マージ後）" \
@@ -42,6 +42,6 @@ jobs:
               echo "イベントの変更なし"
               exit 0
             fi
-            git commit -m "サイクル #${{ github.event.pull_request.number }} の人間承認を記録する。"
+            git commit -m "chore: サイクル #${{ github.event.pull_request.number }} の人間承認を記録する。"
             git push origin HEAD:"${{ github.event.pull_request.base.ref }}"
           fi

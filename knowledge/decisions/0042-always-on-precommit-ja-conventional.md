@@ -15,8 +15,10 @@
      `Revert "…"` は引用内の主語を再検査する。`fixup!` / `squash!` は rebase 中だけ。
      連鎖コマンド（`&&` / `;`）と `--no-veri` 略記、`GIT_CONFIG_*` / `git config core.hooksPath` /
      `chmod … githooks` / `scripts/githooks` 以外の hooksPath は拒否。
-     CI は先端1件だけ検査する（`git log -1`。`git log HEAD` は全履歴になるので使わない）。
-     pull_request では merge commit（主語が `Merge …` で lint 免除）ではなく
+     CI は先端の非 merge 1件だけ検査する（`git log -1 --no-merges`。
+     `git log HEAD` は全履歴になるので使わない。revision は `--` の前）。
+     主語は `%B` の1行目（`%s` の段落折り畳みは使わない）。
+     pull_request では Actions の merge commit ではなく
      `github.event.pull_request.head.sha` を `--tip` に渡す。
      範囲 `origin/main..HEAD` は 0042 以前の英語主語を含むので使わない（履歴は書き換えない）。
      先端検査では日本語レガシー免除を使わない。範囲指定のときだけ日本語レガシー主語を許容する。
