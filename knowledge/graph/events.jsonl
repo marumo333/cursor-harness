@@ -29,3 +29,5 @@
 {"t":"2026-08-15T07:56:21.544Z","type":"node_state","cycle":"C-0004","node":"skill:adversarial-review","state":"skipped"}
 {"t":"2026-08-15T07:56:21.563Z","type":"edge_state","cycle":"C-0004","from":"skill:adversarial-review","to":"skill:verify","state":"skipped","reason":"docs_only"}
 {"t":"2026-08-15T07:56:21.582Z","type":"node_state","cycle":"C-0004","node":"skill:reflect","state":"used"}
+{"t":"2026-08-15T07:56:52.030Z","type":"node_state","cycle":"C-0004","node":"skill:verify","state":"used"}
+{"t":"2026-08-15T07:56:52.051Z","type":"edge_state","cycle":"C-0004","from":"skill:verify","to":"skill:reflect","state":"taken","reason":"docs_only"}
