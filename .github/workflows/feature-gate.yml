@@ -29,9 +29,14 @@ jobs:
           PR_HEAD: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
-          if [ -n "${PR_HEAD}" ]; then
-            node scripts/lint-commit-range.mjs --tip "${PR_HEAD}"
-          else
-            node scripts/lint-commit-range.mjs --tip
+          lint_script="scripts/lint-commit-range.mjs"
+          if git cat-file -e origin/main:scripts/lint-commit-range.mjs 2>/dev/null; then
+            tmp="$(mktemp -d)"
+            git archive origin/main scripts | tar -x -C "$tmp"
+            lint_script="$tmp/scripts/lint-commit-range.mjs"
           fi
-
+          if [ -n "${PR_HEAD}" ]; then
+            node "$lint_script" --tip "${PR_HEAD}"
+          else
+            node "$lint_script" --tip
+          fi

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { execFileSync } from 'node:child_process';
 import { lintCommitMessage } from './lib/commit-msg-lint.mjs';
-import { parseCommitLogRequest, shouldSkipLegacyJa } from './lib/commit-log-args.mjs';
+import { parseCommitLogRequest, parseCommitLogRecords, shouldSkipLegacyJa } from './lib/commit-log-args.mjs';
 
 const parsed = parseCommitLogRequest(process.argv.slice(2));
 if (!parsed.ok) {
@@ -19,18 +19,26 @@ try {
 	process.exit(1);
 }
 
-const subjects = log.split('\n').map((s) => s.trim()).filter(Boolean);
-if (parsed.mode === 'tip' && subjects.length === 0) {
+const records = parseCommitLogRecords(log);
+if (parsed.mode === 'tip' && records.length === 0) {
 	console.error('[commit-range] 先端主語が空です。');
 	process.exit(1);
 }
 
 let bad = 0;
-for (const subject of subjects) {
-	const r = lintCommitMessage(subject);
+for (const rec of records) {
+	if (!rec.subject) {
+		console.error('[commit-range] 主語が空です。');
+		bad += 1;
+		continue;
+	}
+	const r = lintCommitMessage(rec.subject, {
+		parentCount: rec.parentCount,
+		allowFixup: false
+	});
 	if (r.ok) continue;
-	if (shouldSkipLegacyJa(subject, parsed.mode)) continue;
-	console.error('[commit-range] ' + subject);
+	if (shouldSkipLegacyJa(rec.subject, parsed.mode)) continue;
+	console.error('[commit-range] ' + rec.subject);
 	for (const e of r.errors) console.error('  ' + e);
 	bad += 1;
 }

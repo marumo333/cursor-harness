@@ -62,9 +62,22 @@ test('空メッセージは落ちる', () => {
 	assert.equal(r.ok, false);
 });
 
-test('Merge / Revert / fixup は生成文として通す', () => {
-	assert.equal(lintCommitMessage("Merge branch 'topic'").ok, true);
+test('手書き Merge / fixup は通さない', () => {
+	assert.equal(lintCommitMessage("Merge branch 'topic'").ok, false);
+	assert.equal(lintCommitMessage('Merge whatever i want here').ok, false);
+	assert.equal(lintCommitMessage('fixup! feat: 本流。').ok, false);
+	assert.equal(lintCommitMessage('squash! feat: 本流。').ok, false);
+});
+
+test('git 生成の Merge / rebase 中の fixup は通す', () => {
+	assert.equal(lintCommitMessage("Merge branch 'topic'", { isMerge: true }).ok, true);
+	assert.equal(lintCommitMessage("Merge abcdef0 into 1234567", { parentCount: 2 }).ok, true);
+	assert.equal(lintCommitMessage("Merge abcdef0 into 1234567", { parentCount: 1 }).ok, false);
+	assert.equal(lintCommitMessage('fixup! feat: 本流。', { allowFixup: true }).ok, true);
+	assert.equal(lintCommitMessage('squash! feat: 本流。', { allowFixup: true }).ok, true);
+});
+
+test('Revert は引用内の主語を再検査する', () => {
 	assert.equal(lintCommitMessage('Revert "feat: 本流。"').ok, true);
-	assert.equal(lintCommitMessage('fixup! feat: 本流。').ok, true);
-	assert.equal(lintCommitMessage('squash! feat: 本流。').ok, true);
+	assert.equal(lintCommitMessage('Revert "Update README.md"').ok, false);
 });

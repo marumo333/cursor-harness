@@ -27,15 +27,32 @@ export function subjectLine(raw) {
 	return '';
 }
 
-export function lintCommitMessage(raw) {
+/**
+ * @param {string} raw
+ * @param {{ isMerge?: boolean, parentCount?: number, allowFixup?: boolean }} [ctx]
+ */
+export function lintCommitMessage(raw, ctx = {}) {
 	const subject = subjectLine(raw);
 	const errors = [];
 	if (!subject) {
 		errors.push('コミットメッセージが空です。');
 		return { ok: false, errors };
 	}
-	if (/^(Merge\b|Revert "|fixup! |squash! )/.test(subject)) {
-		return { ok: true, errors: [] };
+	if (/^Merge\b/.test(subject)) {
+		if (ctx.isMerge === true || (ctx.parentCount ?? 0) >= 2) {
+			return { ok: true, errors: [] };
+		}
+		errors.push('Merge 免除は git が生成した merge commit（親が2つ以上）のときだけ。');
+		return { ok: false, errors };
+	}
+	if (/^(fixup! |squash! )/.test(subject)) {
+		if (ctx.allowFixup === true) return { ok: true, errors: [] };
+		errors.push('fixup! / squash! は rebase 中だけ許す。');
+		return { ok: false, errors };
+	}
+	const revert = subject.match(/^Revert "(.+)"$/);
+	if (revert) {
+		return lintCommitMessage(revert[1], { isMerge: false, allowFixup: false, parentCount: 0 });
 	}
 	const m = subject.match(PREFIX);
 	if (!m) {

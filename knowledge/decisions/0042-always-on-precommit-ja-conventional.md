@@ -11,7 +11,8 @@
   3. **主語は conventional prefix + 日本語。**
      `feat` / `fix` / `docs` / `style` / `refactor` / `test` / `chore` / `perf` /
      `ci` / `build` / `revert`。機械キー・パスは英語のまま可。英語だけの主語は拒否。
-     git 生成の `Merge` / `Revert` / `fixup!` / `squash!` は例外。
+     git 生成の `Merge` は親が2つ以上のときだけ例外。手書き `Merge …` は拒否。
+     `Revert "…"` は引用内の主語を再検査する。`fixup!` / `squash!` は rebase 中だけ。
      連鎖コマンド（`&&` / `;`）と `--no-veri` 略記、`GIT_CONFIG_*` / `git config core.hooksPath` /
      `chmod … githooks` / `scripts/githooks` 以外の hooksPath は拒否。
      CI は先端1件だけ検査する（`git log -1`。`git log HEAD` は全履歴になるので使わない）。
@@ -20,6 +21,7 @@
      範囲 `origin/main..HEAD` は 0042 以前の英語主語を含むので使わない（履歴は書き換えない）。
      先端検査では日本語レガシー免除を使わない。範囲指定のときだけ日本語レガシー主語を許容する。
      `git log` に任意 argv は渡さない。
+     main に検査スクリプトがあるときは CI は main の copy を使う（PR 側でゲートを緩めない）。
   4. **pre-commit 本体**は staged `.env` 禁止 +（製品 `src` があるとき）`pnpm run check` +
      `node scripts/feature-gate.mjs`。hooks から Task は起動しない（[[0033]]）。
   5. clone 後は `node scripts/install-git-hooks.mjs`（`pnpm` の `prepare` でも同じ）。
