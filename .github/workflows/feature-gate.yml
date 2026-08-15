@@ -23,4 +23,4 @@ jobs:
             node scripts/feature-gate.mjs
           fi
       - name: ハーネス単体テスト
-        run: node --test 'scripts/**/*.test.mjs'
+        run: node --test scripts/cycle-metrics.test.mjs

@@ -12,7 +12,7 @@
     `pnpm check` は script 欠落時に PATH 上の `check` を実行するので使わない。
   - ローカルのテスト起動は `pnpm test`（中身は `node --test`）。CI も `node --test` を直接呼ぶ。
   - hooks / 完了の定義の文書は npm を残さない。
-  - settings の allow に `pnpm` を置かない。`pnpm run` は任意 script と `-C` でリポ外実行ができる。
-    エージェントが自動実行してよいのは `node --test` と `node scripts/*` だけ。
+  - settings の allow に `pnpm` も `node --test:*` も置かない。
+    テスト起動の自動承認は `node --test scripts/cycle-metrics.test.mjs` の完全一致だけ。
 - 結果: 複製先も pnpm を継承する。`node scripts/*` はそのまま。
 - 関連: [[0014]] [[0016]] [[0039]]
