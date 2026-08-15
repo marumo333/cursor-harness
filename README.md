@@ -16,6 +16,10 @@
 
 ## 設計概要
 
+### 通常のモデルフロー
+
+1周の席。親は常時 Grok。Claude は名前付き Task のみ。Fable は天井判断だけでこの図に入れない。
+
 ```mermaid
 flowchart LR
   parent["親 Grok 4.6"]
@@ -29,6 +33,10 @@ flowchart LR
   trio --> sol["GPT-5.6 Sol"]
 ```
 
+### 設計フロー
+
+製品もハーネス改善も、実装から入らない直線の1周（[[0039]]）。再起は次の図。
+
 ```mermaid
 flowchart TD
   clone["clone テンプレート"] --> adr["ADR で技術選定"]
@@ -40,9 +48,21 @@ flowchart TD
   review --> verify["verify"]
   verify --> reflect["reflect"]
   reflect --> pr["人間が PR マージ"]
-  pr --> cycle{"省略 / 失敗?"}
-  cycle -->|yes| feat
-  cycle -->|no| stop["止める"]
+```
+
+### 再起的フロー
+
+人間がマージしたあとだけ回る。hooks から Task は起動しない。省略も失敗も無い周は止める。
+
+```mermaid
+flowchart TD
+  merge["人間が PR をマージ"] --> check{"省略 / 失敗が残る?"}
+  check -->|no| stop["止める"]
+  check -->|yes| guard{"未マージの cycle PR / 未処理 followup / MERGED≠true?"}
+  guard -->|yes| stop
+  guard -->|no| draft["次 Feature を proposed 起票<br/>下書き PR を開く"]
+  draft --> wait["エージェントは自動起動しない"]
+  wait --> back["人間が新しいセッションで<br/>設計フローの Feature 起票へ"]
 ```
 
 ## 構成
