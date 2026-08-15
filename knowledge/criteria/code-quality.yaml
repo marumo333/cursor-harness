@@ -32,6 +32,7 @@ definition_of_done:
   - plan_confirm_if_fanout
   - learnings_appended
   - cycle_skills_recorded # 必須 skill の used/skipped（ADR 0039）
+  - commit_hook_and_ja_conventional # pre-commit 必須・主語は日本語 prefix（ADR 0042）
 
 naming:
   files: kebab-case

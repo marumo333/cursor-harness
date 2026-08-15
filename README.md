@@ -10,6 +10,7 @@
 - 管理: skill の使用/省略を `knowledge/graph/` に書き、ノード / 辺 / 状態の3指標で計る
 - 再起: 人間が PR をマージしたあと、省略が残っていれば次 Feature の下書き PR を開く（エージェントは自動起動しない）
 - パッケージ: pnpm（[[0041]]）
+- commit: hook 必須。主語は `feat:` / `fix:` / `docs:` 等 + 日本語（[[0042]]）
 
 使い方は `TEMPLATE.md`。
 
@@ -51,7 +52,7 @@ flowchart TD
 .cursor/          Cursor の hook
 knowledge/        ADR / 判断基準 / Feature / グラフ / 内省
 policy/           OPA（入場と cycle）
-scripts/          feature-gate / cycle-*
+scripts/          feature-gate / cycle-* / githooks / commit-msg
 ```
 
 ## 置かないもの

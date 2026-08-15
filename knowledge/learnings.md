@@ -8,6 +8,32 @@
 
 ---
 
+## 2026-08-15 — 常時 pre-commit と日本語 conventional 主語（F-0005）
+
+**問い**
+
+- 実装後の commit が Claude PreToolUse だけだと迂回できる。主語が英語。
+- 1周合計のトークンを、KV cache / Kimi K3 / Obsidian で減らせるか。
+
+**worked**
+
+- git / Cursor / Claude の三重 hook。`--no-verify`・連鎖・略記・`GIT_CONFIG_*`・空 hooksPath を拒否。
+- 主語は `feat:` 等 + 日本語。Merge / Revert / fixup は例外。
+- 敵対レビューの C1（`git add && git commit --no-verify` が allow）をテストで先に赤にして直した。
+
+**failed**
+
+- hook 自体は入力トークンを減らさない。節約は席への再注入削減（packet）側。
+- CI の主語検査は先端だけ。0042 以前の英語コミットは書き換えない。
+- `node` 不在の GUI git と OPA 未導入環境では commit が止まる（fail-closed）。
+
+**edge cases**
+
+- Cursor hook はシェルコマンド文字列に `--no-verify` が含まれるだけで deny する。
+- F-0005 は `proposed`。適用被覆は F-0001。
+
+---
+
 ## 2026-08-15 — PR レビュー指摘の再修正（F-0004）
 
 **問い**

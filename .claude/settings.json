@@ -27,6 +27,14 @@
 	"permissions": {
 		"allow": [
 			"Bash(node --test scripts/cycle-metrics.test.mjs)",
+			"Bash(node --test scripts/commit-msg-lint.test.mjs)",
+			"Bash(node --test scripts/git-commit-cmd.test.mjs)",
+			"Bash(node --test scripts/commit-guard.test.mjs)",
+			"Bash(node --test scripts/blocked-env.test.mjs)",
+			"Bash(node scripts/lint-commit-range.mjs:*)",
+			"Bash(node scripts/commit-msg-lint.mjs:*)",
+			"Bash(node scripts/run-pre-commit.mjs)",
+			"Bash(node scripts/install-git-hooks.mjs)",
 			"Bash(node scripts/feature-gate.mjs:*)",
 			"Bash(node scripts/cycle-record.mjs:*)",
 			"Bash(node scripts/cycle-metrics.mjs:*)",

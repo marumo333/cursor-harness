@@ -23,4 +23,6 @@ jobs:
             node scripts/feature-gate.mjs
           fi
       - name: ハーネス単体テスト
-        run: node --test scripts/cycle-metrics.test.mjs
+        run: node --test scripts/cycle-metrics.test.mjs scripts/commit-msg-lint.test.mjs scripts/git-commit-cmd.test.mjs scripts/commit-guard.test.mjs scripts/blocked-env.test.mjs
+      - name: コミット主語を検査する
+        run: node scripts/lint-commit-range.mjs HEAD

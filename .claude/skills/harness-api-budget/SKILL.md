@@ -26,6 +26,9 @@ description: Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus T
 6. Opus ゲートは **名前付き agent 必須**。model 未指定の汎用 Task でゲート代替禁止。
 7. Fable と Opus を trio に同居させない（Claude 席は1系統・[[0037]]）。
 8. Fable は `fable_seat` のみ: 天井判断の追加起動。ゲート既定代替禁止。
+9. **1周の再注入**: 各席に渡すのは goal / feature / diff / 関連 ADR パス / 今周の事実だけ。
+   `learnings.md` 全文と `decisions/` 全件を親と各 Task が読み直さない（同じ本文は1周1席）。
+   これは入力トークン削減。pre-commit（[[0042]]）は回避防止であり、トークンは減らさない。
 
 ## superpowers 接続
 
