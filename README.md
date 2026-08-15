@@ -1,38 +1,65 @@
 # cursor-harness
 
-Cursor 向けエージェント・ハーネス設計（`jp-code-agent` から切り出し）。
+プロダクトを含まない Cursor ハーネスの**テンプレート**。製品を作る前にここから切る（[[0039]]）。
 
-モデル戦略・自己成長ループ・agent/skill/hook・判断基準（knowledge）をまとめ、別プロダクトへ移植・参照できるようにしたリポジトリ。
+## 何をするか
+
+- 席: 親 Grok 4.6 / Opus ゲート / Sol は3体多数決のみ
+- 正本: `knowledge/features/F-NNNN-*.yaml`
+- 入場: OPA `node scripts/feature-gate.mjs`
+- 管理: skill の使用/省略を `knowledge/graph/` に書き、ノード / 辺 / 状態の3指標で計る
+- 再起: 人間が PR をマージしたあと、省略が残っていれば次 Feature の下書き PR を開く（エージェントは自動起動しない）
+- パッケージ: pnpm（[[0041]]）
+- commit: hook 必須。主語は `feat:` / `fix:` / `docs:` 等 + 日本語（[[0042]]）
+
+使い方は `TEMPLATE.md`。
+
+## 設計概要
+
+```mermaid
+flowchart LR
+  parent["親 Grok 4.6"]
+  opus["Opus 5 ゲート"]
+  trio["高リスク trio"]
+  parent -->|"壁打ち / 統合 / cycle"| opus
+  opus -->|"plan-confirm / レビュー / verify / reflect"| parent
+  parent --> trio
+  trio --> o2["Opus 5"]
+  trio --> g2["Grok 4.6"]
+  trio --> sol["GPT-5.6 Sol"]
+```
+
+```mermaid
+flowchart TD
+  clone["clone テンプレート"] --> adr["ADR で技術選定"]
+  adr --> feat["Feature を proposed 起票"]
+  feat --> merge1["起票 PR をマージ"]
+  merge1 --> admit["次 PR で admitted"]
+  admit --> impl["実装"]
+  impl --> review["敵対レビュー"]
+  review --> verify["verify"]
+  verify --> reflect["reflect"]
+  reflect --> pr["人間が PR マージ"]
+  pr --> cycle{"省略 / 失敗?"}
+  cycle -->|yes| feat
+  cycle -->|no| stop["止める"]
+```
 
 ## 構成
 
 ```
-.claude/          agents / skills / hooks / AGENTS.md / CLAUDE.md
-.cursor/          Cursor hooks
-knowledge/        ADR・criteria・learnings・harness-audit 履歴
-docs/superpowers/ ハーネス設計・監査スペック
-scripts/          arch-fitness 機械ゲート
+.claude/          エージェント / skill / hook
+.cursor/          Cursor の hook
+knowledge/        ADR / 判断基準 / Feature / グラフ / 内省
+policy/           OPA（入場と cycle）
+scripts/          feature-gate / cycle-* / githooks / commit-msg
 ```
 
-## モデル戦略（要約）
+## 置かないもの
 
-| 席 | モデル | 役割 |
-| --- | --- | --- |
-| 親チャット | Grok 4.6 | 壁打ち・ディスパッチ・統合・HOTL |
-| Task ゲート | Opus 5 | plan-confirm / 敵対レビュー / verifier / reflector / 高リスク実装 |
-| 第3レンズ | GPT-5.6 Sol | 高リスク3体多数決のみ |
-
-詳細は `.claude/AGENTS.md` と `knowledge/criteria/model-routing.yaml`。
-
-## 自己成長ループ
-
-`計画 → plan-confirm → 実装(TDD) → 検証(敵対レビュー含む) → 内省 → Feature正本起票 → OPA入場 → harness-grow`
-
-再現可能な改善の正本は `knowledge/features/F-NNNN-*.yaml`。入場は `node scripts/feature-gate.mjs`（OPA/Rego）。
-learnings は日記であり、GitHub Issue は正本にしない。
+認証・課金・UI・DB・e2e・配信・案件グラフ。それらは製品リポに足す。
 
 ## 由来
 
-元リポジトリ: [marumo333/jp-code-agent](https://github.com/marumo333/jp-code-agent)
-
-製品コード（SvelteKit / Supabase 等）は含まない。`CLAUDE.md` や一部 skill/hook には元プロダクト固有の記述が残るので、移植時はプロジェクトに合わせて調整する。
+元リポジトリ: [marumo333/jp-code-agent](https://github.com/marumo333/jp-code-agent)。
+製品コードは含めない（[[0039]]）。

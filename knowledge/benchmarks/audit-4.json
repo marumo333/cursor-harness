@@ -1,6 +1,6 @@
 {
 	"audit": 4,
-	"context": "cursor-harness: Feature 正本 + OPA grow admission (ADR 0038 / F-0001); after first adversarial review fixes",
+	"context": "cursor-harness: Feature 正本と OPA grow 入場（ADR 0038 / F-0001）。初回敵対レビュー修正後",
 	"scores": {
 		"rules_coverage": {
 			"score": 84,

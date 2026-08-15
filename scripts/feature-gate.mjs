@@ -13,11 +13,20 @@ import { ensureOpa } from './ensure-opa.mjs';
 const ROOT = process.env.HARNESS_ROOT || join(dirname(fileURLToPath(import.meta.url)), '..');
 const POLICY = process.env.OPA_POLICY_DIR || join(ROOT, 'policy');
 const FEATURES = join(ROOT, 'knowledge', 'features');
-const LEARNED = join(POLICY, 'learned');
 const GIT = ['-c', 'core.quotePath=false'];
 const F0001 = 'knowledge/features/F-0001-feature-canon-opa-grow.yaml';
 const FEATURE_NAME = /^F-\d{4}-.+\.ya?ml$/;
-const FORBIDDEN_LEARNED = /^\s*package\s+(grow\.admission|feature\.canon|harness\.canon)\b/m;
+const FORBIDDEN_LEARNED_BUILTIN = /\b(http\.send|opa\.runtime|net\.lookup_ip_addr|io\.jwt)\b/;
+const PACKAGE_HOME = {
+	'grow.admission': 'grow.rego',
+	'grow.admission_test': 'grow_test.rego',
+	'feature.canon': 'feature.rego',
+	'feature.canon_test': 'feature_test.rego',
+	'harness.canon': 'canon.rego',
+	'harness.canon_test': 'canon_test.rego',
+	'cycle.admission': 'cycle.rego',
+	'cycle.admission_test': 'cycle_test.rego'
+};
 
 const args = process.argv.slice(2);
 const testOnly = args.includes('--test');
@@ -28,7 +37,7 @@ const admitPath = wantsAdmit ? args[admitIdx + 1] : null;
 const opa = ensureOpa();
 
 function fail(msg) {
-	console.error(`[feature-gate] FAIL ${msg}`);
+	console.error(`[feature-gate] 失敗 ${msg}`);
 	process.exit(1);
 }
 
@@ -39,7 +48,7 @@ function gitLines(cmd, { required = false } = {}) {
 			.map((s) => s.trim())
 			.filter(Boolean);
 	} catch (e) {
-		if (required) fail(`git ${cmd.join(' ')} failed: ${e.message || e}`);
+		if (required) fail(`git ${cmd.join(' ')} が失敗: ${e.message || e}`);
 		return [];
 	}
 }
@@ -58,7 +67,7 @@ function evalQuery(query, inputObj) {
 		const value = parsed.result?.[0]?.expressions?.[0]?.value;
 		if (value === undefined) {
 			if (query === 'data.harness.canon.paths') return [];
-			fail(`opa eval returned empty for ${query}`);
+			fail(`opa eval が空を返した: ${query}`);
 		}
 		return value;
 	} finally {
@@ -71,10 +80,10 @@ function loadFeature(path) {
 	try {
 		parsed = opaJson(['eval', '-f', 'json', '-d', path, 'data']);
 	} catch (e) {
-		fail(`cannot parse ${path}: ${e.message || e}`);
+		fail(`解析できない ${path}: ${e.message || e}`);
 	}
 	const data = parsed.result?.[0]?.expressions?.[0]?.value;
-	if (!data || !data.feature) fail(`${path}: top-level feature: mapping is required`);
+	if (!data || !data.feature) fail(`${path}: トップレベル feature: が必要`);
 	return data.feature;
 }
 
@@ -86,20 +95,86 @@ function featureFiles() {
 		.sort();
 }
 
-function assertLearnedIsolation() {
-	if (!existsSync(LEARNED)) return;
-	for (const name of readdirSync(LEARNED)) {
-		if (!name.endsWith('.rego')) continue;
-		const text = readFileSync(join(LEARNED, name), 'utf8');
-		if (FORBIDDEN_LEARNED.test(text)) {
-			fail(`policy/learned/${name} must not declare package grow.admission|feature.canon|harness.canon`);
+const PACKAGE_HOME_FILES = new Set(Object.values(PACKAGE_HOME));
+const RESOLVED_NS = {
+	'data.grow.admission': 'grow.rego',
+	'data.grow.admission_test': 'grow_test.rego',
+	'data.feature.canon': 'feature.rego',
+	'data.feature.canon_test': 'feature_test.rego',
+	'data.harness.canon': 'canon.rego',
+	'data.harness.canon_test': 'canon_test.rego',
+	'data.cycle.admission': 'cycle.rego',
+	'data.cycle.admission_test': 'cycle_test.rego'
+};
+
+function walkRego(dir, fn) {
+	if (!existsSync(dir)) return;
+	for (const ent of readdirSync(dir, { withFileTypes: true })) {
+		const p = join(dir, ent.name);
+		if (ent.isSymbolicLink()) {
+			fail(`policy 配下の symlink は拒否: ${relative(POLICY, p)}`);
 		}
+		if (ent.isDirectory()) walkRego(p, fn);
+		else if (ent.name.endsWith('.rego')) fn(p);
 	}
 }
 
+function relToPolicy(p) {
+	const raw = String(p).replaceAll('\\', '/');
+	const candidates = [raw.startsWith('/') ? raw : resolve(ROOT, raw), join(POLICY, raw), resolve(POLICY, raw)];
+	for (const abs of candidates) {
+		const rel = relative(POLICY, abs).replaceAll('\\', '/');
+		if (rel && !rel.startsWith('..') && !rel.startsWith('/')) return rel;
+	}
+	fail(`opa inspect のパスが policy 配下に無い: ${p}`);
+}
+
+function assertResolvedNamespaces() {
+	let parsed;
+	try {
+		parsed = opaJson(['inspect', '-f', 'json', POLICY]);
+	} catch (e) {
+		fail(`opa inspect が失敗: ${e.message || e}`);
+	}
+	const ns = parsed.namespaces || {};
+	for (const [name, home] of Object.entries(RESOLVED_NS)) {
+		const files = (ns[name] || []).map(relToPolicy);
+		if (files.length !== 1 || files[0] !== home) {
+			fail(`名前空間 ${name} の正本は ${home} のみ（実際 ${JSON.stringify(files)}）`);
+		}
+	}
+	for (const [name, files] of Object.entries(ns)) {
+		if (name.startsWith('data.learned.')) {
+			const leaked = (files || []).map(relToPolicy).filter((rel) => !rel.startsWith('learned/'));
+			if (leaked.length) fail(`learned 名前空間 ${name} が learned/ 外: ${JSON.stringify(leaked)}`);
+			continue;
+		}
+		if (RESOLVED_NS[name]) continue;
+		fail(`未知の名前空間 ${name}: ${JSON.stringify(files)}`);
+	}
+}
+
+function assertPolicyIsolation() {
+	walkRego(POLICY, (abs) => {
+		const rel = relative(POLICY, abs).replaceAll('\\', '/');
+		const text = readFileSync(abs, 'utf8');
+		if (FORBIDDEN_LEARNED_BUILTIN.test(text)) {
+			fail(`policy/${rel} は http.send / opa.runtime / net.lookup_ip_addr / io.jwt を使えない`);
+		}
+		if (!rel.startsWith('learned/') && !PACKAGE_HOME_FILES.has(rel)) {
+			fail(`policy/${rel} は許可された正本ファイルではない`);
+		}
+	});
+	assertResolvedNamespaces();
+}
+
 function runOpaTest() {
-	assertLearnedIsolation();
-	execFileSync(opa, ['test', POLICY, '-v'], { stdio: 'inherit', cwd: ROOT });
+	assertPolicyIsolation();
+	try {
+		execFileSync(opa, ['test', POLICY, '-v'], { stdio: 'inherit', cwd: ROOT });
+	} catch (e) {
+		fail(`opa test が失敗（終了コード ${e.status ?? '不明'}）`);
+	}
 }
 
 function resolveMergeBase() {
@@ -111,7 +186,7 @@ function resolveMergeBase() {
 			}).trim();
 			if (mb) return { base, mb };
 		} catch {
-			// try next
+			// 次の基準ブランチを試す
 		}
 	}
 	return null;
@@ -161,60 +236,68 @@ function isExemptNewProposed(rel, feature, mb) {
 
 function admitted(input) {
 	const deny = evalQuery('data.grow.admission.deny', input);
-	if (!Array.isArray(deny)) fail('grow.admission.deny did not return an array');
+	if (!Array.isArray(deny)) fail('grow.admission.deny が配列を返さなかった');
 	return { ok: deny.length === 0, deny };
 }
 
 function assertUnderFeatures(abs) {
 	const rel = relative(FEATURES, abs);
 	if (rel.startsWith('..') || rel.includes(':')) {
-		fail(`--admit path must be under knowledge/features/: ${abs}`);
+		fail(`--admit のパスは knowledge/features/ 配下: ${abs}`);
 	}
 	if (!FEATURE_NAME.test(rel.split('/').pop() ?? '')) {
-		fail(`--admit filename must match F-NNNN-*.yaml`);
+		fail(`--admit のファイル名は F-NNNN-*.yaml`);
 	}
 }
 
 runOpaTest();
 if (testOnly) {
-	console.log('[feature-gate] opa test pass');
+	console.log('[feature-gate] opa test 成功');
 	process.exit(0);
 }
 
 if (wantsAdmit) {
-	if (!admitPath) fail('--admit requires a knowledge/features/F-NNNN-*.yaml path');
+	if (!admitPath) fail('--admit には knowledge/features/F-NNNN-*.yaml が必要');
 	const abs = resolve(ROOT, admitPath);
-	if (!existsSync(abs)) fail(`--admit file not found: ${admitPath}`);
+	if (!existsSync(abs)) fail(`--admit のファイルが無い: ${admitPath}`);
 	assertUnderFeatures(abs);
 	const feature = loadFeature(abs);
-	const { ok, deny } = admitted({ action: 'admit', feature });
-	if (!ok) fail(`admit denied for ${admitPath}: ${JSON.stringify(deny)}`);
-	console.log(`[feature-gate] admit allow ${feature.id}`);
+	const resolved = resolveMergeBase();
+	if (!resolved) fail('origin/main または main との merge-base が解けない。欠落で通すことを拒否する');
+	const rel = relative(ROOT, abs).replaceAll('\\', '/');
+	const { ok, deny } = admitted({
+		action: 'admit',
+		feature,
+		feature_in_merge_base: inMergeBase(resolved.mb, rel),
+		f0001_in_merge_base: inMergeBase(resolved.mb, F0001)
+	});
+	if (!ok) fail(`入場拒否 ${admitPath}: ${JSON.stringify(deny)}`);
+	console.log(`[feature-gate] 入場許可 ${feature.id}`);
 	process.exit(0);
 }
 
 const resolved = resolveMergeBase();
-if (!resolved) fail('cannot resolve merge-base against origin/main or main; refusing fail-open');
+if (!resolved) fail('origin/main または main との merge-base が解けない。欠落で通すことを拒否する');
 
 const files = featureFiles();
-if (files.length === 0) fail('no knowledge/features/F-NNNN-*.yaml (正本が空)');
+if (files.length === 0) fail('knowledge/features/F-NNNN-*.yaml が無い（正本が空）');
 
 const loaded = files.map((file) => ({ file, rel: relFeature(file), feature: loadFeature(file) }));
 const ids = new Set();
 for (const { file, rel, feature } of loaded) {
 	const deny = evalQuery('data.feature.canon.deny', { feature });
 	if (!Array.isArray(deny) || deny.length) fail(`${file}: ${JSON.stringify(deny)}`);
-	if (ids.has(feature.id)) fail(`duplicate feature.id ${feature.id}`);
+	if (ids.has(feature.id)) fail(`feature.id が重複 ${feature.id}`);
 	ids.add(feature.id);
 	if (!rel.split('/').pop()?.startsWith(`${feature.id}-`)) {
-		fail(`${file}: filename must start with ${feature.id}-`);
+		fail(`${file}: ファイル名は ${feature.id}- で始める`);
 	}
 }
 
 const paths = diffPaths(resolved);
 const f0001InBase = inMergeBase(resolved.mb, F0001);
 const allCanon = evalQuery('data.harness.canon.paths', { diff_paths: paths });
-if (!Array.isArray(allCanon)) fail('harness.canon.paths did not return an array');
+if (!Array.isArray(allCanon)) fail('harness.canon.paths が配列を返さなかった');
 
 const canonPaths = allCanon.filter((p) => {
 	const hit = loaded.find((x) => x.rel === p);
@@ -259,12 +342,12 @@ if (canonPaths.length > 0) {
 				});
 				return `${feature.id}: ${JSON.stringify(deny)}`;
 			});
-			fail(`canon path ${p} is not covered by any eligible Feature.\n  ${detail.join('\n  ')}`);
+			fail(`canon パス ${p} を被覆する入場可能な Feature が無い。\n  ${detail.join('\n  ')}`);
 		}
 	}
-	console.log(`[feature-gate] covered:\n  ${reports.join('\n  ')}`);
+	console.log(`[feature-gate] 被覆:\n  ${reports.join('\n  ')}`);
 }
 
 console.log(
-	`[feature-gate] pass (${loaded.length} feature(s), ${paths.length} diff path(s), ${canonPaths.length} canon)`
+	`[feature-gate] 成功（Feature ${loaded.length}、差分 ${paths.length}、canon ${canonPaths.length}）`
 );

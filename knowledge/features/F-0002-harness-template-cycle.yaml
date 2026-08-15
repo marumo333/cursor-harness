@@ -1,0 +1,36 @@
+feature:
+  id: F-0002
+  title: 製品排除テンプレートと有界サイクルグラフ
+  kind: harness-grow
+  status: proposed
+  source: human
+  created: '2026-08-14'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    製品 agent/skill が残りテンプレートにならない。自己改善は1周の手順だけで、
+    省略指標もマージ後の有界再起も無い。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - .claude/
+      - .cursor/
+      - .github/workflows/
+      - knowledge/
+      - policy/
+      - scripts/
+      - package.json
+      - README.md
+      - TEMPLATE.md
+      - docs/superpowers/
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: true
+    no_jp_code_merge_write: true
+    supersedes:
+      - '0032'
+      - '0034'

@@ -6,7 +6,7 @@ import data.grow.admission
 
 base := {
 	"id": "F-0002",
-	"title": "promote a skill",
+	"title": "skill を昇格する",
 	"kind": "harness-grow",
 	"status": "admitted",
 	"source": "reflector",
@@ -17,13 +17,55 @@ base := {
 }
 
 test_admit_allow_after_review if {
-	admission.allow with input as {"action": "admit", "feature": base}
+	admission.allow with input as {
+		"action": "admit",
+		"feature": base,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
+	}
+}
+
+test_admit_new_born_admitted_denied if {
+	not admission.allow with input as {
+		"action": "admit",
+		"feature": base,
+		"feature_in_merge_base": false,
+		"f0001_in_merge_base": true,
+	}
+}
+
+test_admit_missing_feature_in_merge_base_denied if {
+	not admission.allow with input as {
+		"action": "admit",
+		"feature": base,
+		"f0001_in_merge_base": true,
+	}
+}
+
+test_admit_missing_f0001_in_merge_base_denied if {
+	not admission.allow with input as {
+		"action": "admit",
+		"feature": base,
+		"feature_in_merge_base": true,
+	}
+}
+
+test_apply_missing_feature_in_merge_base_denied if {
+	not admission.allow with input as {
+		"action": "apply",
+		"feature": base,
+		"f0001_in_merge_base": true,
+		"diff_paths": [".claude/skills/example/SKILL.md"],
+		"existing_adrs": [],
+	}
 }
 
 test_apply_allow_when_paths_covered if {
 	admission.allow with input as {
 		"action": "apply",
 		"feature": base,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md"],
 		"existing_adrs": [],
 	}
@@ -33,6 +75,8 @@ test_deny_empty_feature_apply if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": {},
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/CLAUDE.md"],
 		"existing_adrs": [],
 	}
@@ -42,6 +86,8 @@ test_deny_missing_status_apply if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": object.remove(base, {"status"}),
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md"],
 		"existing_adrs": [],
 	}
@@ -52,6 +98,8 @@ test_deny_apply_without_review if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": pending,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md"],
 		"existing_adrs": [],
 	}
@@ -66,6 +114,8 @@ test_deny_self_reported_non_mutate if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": chore,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/CLAUDE.md", "policy/learned/backdoor.rego"],
 		"existing_adrs": [],
 	}
@@ -75,6 +125,8 @@ test_deny_uncovered_canon_path if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": base,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md", "knowledge/criteria/code-quality.yaml"],
 		"existing_adrs": [],
 	}
@@ -84,6 +136,8 @@ test_cover_paths_allows_partial_feature if {
 	admission.allow with input as {
 		"action": "apply",
 		"feature": base,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md", "knowledge/criteria/code-quality.yaml"],
 		"cover_paths": [".claude/skills/example/SKILL.md"],
 		"existing_adrs": [],
@@ -95,6 +149,8 @@ test_deny_apply_while_proposed if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": proposed,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md"],
 		"existing_adrs": [],
 	}
@@ -105,6 +161,8 @@ test_deny_apply_when_done if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": done,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md"],
 		"existing_adrs": [],
 	}
@@ -114,6 +172,8 @@ test_deny_silent_adr_rewrite if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": object.union(base, {"proposed_change": {"mutates_canon": true, "paths": ["knowledge/decisions/"]}}),
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": ["knowledge/decisions/0016-definition-of-done.md"],
 		"existing_adrs": ["knowledge/decisions/0016-definition-of-done.md"],
 	}
@@ -127,6 +187,8 @@ test_allow_adr_amend_when_flagged if {
 	admission.allow with input as {
 		"action": "apply",
 		"feature": feat,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": ["knowledge/decisions/0016-definition-of-done.md"],
 		"existing_adrs": ["knowledge/decisions/0016-definition-of-done.md"],
 	}
@@ -134,7 +196,7 @@ test_allow_adr_amend_when_flagged if {
 
 f0001 := {
 	"id": "F-0001",
-	"title": "introduce the gate",
+	"title": "ゲートを導入する",
 	"kind": "harness-grow",
 	"status": "in_progress",
 	"source": "human",
@@ -149,6 +211,7 @@ test_bootstrap_f0001_only_while_introducing if {
 	admission.allow with input as {
 		"action": "apply",
 		"feature": f0001,
+		"feature_in_merge_base": false,
 		"f0001_in_merge_base": false,
 		"diff_paths": [
 			"knowledge/features/F-0001-feature-canon-opa-grow.yaml",
@@ -163,6 +226,7 @@ test_bootstrap_without_intro_file_denied if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": f0001,
+		"feature_in_merge_base": false,
 		"f0001_in_merge_base": false,
 		"diff_paths": ["policy/grow.rego", ".claude/skills/harness-grow/SKILL.md"],
 		"existing_adrs": [],
@@ -173,6 +237,7 @@ test_bootstrap_after_merge_denied if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": f0001,
+		"feature_in_merge_base": true,
 		"f0001_in_merge_base": true,
 		"diff_paths": [
 			"knowledge/features/F-0001-feature-canon-opa-grow.yaml",
@@ -184,13 +249,18 @@ test_bootstrap_after_merge_denied if {
 
 test_bootstrap_other_id_denied if {
 	boot := object.union(base, {"id": "F-0003", "bootstrap": true, "source": "human"})
-	not admission.allow with input as {"action": "admit", "feature": boot}
+	not admission.allow with input as {
+		"action": "admit",
+		"feature": boot,
+		"feature_in_merge_base": false,
+		"f0001_in_merge_base": true,
+	}
 }
 
 test_omit_mutates_canon_denied if {
 	omit_pc := {
 		"id": "F-0002",
-		"title": "promote a skill",
+		"title": "skill を昇格する",
 		"kind": "harness-grow",
 		"status": "admitted",
 		"source": "reflector",
@@ -202,6 +272,8 @@ test_omit_mutates_canon_denied if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": omit_pc,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md"],
 		"existing_adrs": [],
 	}
@@ -212,6 +284,7 @@ test_new_feature_cannot_be_born_approved if {
 		"action": "apply",
 		"feature": base,
 		"feature_in_merge_base": false,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md"],
 		"existing_adrs": [],
 	}
@@ -221,6 +294,8 @@ test_empty_cover_paths_denied if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": base,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/skills/example/SKILL.md"],
 		"cover_paths": [],
 		"existing_adrs": [],
@@ -230,7 +305,7 @@ test_empty_cover_paths_denied if {
 test_c3_bypass_ticket_denied if {
 	bypass := {
 		"id": "F-0099",
-		"title": "bypass",
+		"title": "迂回",
 		"kind": "chore",
 		"status": "admitted",
 		"source": "human",
@@ -241,6 +316,8 @@ test_c3_bypass_ticket_denied if {
 	not admission.allow with input as {
 		"action": "apply",
 		"feature": bypass,
+		"feature_in_merge_base": true,
+		"f0001_in_merge_base": true,
 		"diff_paths": [".claude/CLAUDE.md", "policy/learned/backdoor.rego"],
 		"existing_adrs": [],
 	}

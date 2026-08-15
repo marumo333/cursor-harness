@@ -15,7 +15,7 @@ opa:
   test: 'node scripts/feature-gate.mjs --test'
   gate: 'node scripts/feature-gate.mjs'
   admit: 'node scripts/feature-gate.mjs --admit <feature.yaml>'
-  judge: deny_empty # allow 完全ルールは信用しない（learned 注入対策）
+  judge: deny_empty # allow の完全ルールは信用しない（learned 注入対策）
 
 actions:
   admit:

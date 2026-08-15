@@ -7,17 +7,15 @@ description: ハーネス健全性を決定的にスコア化し履歴に記録�
 
 ## スコア項目（決定的・0-100）
 
-- ルール網羅: CLAUDE.md 規約1-13 が hooks/agent 禁止事項で強制されているか。
-- knowledge 充足: PRD 有り・ADR に未解決の重要判断が残っていないか・criteria が最新か。
-- **routing 整合（[[0033]] / [[0037]]）**: `model-routing.yaml` の chat_orchestrator=Grok・opus_gates・
-  review_trio(Opus/Grok/Sol)・budget_guards が AGENTS / skills / `.claude/agents/*.md` frontmatter /
-  ルーティング ADR（0016/0018/0031/0032/0033/0037）と矛盾していないか。
-  `claude-fable` の残存は `fable_exception`・明示禁止文・履歴 ADR / 過去の plan・learnings 以外にあってはならない。
-- **arch fitness 文書整合（[[0034]]）**: `arch:fitness` が verify/0016/code-quality に載っているか。
-- 検証網羅: クリティカル領域(認証/課金/認可)のテスト有無・e2e カバレッジ。
-- セキュリティ: security-policy.yaml 各項目の実装状況（OWASP LLM/Agentic Top10）。
-- 学習: learnings が更新され、再現可能な改善が Feature 正本に起票され、OPA allow のうえ golden path が昇格されているか（[[0038]]）。
-- **feature/OPA 整合**: `opa test policy/` 緑、`knowledge/features/` が schema を満たす、canon 差分が票で被覆されているか。
+- ルール網羅: CLAUDE.md の禁止が hooks/agent で強制されているか。
+- knowledge 充足: ADR に未解決の重要判断が残っていないか・criteria が最新か。
+- **席割当の整合（[[0033]] / [[0037]] / [[0040]]）**: `model-routing.yaml` の chat_orchestrator=Grok（世代ピンは 0040）・grok_task・opus_gates・
+  review_trio(Opus/Grok/Sol)・budget_guards が AGENTS / skills / `.claude/agents/*.md` 先頭事項と矛盾していないか。
+- **製品ゼロ（[[0039]]）**: 認証/課金/UI/DB/e2e/HOTL/配信の agent・skill・hook・criteria が再混入していないか。
+- **cycle 整合（[[0039]]）**: required-cycle の必須ノードが記録され、3指標が出せるか。
+- セキュリティ: security-policy.yaml 各項目（OWASP LLM/Agentic Top10）。
+- 学習: learnings が更新され、再現可能な改善が Feature 正本に起票され、OPA allow のうえ成功経路が昇格されているか（[[0038]]）。
+- **feature/OPA 整合**: `opa test policy/` 緑、`knowledge/features/` が型を満たす、canon 差分が票で被覆されているか。
 
 ## 実行席
 

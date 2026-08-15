@@ -2,7 +2,7 @@ package harness.canon
 
 import rego.v1
 
-# Single source of canon paths (ADR 0038). JS gate must query this package.
+# canon パスの正本（ADR 0038）。JS ゲートはこのパッケージを問い合わせる。
 
 canon_path(p) if startswith(p, ".claude/skills/")
 
@@ -17,6 +17,9 @@ canon_path(p) if startswith(p, ".cursor/hooks/")
 canon_path(p) if p == ".cursor/log_subagent_model.mjs"
 
 canon_path(p) if startswith(p, "knowledge/features/")
+
+# events.jsonl は追記ログ（状態）。正本は必須集合だけ。
+canon_path(p) if p == "knowledge/graph/required-cycle.json"
 
 canon_path(p) if p == ".claude/CLAUDE.md"
 
@@ -33,6 +36,12 @@ canon_path(p) if startswith(p, "policy/")
 canon_path(p) if startswith(p, "scripts/")
 
 canon_path(p) if p == "package.json"
+
+canon_path(p) if p == "pnpm-lock.yaml"
+
+canon_path(p) if p == "README.md"
+
+canon_path(p) if p == "TEMPLATE.md"
 
 canon_path(p) if startswith(p, ".github/workflows/")
 

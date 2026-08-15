@@ -5,7 +5,7 @@
 ## 起票
 
 1. 次番号を決める（既存 `F-NNNN` の最大+1）。
-2. `F-NNNN-kebab-slug.yaml` を追加する。トップレベルは必ず `feature:`。
+2. `F-NNNN-kebab-slug.yaml` を追加する。トップレベルは必ず `feature:`（機械キーは英語のまま）。
 3. `status: proposed` で起票。敵対レビュー後に `evidence.adversarial_review: approved`。
 4. `node scripts/feature-gate.mjs --admit knowledge/features/F-NNNN-….yaml` が allow なら
    `status: admitted`。
@@ -17,7 +17,7 @@ kind:
 | ------------- | ----------------------------------------- | ------------------------------ |
 | harness-grow  | 手順・判断の昇格                          | skill / CLAUDE / ADR / criteria |
 | harness-rule  | 学習した不変条件を決定的ルールにする      | `policy/learned/*.rego`        |
-| product       | 製品挙動（この切り出しリポでは稀）        | 製品コード                     |
-| chore         | canon をmutateしない雑務                  | ドキュメント等                 |
+| product       | 製品リポ側で足す票（テンプレートでは使わない） | 製品コード                     |
+| chore         | canon を書き換えない雑務                  | ドキュメント等                 |
 
 GitHub Issue は鏡にできるが、正本ではない（[[0033]]）。

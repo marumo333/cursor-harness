@@ -1,0 +1,38 @@
+feature:
+  id: F-0005
+  title: 常時 pre-commit と日本語 conventional 主語
+  kind: harness-grow
+  status: proposed
+  source: human
+  created: '2026-08-15'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    Claude PreToolUse だけの pre-commit は Cursor Shell と --no-verify で迂回できる。
+    コミット主語が英語だと人が読む文面の規約とずれる。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - scripts/
+      - .claude/hooks/
+      - .claude/settings.json
+      - .cursor/hooks.json
+      - .cursor/hooks/
+      - .github/workflows/
+      - package.json
+      - knowledge/decisions/
+      - knowledge/features/
+      - knowledge/criteria/
+      - .claude/skills/
+      - .claude/AGENTS.md
+      - README.md
+      - TEMPLATE.md
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: true
+    no_jp_code_merge_write: true
+    supersedes: []

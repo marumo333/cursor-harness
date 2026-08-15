@@ -14,8 +14,8 @@ review_states := {"approved", "pending", "not_required"}
 
 valid if count(deny) == 0
 
-# Helpers are complete rules so `not helper` is true when the field is missing
-# (undefined refs inside `not (x in set)` are hoisted and silently skip the deny).
+# ヘルパーは完全ルール。欠落時は not helper が真になる
+# （`not (x in set)` 内の未定義参照は hoisting され deny を飛ばす）
 
 has_id if regex.match(`^F-[0-9]{4}$`, feature.id)
 
@@ -58,35 +58,35 @@ rule_path_present if {
 	startswith(p, "policy/")
 }
 
-deny contains "feature.id must match F-NNNN" if not has_id
+deny contains "feature.id は F-NNNN 形式" if not has_id
 
-deny contains "feature.title is required" if not has_title
+deny contains "feature.title は必須" if not has_title
 
-deny contains "feature.kind must be harness-grow|harness-rule|product|chore" if not has_kind
+deny contains "feature.kind は harness-grow|harness-rule|product|chore" if not has_kind
 
-deny contains "feature.status must be a known status" if not has_status
+deny contains "feature.status が不正" if not has_status
 
-deny contains "feature.source must be human|reflector|audit" if not has_source
+deny contains "feature.source は human|reflector|audit" if not has_source
 
-deny contains "feature.learning_refs must be a non-empty array" if not has_learning_refs
+deny contains "feature.learning_refs は空でない配列" if not has_learning_refs
 
-deny contains "each learning_ref must start with knowledge/" if {
+deny contains "learning_ref は knowledge/ で始まる" if {
 	has_learning_refs
 	not learning_refs_prefixed
 }
 
-deny contains "feature.proposed_change.paths must be a non-empty array" if not has_paths
+deny contains "proposed_change.paths は空でない配列" if not has_paths
 
-deny contains "harness-rule features must include a path under policy/" if {
+deny contains "harness-rule は policy/ 配下のパスが必要" if {
 	feature.kind == "harness-rule"
 	not rule_path_present
 }
 
-deny contains "feature.evidence.adversarial_review must be approved|pending|not_required" if not has_review_state
+deny contains "adversarial_review は approved|pending|not_required" if not has_review_state
 
-deny contains "feature.proposed_change.mutates_canon must be a boolean" if not has_mutates_flag
+deny contains "mutates_canon は真偽値" if not has_mutates_flag
 
-deny contains "chore may not set proposed_change.mutates_canon=true" if {
+deny contains "chore は mutates_canon=true にできない" if {
 	feature.kind == "chore"
 	feature.proposed_change.mutates_canon == true
 }

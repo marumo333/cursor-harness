@@ -2,6 +2,8 @@ name: feature-gate
 on:
   push:
   pull_request:
+permissions:
+  contents: read
 jobs:
   opa:
     runs-on: ubuntu-latest
@@ -9,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Run feature-gate (main's policy after it exists)
+      - name: feature-gate を実行する（main に載った後は main の policy）
         run: |
           set -euo pipefail
           if git cat-file -e origin/main:policy/grow.rego 2>/dev/null; then
@@ -19,4 +21,22 @@ jobs:
               node "$tmp/scripts/feature-gate.mjs"
           else
             node scripts/feature-gate.mjs
+          fi
+      - name: ハーネス単体テスト
+        run: node --test scripts/cycle-metrics.test.mjs scripts/commit-msg-lint.test.mjs scripts/git-commit-cmd.test.mjs scripts/commit-guard.test.mjs scripts/blocked-env.test.mjs scripts/lint-commit-range.test.mjs
+      - name: コミット主語を検査する
+        env:
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          lint_script="scripts/lint-commit-range.mjs"
+          if git cat-file -e origin/main:scripts/lint-commit-range.mjs 2>/dev/null; then
+            tmp="$(mktemp -d)"
+            git archive origin/main scripts | tar -x -C "$tmp"
+            lint_script="$tmp/scripts/lint-commit-range.mjs"
+          fi
+          if [ -n "${PR_HEAD}" ]; then
+            node "$lint_script" --tip "${PR_HEAD}"
+          else
+            node "$lint_script" --tip
           fi

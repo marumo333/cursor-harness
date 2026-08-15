@@ -1,53 +1,41 @@
-# コード品質バー（実用バランス）— ハーネス/hook が機械参照する。出典: ADR 0013-0016
-level: pragmatic-balance
+# コード品質バー — ハーネス テンプレート。出典: ADR 0013-0016 / 0038 / 0039
+# キー名は機械参照用。
+level: pragmatic-balance # 実用バランス
 
-typescript:
-  strict: true
-  no_any_in: ['src/lib/server', 'src/lib/**/domain']
-  validate_external_input_with: zod # 境界の外部データは検証してから型付け
-
-tdd_required_for: # test-first 必須（ADR 0013）
-  - auth/session
-  - authz/billing (reserve->settle)
-  - ports and repositories
-  - stripe webhook
-  - rls policies
-  - product_behavior_change # 観測可能挙動の feature / bugfix / 新規 e2e 契約
+tdd_required_for: # TDD 必須領域
+  - feature_gate
+  - cycle_metrics
+  - opa_policy
+  - harness_behavior_change # ハーネスの観測可能挙動
 
 tdd_process:
-  red_before_green: required
-  red_evidence: e2e_runner_or_vitest_fail_log
+  red_before_green: required # 赤を先に観測
+  red_evidence: node_test_fail_log
 
-tdd_exceptions:
-  - docs_only
-  - style_only_no_behavior
+tdd_exceptions: # 人間が明示する例外
+  - docs_only # 文書のみ
+  - style_only_no_behavior # 挙動なしの体裁
   - snapshot_baseline_import
-  - config_chore
-  - retrofit_with_human_ack
+  - config_chore # 設定の雑務
+  - retrofit_with_human_ack # 後付けを人間が認める
 
 testing:
-  unit: vitest # 純ロジック domain/utils
-  integration: services # Supabase ローカル or モック
-  e2e: playwright # 主要ユーザーフロー
-  ui_components: light # 重要 widget のみ
+  unit: node:test
+  opa: policy/*_test.rego
 
-definition_of_done: # 全て真で「前進可能」（ADR 0016）
-  - typecheck_green
-  - lint_format_pass
-  - critical_tests_green
-  - e2e_green_if_flow_touched
-  - tdd_red_evidence_or_exception # 挙動変更は red 証跡、例外は tdd_exceptions
-  - secret_scan_pass # PUBLIC_ 以外の鍵がクライアント/コミットに無い
-  - arch_fitness_pass # npm run arch:fitness（ADR 0034）
-  - review_pass # 独立敵対レビュー（高リスクは Opus/Grok/Sol 3体・[[0037]]）
-  - plan_confirm_if_fanout # fan-out 時は plan-confirm 証跡（ADR 0033）
-  - learnings_appended # knowledge/learnings.md に内省
-  - feature_opa_gate # canon mutate 時は Feature 正本 + opa apply allow（ADR 0038）
+definition_of_done:
+  - feature_opa_gate # node scripts/feature-gate.mjs（ADR 0038）
+  - harness_tests_green # pnpm test（cycle 指標）
+  - tdd_red_evidence_or_exception
+  - secret_scan_pass
+  - review_pass # 独立敵対レビュー（高リスクは Opus/Grok/Sol 3体）
+  - plan_confirm_if_fanout
+  - learnings_appended
+  - cycle_skills_recorded # 必須 skill の used/skipped（ADR 0039）
+  - commit_hook_and_ja_conventional # pre-commit 必須・主語は日本語 prefix（ADR 0042）
 
 naming:
   files: kebab-case
   types: PascalCase
-  repositories: '*.repo.ts | *.client.ts'
-  ports: 'XxxPort'
-  services: '*.service.ts'
-  features: 'verb-noun (e.g. chat-send)'
+  features: 'F-NNNN-slug.yaml'
+  cycles: 'C-NNNN'

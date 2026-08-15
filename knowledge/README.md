@@ -1,33 +1,32 @@
-# knowledge/ — 意思決定ログ & 手続きメモリ（自己成長ループの記憶層）
+# knowledge/ — 意思決定ログと手続きメモリ
 
-判断基準を**データとして保持**し、自己成長ループが**着手時に読み・内省時に書く**場所。
+判断基準をデータとして保持し、自己成長ループが着手時に読み・内省時に書く場所。
 
 ```
-decisions/    ADR（1ファイル1決定。context/decision/consequences）。この会話の確定事項を seed 投入。
-features/     自己改善・ハーネス変更の**作業正本**（F-NNNN YAML。[[0038]]）。
-learnings.md  実行ごとの what worked / failed / edge cases（日記。正本ではない）。
-criteria/     判断基準を YAML 化（コスト閾値・モデルルーティング・主権ルール・検索方針）。
-benchmarks/   harness 監査スコア履歴（実行するほど成長しているかを可視化）。
-state.sqlite  ECC式セッション状態（.gitignore・ローカル記録）。
+decisions/    ADR（1ファイル1決定）
+features/     自己改善の作業正本（F-NNNN YAML・[[0038]]）
+graph/        必須 skill の使用/省略と cycle 3指標（[[0039]]）
+learnings.md  実行ごとの worked / failed / edge cases（日記。正本ではない）
+criteria/     判断基準 YAML
+benchmarks/   ハーネス監査スコア履歴
 ```
 
 ## ルール
 
-- 新しい重要判断は必ず ADR を起票（連番）。過去 ADR を覆す時は新 ADR で `Supersedes` を明記。
-- ループの各タスク完了時に `learnings.md` へ追記（CLAUDE.md 規約⑧・`post_task_reflect` hook）。
+- 新しい重要判断は必ず ADR を起票（連番）。過去 ADR を覆す時は新 ADR で廃止対象を明記する。
+- ループの各タスク完了時に `learnings.md` へ追記し、必須 skill を `graph/events.jsonl` に記録する。
 - **再現可能な改善・canon 変更は Feature を正本として起票**してから適用する（[[0038]]）。
-  reflector は起票、harness-grow は OPA admit/apply allow の票だけ書く。
-- 判断が再現可能な閾値・ルールなら `criteria/*.yaml` に落とす。入場条件と不変条件は
-  `policy/*.rego`（`opa test` / `node scripts/feature-gate.mjs`）。
+- 判断が再現可能な閾値・ルールなら `criteria/*.yaml` に落とす。入場条件と不変条件は `policy/*.rego`。
+- 製品の要求定義や案件グラフは置かない（[[0039]]）。
 
 ## ADR フォーマット
 
 ```
 # ADR NNNN: タイトル
-- Status: Proposed | Accepted | Superseded by NNNN
-- Date: YYYY-MM-DD
-- Context: なぜこの判断が要るか
-- Decision: 何を決めたか
-- Consequences: 結果・トレードオフ・将来の逃げ道
-- Links: [[other-adr]]
+- 状態: 提案 | 受理 | 廃止（後継 NNNN）
+- 日付: YYYY-MM-DD
+- 背景: なぜこの判断が要るか
+- 決定: 何を決めたか
+- 結果: 結果・トレードオフ・将来の逃げ道
+- 関連: [[他のADR]]
 ```

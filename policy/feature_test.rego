@@ -6,7 +6,7 @@ import data.feature.canon
 
 good_feature := {
 	"id": "F-0002",
-	"title": "pin a learned invariant",
+	"title": "学習した不変条件を固定する",
 	"kind": "harness-rule",
 	"status": "proposed",
 	"source": "reflector",
@@ -25,17 +25,17 @@ test_reject_empty_feature if {
 }
 
 test_reject_missing_id if {
-	"feature.id must match F-NNNN" in canon.deny with input as {"feature": object.remove(good_feature, {"id"})}
+	"feature.id は F-NNNN 形式" in canon.deny with input as {"feature": object.remove(good_feature, {"id"})}
 }
 
 test_reject_missing_kind if {
-	"feature.kind must be harness-grow|harness-rule|product|chore" in canon.deny with input as {"feature": object.remove(good_feature, {"kind"})}
+	"feature.kind は harness-grow|harness-rule|product|chore" in canon.deny with input as {"feature": object.remove(good_feature, {"kind"})}
 }
 
 test_reject_missing_review if {
 	missing_review := {
 		"id": "F-0002",
-		"title": "pin a learned invariant",
+		"title": "学習した不変条件を固定する",
 		"kind": "harness-rule",
 		"status": "proposed",
 		"source": "reflector",
@@ -43,26 +43,26 @@ test_reject_missing_review if {
 		"proposed_change": {"mutates_canon": true, "paths": ["policy/learned/example.rego"]},
 		"evidence": {},
 	}
-	"feature.evidence.adversarial_review must be approved|pending|not_required" in canon.deny with input as {"feature": missing_review}
+	"adversarial_review は approved|pending|not_required" in canon.deny with input as {"feature": missing_review}
 }
 
 test_reject_bad_id if {
-	"feature.id must match F-NNNN" in canon.deny with input as {"feature": object.union(good_feature, {"id": "feat-1"})}
+	"feature.id は F-NNNN 形式" in canon.deny with input as {"feature": object.union(good_feature, {"id": "feat-1"})}
 }
 
 test_reject_empty_learning_refs if {
-	"feature.learning_refs must be a non-empty array" in canon.deny with input as {"feature": object.union(good_feature, {"learning_refs": []})}
+	"feature.learning_refs は空でない配列" in canon.deny with input as {"feature": object.union(good_feature, {"learning_refs": []})}
 }
 
 test_reject_harness_rule_without_policy_path if {
 	bad := object.union(good_feature, {"proposed_change": {"mutates_canon": true, "paths": [".claude/skills/x/SKILL.md"]}})
-	"harness-rule features must include a path under policy/" in canon.deny with input as {"feature": bad}
+	"harness-rule は policy/ 配下のパスが必要" in canon.deny with input as {"feature": bad}
 }
 
 test_reject_missing_mutates_flag if {
 	missing_mutates := {
 		"id": "F-0002",
-		"title": "pin a learned invariant",
+		"title": "学習した不変条件を固定する",
 		"kind": "harness-rule",
 		"status": "proposed",
 		"source": "reflector",
@@ -70,10 +70,10 @@ test_reject_missing_mutates_flag if {
 		"proposed_change": {"paths": ["policy/learned/example.rego"]},
 		"evidence": {"adversarial_review": "pending"},
 	}
-	"feature.proposed_change.mutates_canon must be a boolean" in canon.deny with input as {"feature": missing_mutates}
+	"mutates_canon は真偽値" in canon.deny with input as {"feature": missing_mutates}
 }
 
 test_reject_chore_mutating_canon if {
 	bad := object.union(good_feature, {"kind": "chore", "proposed_change": {"mutates_canon": true, "paths": ["README.md"]}})
-	"chore may not set proposed_change.mutates_canon=true" in canon.deny with input as {"feature": bad}
+	"chore は mutates_canon=true にできない" in canon.deny with input as {"feature": bad}
 }

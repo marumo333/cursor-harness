@@ -1,0 +1,47 @@
+name: harness-cycle
+on:
+  pull_request:
+    types: [closed]
+jobs:
+  after-merge:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+      - name: 承認を記録し、必要なら次 Feature を起票する
+        env:
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MERGED: 'true'
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          out="$(node scripts/cycle-after-merge.mjs)"
+          echo "$out"
+          recurse="$(node -e 'const o=JSON.parse(process.argv[1]); process.stdout.write(String(o.recurse))' "$out")"
+          git config user.name "harness-cycle"
+          git config user.email "harness-cycle@users.noreply.github.com"
+          git add knowledge/graph/events.jsonl
+          if [ "$recurse" = "true" ]; then
+            git add knowledge/features
+            branch="cycle/followup-${{ github.event.pull_request.number }}"
+            git checkout -b "$branch"
+            git commit -m "chore: サイクル承認を記録し、続きの Feature を起票する。"
+            git push -u origin "$branch"
+            gh pr create --draft --base "${{ github.event.pull_request.base.ref }}" --head "$branch" \
+              --title "サイクル続き（#${{ github.event.pull_request.number }} マージ後）" \
+              --body "人間が #${{ github.event.pull_request.number }} をマージした。有界再起（ADR 0039）: 次 Feature は proposed。新しいエージェントセッションで実行すること。この workflow はエージェントを起動しない。"
+          else
+            if git diff --cached --quiet; then
+              echo "イベントの変更なし"
+              exit 0
+            fi
+            git commit -m "chore: サイクル #${{ github.event.pull_request.number }} の人間承認を記録する。"
+            git push origin HEAD:"${{ github.event.pull_request.base.ref }}"
+          fi

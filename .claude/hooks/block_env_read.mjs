@@ -2,7 +2,7 @@
 /**
  * .env 読み取りブロック（規約1）。
  * - Claude Code PreToolUse(Bash): tool_input.command を検査 → 拒否は exit 2
- * - Cursor beforeShellExecution / beforeReadFile: JSON permission deny
+ * - Cursor beforeShellExecution / beforeReadFile: JSON で拒否
  */
 import { readFileSync } from 'node:fs';
 

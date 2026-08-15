@@ -5,6 +5,10 @@
 			{
 				"command": "node .cursor/hooks/block-env-read.mjs",
 				"failClosed": true
+			},
+			{
+				"command": "node .cursor/hooks/pre-commit.mjs",
+				"failClosed": true
 			}
 		],
 		"beforeReadFile": [
