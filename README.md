@@ -6,10 +6,10 @@
 
 - 席: 親 Grok 4.6 / Opus 5 ゲート / Sol は**高リスク3体多数決のみ**
 - 正本: [`knowledge/features/F-NNNN-*.yaml`](knowledge/features/README.md)。GitHub Issues / Spec Kit は正本にしない（[ADR 0033](knowledge/decisions/0033-harness-api-budget-routing.md)）
-- 入場: OPA `node scripts/feature-gate.mjs`
+- ゲート: OPA `node scripts/feature-gate.mjs`（自己改善ループそのものではない）
 - 出生規則: Feature は `proposed` で起票する。**同一 PR で `admitted` / `approved` にしない**（[ADR 0038](knowledge/decisions/0038-feature-canon-opa-grow.md)）
 - 管理: skill の使用/省略を `knowledge/graph/` に書き、ノード / 辺 / 状態の3指標で計る
-- 再起: 人間が PR をマージしたあと、省略が残っていれば次 Feature の下書き PR を開く（エージェントは自動起動しない）。戻る先は Feature 起票であり、clone からやり直さない
+- 再起的自己改善: AI 実装 PR に省略・失敗・差し戻しが残ったとき、人間がマージしたあと次 Feature の下書き PR を開く（エージェントは自動起動しない）。戻る先は Feature 起票であり、clone からやり直さない
 - パッケージ: pnpm（[ADR 0041](knowledge/decisions/0041-pnpm-package-manager.md)）
 - commit: hook 必須。主語は `feat:` / `fix:` / `docs:` 等 + 日本語（[ADR 0042](knowledge/decisions/0042-always-on-precommit-ja-conventional.md)）
 
@@ -29,19 +29,19 @@ node scripts/install-git-hooks.mjs
 
 ## アーキテクチャ
 
-手順の流れ図ではなく、層と正本の境界を示す。元ファイルは [`docs/architecture/`](docs/architecture/)。
+層と、AI 実装 PR の問題から自己改善が回る経路を示す。元ファイルは [`docs/architecture/`](docs/architecture/)。
 
 ### ランタイム
 
-人間が PR をマージすることだけが再起の点火。席の下に hook / CI、その下に feature-gate と OPA、最下が正本。製品の認証・課金・UI は置かない。
+席と強制の層。OPA は canon 変更のゲートであり、自己改善ループそのものではない。
 
 ![cursor-harness ランタイム](docs/architecture/harness-runtime-architecture.png)
 
-### 正本・入場・有界再起
+### 再起的自己改善
 
-Feature YAML が正本。GitHub PR は鏡。apply は deny が空のときだけ。再起は人間マージ後の下書き PR までで、エージェントは自動起動しない。
+AI 実装 PR に省略・失敗・差し戻しが残ったときだけ回る。人間のマージが点火。cycle-after-merge は下書き PR までで、エージェントは自動起動しない。OPA は横のゲート。
 
-![正本・入場・有界再起](docs/architecture/harness-canon-cycle-architecture.png)
+![再起的自己改善](docs/architecture/harness-self-improve-architecture.png)
 
 ## 構成
 
@@ -49,7 +49,7 @@ Feature YAML が正本。GitHub PR は鏡。apply は deny が空のときだけ
 .claude/          エージェント / skill / hook
 .cursor/          Cursor の hook
 knowledge/        ADR / 判断基準 / Feature / グラフ / 内省
-policy/           OPA（入場と cycle）
+policy/           OPA（ゲートと cycle）
 scripts/          feature-gate / cycle-* / githooks / commit-msg
 ```
 
