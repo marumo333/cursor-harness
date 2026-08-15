@@ -32,3 +32,5 @@
 {"t":"2026-08-15T07:56:52.030Z","type":"node_state","cycle":"C-0004","node":"skill:verify","state":"used"}
 {"t":"2026-08-15T07:56:52.051Z","type":"edge_state","cycle":"C-0004","from":"skill:verify","to":"skill:reflect","state":"taken","reason":"docs_only"}
 {"t":"2026-08-15T08:02:01.446Z","type":"human_approved","cycle":"C-0003","merge_sha":"b81edd0a7e64564dbad72a26975f4dfc20d1aae2","pr":"7"}
+{"t":"2026-08-15T08:06:58.517Z","type":"human_approved","cycle":"C-0004","merge_sha":"8c0532903cf1f4380fd4da714c14e593655f1995","pr":"8"}
+{"t":"2026-08-15T08:06:58.607Z","type":"cycle_open","cycle":"C-0005","source":"after-merge","from":"C-0004"}

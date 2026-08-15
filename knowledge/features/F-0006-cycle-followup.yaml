@@ -1,0 +1,28 @@
+feature:
+  id: F-0006
+  title: 人間承認後のサイクル続き（C-0004 から C-0005）
+  kind: harness-grow
+  status: proposed
+  source: audit
+  created: '2026-08-15'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    前サイクル C-0004 がマージされた（sha 8c0532903cf1f4380fd4da714c14e593655f1995）。
+    ノード省略率=0.25 辺省略率=0.5
+    状態完全性=1 失敗あり=false。
+    省略または失敗した必須 skill を再実行する。
+  proposed_change:
+    mutates_canon: false
+    paths:
+      - knowledge/graph/
+      - knowledge/learnings.md
+  evidence:
+    adversarial_review: not_required
+    review_agent: none
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: false
+    no_jp_code_merge_write: true
+    supersedes: []
