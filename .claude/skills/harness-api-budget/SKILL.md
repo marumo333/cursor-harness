@@ -3,15 +3,15 @@ name: harness-api-budget
 description: Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Solは3体のみ）。壁打ち〜検証の席判断で使う。
 ---
 
-# harness-api-budget skill（[[0033]] / [[0037]] / [[0039]]）
+# harness-api-budget skill（[[0033]] / [[0037]] / [[0039]] / [[0040]]）
 
 ## 席の要約
 
 | 席                   | いつ                                                                 |
 | -------------------- | -------------------------------------------------------------------- |
-| 親チャット **Grok**  | 常時。壁打ち・調査・下書き・ディスパッチ操作・統合・cycle 記録       |
-| Task **Opus 5**      | plan-confirm / 敵対レビュー / verifier / reflector / 設計 / grow 前  |
-| Task **Grok**        | 明文化済みの実装並列展開 / 複数試行                                  |
+| 親チャット **Grok 4.6** | 常時。壁打ち・調査・下書き・ディスパッチ操作・統合・cycle 記録    |
+| Task **Opus 5**         | plan-confirm / 敵対レビュー / verifier / reflector / 設計 / grow 前 |
+| Task **Grok 4.6**       | 明文化済みの実装並列展開 / 複数試行                                 |
 | Task **GPT-5.6 Sol** | **高リスク3体の第3レンズのみ**（secret）。他では使わない             |
 
 製品の構築役（auth-billing / ui / db / e2e）はテンプレートに置かない。

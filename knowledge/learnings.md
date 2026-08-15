@@ -8,6 +8,34 @@
 
 ---
 
+## 2026-08-15 — 親/trio の Grok 席を 4.6 に更新（ADR 0040 / F-0003）
+
+**問い**
+
+- 親の実体は `cursor-grok-4.6-xhigh-fast` なのに、文書と criteria が 4.5 / 旧スラッグのまま。
+- 4.6 GA 後、他席（Opus / Sol / Fable / Composer）も動かす必要があるか。
+
+**効いた**
+
+- 公式（2026-08-12）は 4.6 を長時間エージェントと指示追従の後継と明記。同一 Cursor Models 枠。
+- 旧スラッグ `grok-4.5-fast-xhigh` は廃止済み。Task 実在は `cursor-grok-4.6-high-fast`。
+- 親スラッグは実体の xhigh-fast、trio/並列展開は Task allowlist の high-fast に分けた。
+- Opus 5 / Sol / Fable / Composer / Auto は据え置き。席骨格（0033/0037）は触らない。
+- 旧 ADR 本文は歴史として残し、改正注記と 0040 だけを正本にした。
+
+**失敗 / リスク**
+
+- Cursor ヘルプの available-models はまだ flagship=4.5、Router 必須も 4.5。文書遅れを理由に戻さない。
+- F-0003 は `proposed`。同一 PR で admitted にしない。canon 適用は merge-base の F-0001 で被覆。
+- Task に 4.6 非 Fast / xhigh-fast が無い。親 UI と Task スラッグを同一にすると起動が落ちる。
+
+**次**
+
+- 次の Grok 世代は GA + Task スラッグ実在 + 公式の長時間/指示追従根拠が揃ってから ADR+Feature。
+- Claude/Sol も同じ条件。ヘルプの flagship 表記だけでは動かさない。
+
+---
+
 ## 2026-08-14 — 製品排除テンプレートと有界サイクル（ADR 0039 / F-0002）
 
 **問い**

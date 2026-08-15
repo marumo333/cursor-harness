@@ -1,0 +1,29 @@
+feature:
+  id: F-0003
+  title: 親/trio の Grok 席を 4.6 に更新
+  kind: harness-grow
+  status: proposed
+  source: human
+  created: '2026-08-15'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    親チャットの実体は Grok 4.6 なのに、文書と model-routing が 4.5 / 旧スラッグのまま。
+    0037 の「4.5 据え置き」が陳腐化している。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - knowledge/
+      - .claude/
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: true
+    no_jp_code_merge_write: true
+    supersedes:
+      - '0031'
+      - '0033'
+      - '0037'

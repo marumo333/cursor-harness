@@ -1,6 +1,7 @@
-# ハーネス席 — ADR 0031 / 0033 / 0037 / 0039
+# ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040
+# 親は UI 実体（xhigh+Fast）。trio/並列展開の Task は allowlist の high-fast。
 harness_agents:
-  chat_orchestrator: grok-4.5-fast-xhigh
+  chat_orchestrator: cursor-grok-4.6-xhigh-fast
   opus_gates:
     - plan-confirm
     - review_default
@@ -8,7 +9,7 @@ harness_agents:
     - reflector
   review_trio:
     - model: claude-opus-5-thinking-high
-    - model: grok-4.5-fast-xhigh
+    - model: cursor-grok-4.6-high-fast
     - model: gpt-5.6-sol-medium
   sonnet_pin: claude-sonnet-5-thinking-high
   fable_exception: claude-fable-5-thinking-high

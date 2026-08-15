@@ -5,7 +5,7 @@ model: claude-opus-5-thinking-high
 tools: Read, Grep, Glob, Bash
 ---
 
-# security-reviewer（Opus 5 既定・敵対的。3体多数決時は Task 起動時のモデル指定で Grok 4.5 / GPT-5.6 Sol にも割当）
+# security-reviewer（Opus 5 既定・敵対的。3体多数決時は Task 起動時のモデル指定で Grok 4.6 / GPT-5.6 Sol にも割当）
 
 ## 役割
 攻撃者視点で脆弱性を探す。**書き込みはせず指摘のみ**（修正は担当 agent）。

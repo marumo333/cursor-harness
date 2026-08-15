@@ -9,7 +9,7 @@ description: ハーネス健全性を決定的にスコア化し履歴に記録�
 
 - ルール網羅: CLAUDE.md の禁止が hooks/agent で強制されているか。
 - knowledge 充足: ADR に未解決の重要判断が残っていないか・criteria が最新か。
-- **席割当の整合（[[0033]] / [[0037]]）**: `model-routing.yaml` の chat_orchestrator=Grok・opus_gates・
+- **席割当の整合（[[0033]] / [[0037]] / [[0040]]）**: `model-routing.yaml` の chat_orchestrator=Grok 4.6・opus_gates・
   review_trio(Opus/Grok/Sol)・budget_guards が AGENTS / skills / `.claude/agents/*.md` 先頭事項と矛盾していないか。
 - **製品ゼロ（[[0039]]）**: 認証/課金/UI/DB/e2e/HOTL/配信の agent・skill・hook・criteria が再混入していないか。
 - **cycle 整合（[[0039]]）**: required-cycle の必須ノードが記録され、3指標が出せるか。
