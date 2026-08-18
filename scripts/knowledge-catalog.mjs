@@ -13,6 +13,7 @@ import {
 	assertIndexPath,
 	buildCatalog,
 	dumpJson,
+	parseCatalogArgs,
 	renderLlmsTxt
 } from './lib/knowledge-catalog.mjs';
 
@@ -64,7 +65,7 @@ function collect() {
 		path: rel(p),
 		text: readFileSync(p, 'utf8')
 	}));
-	const criteria = listFiles(join(ROOT, 'knowledge', 'criteria'), (n) => n.endsWith('.yaml')).map((p) => ({
+	const criteria = listFiles(join(ROOT, 'knowledge', 'criteria'), (n) => /\.ya?ml$/.test(n)).map((p) => ({
 		stem: p.split(/[\\/]/).pop().replace(/\.ya?ml$/, ''),
 		path: rel(p),
 		text: readFileSync(p, 'utf8')
@@ -97,19 +98,18 @@ function generate() {
 	};
 }
 
-const check = process.argv.includes('--check');
-const write = process.argv.includes('--write') || !check;
-
-try {
-	assertIndexPath(ROOT, CATALOG_PATH);
-	assertIndexPath(ROOT, LLMS_PATH);
-} catch (e) {
-	fail(e.message);
-}
+const flags = parseCatalogArgs(process.argv.slice(2));
+if (!flags.ok) fail(flags.error);
 
 const { catalogText, llmsText } = generate();
 
-if (check) {
+if (flags.check) {
+	try {
+		assertIndexPath(ROOT, CATALOG_PATH);
+		assertIndexPath(ROOT, LLMS_PATH);
+	} catch (e) {
+		fail(e.message);
+	}
 	if (!existsSync(CATALOG_PATH) || !existsSync(LLMS_PATH)) fail('生成物が無い');
 	const catOk = readFileSync(CATALOG_PATH, 'utf8') === catalogText;
 	const llmsOk = readFileSync(LLMS_PATH, 'utf8') === llmsText;
@@ -118,9 +118,13 @@ if (check) {
 	process.exit(0);
 }
 
-if (write) {
-	mkdirSync(INDEX, { recursive: true });
-	writeFileSync(CATALOG_PATH, catalogText);
-	writeFileSync(LLMS_PATH, llmsText);
-	console.log('[knowledge-catalog] wrote knowledge/index/catalog.json knowledge/index/llms.txt');
+mkdirSync(INDEX, { recursive: true });
+try {
+	assertIndexPath(ROOT, CATALOG_PATH);
+	assertIndexPath(ROOT, LLMS_PATH);
+} catch (e) {
+	fail(e.message);
 }
+writeFileSync(CATALOG_PATH, catalogText);
+writeFileSync(LLMS_PATH, llmsText);
+console.log('[knowledge-catalog] wrote knowledge/index/catalog.json knowledge/index/llms.txt');

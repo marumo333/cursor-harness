@@ -24,6 +24,7 @@ jobs:
           fi
       - name: ハーネス単体テスト
         run: node --test scripts/cycle-metrics.test.mjs scripts/commit-msg-lint.test.mjs scripts/git-commit-cmd.test.mjs scripts/commit-guard.test.mjs scripts/blocked-env.test.mjs scripts/lint-commit-range.test.mjs scripts/knowledge-catalog.test.mjs
+      # 導入中は PR ワークスペースの scripts を使う。main に載った次 PR で origin/main に切り替える（ADR 0043）。
       - name: 三層知識カタログの鮮度と OPA 突合（PR ワークスペースの scripts）
         run: |
           set -euo pipefail

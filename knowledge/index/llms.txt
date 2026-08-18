@@ -4,44 +4,44 @@
 
 ## machine
 
-- [criterion:code-quality](knowledge/criteria/code-quality.yaml): コード品質バー — ハーネス テンプレート。出典: ADR 0013-0016 / 0038 / 0039
-- [criterion:cycle-metrics](knowledge/criteria/cycle-metrics.yaml): サイクル3指標 — ADR 0039。実装は scripts/cycle-metrics.mjs / policy/cycle.rego
-- [criterion:grow-admission](knowledge/criteria/grow-admission.yaml): Feature 正本 + OPA grow 入場 — ハーネス/reflector/verify が参照。出典: ADR 0038
-- [criterion:knowledge-layers](knowledge/criteria/knowledge-layers.yaml): 三層知識の型 — ハーネスが参照。出典: ADR 0043
-- [criterion:model-routing](knowledge/criteria/model-routing.yaml): ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040
-- [criterion:security-policy](knowledge/criteria/security-policy.yaml): ハーネス側の AI セキュリティ（ADR 0018）。
-- [cycle:required](knowledge/graph/required-cycle.json): required 4 / optional 2
-- [F-0001](knowledge/features/F-0001-feature-canon-opa-grow.yaml): Feature 正本と OPA grow 入場
-- [F-0002](knowledge/features/F-0002-harness-template-cycle.yaml): ハーネス制約と有界サイクルグラフ
-- [F-0003](knowledge/features/F-0003-grok46-parent.yaml): 親/trio の Grok 席を 4.6 に更新
-- [F-0004](knowledge/features/F-0004-review-followups.yaml): レビュー指摘の再修正（4.6 本文・pnpm・起動手順）
-- [F-0005](knowledge/features/F-0005-always-on-precommit.yaml): 常時 pre-commit と日本語 conventional 主語
-- [F-0006](knowledge/features/F-0006-tri-layer-knowledge.yaml): 三層知識（machine / index / human）
+- [F-0001](knowledge/features/F-0001-feature-canon-opa-grow.yaml) (in_progress): Feature 正本と OPA grow 入場
+- [F-0002](knowledge/features/F-0002-harness-template-cycle.yaml) (proposed): ハーネス制約と有界サイクルグラフ
+- [F-0003](knowledge/features/F-0003-grok46-parent.yaml) (proposed): 親/trio の Grok 席を 4.6 に更新
+- [F-0004](knowledge/features/F-0004-review-followups.yaml) (proposed): レビュー指摘の再修正（4.6 本文・pnpm・起動手順）
+- [F-0005](knowledge/features/F-0005-always-on-precommit.yaml) (proposed): 常時 pre-commit と日本語 conventional 主語
+- [F-0006](knowledge/features/F-0006-tri-layer-knowledge.yaml) (proposed): 三層知識（machine / index / human）
+- [criterion:code-quality](knowledge/criteria/code-quality.yaml) (n/a): コード品質バー — ハーネス テンプレート。出典: ADR 0013-0016 / 0038 / 0039
+- [criterion:cycle-metrics](knowledge/criteria/cycle-metrics.yaml) (n/a): サイクル3指標 — ADR 0039。実装は scripts/cycle-metrics.mjs / policy/cycle.rego
+- [criterion:grow-admission](knowledge/criteria/grow-admission.yaml) (n/a): Feature 正本 + OPA grow 入場 — ハーネス/reflector/verify が参照。出典: ADR 0038
+- [criterion:knowledge-layers](knowledge/criteria/knowledge-layers.yaml) (n/a): 三層知識の型 — ハーネスが参照。出典: ADR 0043
+- [criterion:model-routing](knowledge/criteria/model-routing.yaml) (n/a): ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040
+- [criterion:security-policy](knowledge/criteria/security-policy.yaml) (n/a): ハーネス側の AI セキュリティ（ADR 0018）。
+- [cycle:required](knowledge/graph/required-cycle.json) (n/a): required 4 / optional 2
 
 ## human
 
-- [ADR-0013](knowledge/decisions/0013-test-strategy.md): テスト戦略（ハーネス テンプレート）
-- [ADR-0014](knowledge/decisions/0014-lint-format-types.md): 検査 / 整形 / 型
-- [ADR-0016](knowledge/decisions/0016-definition-of-done.md): 完了の定義
-- [ADR-0018](knowledge/decisions/0018-ai-security.md): AI/エージェント・セキュリティ（OWASP LLM/Agentic Top 10）
-- [ADR-0026](knowledge/decisions/0026-model-strategy-accuracy.md): ハーネスのモデル戦略＝精度優先（Fable 頭を廃し独立敵対レビューをゲート化）
-- [ADR-0031](knowledge/decisions/0031-model-strategy-cursor-multi-family.md): Cursor ハーネスのモデル戦略＝クロスファミリー検証
-- [ADR-0032](knowledge/decisions/0032-ops-subagent-hotl.md): 検証・UX・HOTL の subagent 化（廃止）
-- [ADR-0033](knowledge/decisions/0033-harness-api-budget-routing.md): ハーネス API 予算ルーティング＝Grok 親 + Claude Task ゲート
-- [ADR-0034](knowledge/decisions/0034-architecture-fitness-gates.md): アーキテクチャ適合ゲート（廃止）
-- [ADR-0037](knowledge/decisions/0037-opus5-gate-routing.md): ハーネス Claude ゲート席＝Opus 5（骨格は 0033 維持）
-- [ADR-0038](knowledge/decisions/0038-feature-canon-opa-grow.md): 自己改善の正本は Feature、入場は OPA
-- [ADR-0039](knowledge/decisions/0039-harness-template-cycle-graph.md): ハーネス制約と有界サイクルグラフ
-- [ADR-0040](knowledge/decisions/0040-grok46-parent-routing.md): 親/trio の Grok 席＝4.6（骨格は 0033 / 0037 維持）
-- [ADR-0041](knowledge/decisions/0041-pnpm-package-manager.md): パッケージマネージャ＝pnpm
-- [ADR-0042](knowledge/decisions/0042-always-on-precommit-ja-conventional.md): pre-commit は常時起動、コミット主語は日本語 conventional
-- [ADR-0043](knowledge/decisions/0043-tri-layer-knowledge.md): 三層知識（machine / index / human）
-- [skill:adversarial-review](.claude/skills/adversarial-review/SKILL.md): 独立敵対レビューの起動手順（全変更のデフォルトゲート）と高リスク3体3ファミリー多数決。実装完了後・前進判定の前に必ず使う。
-- [skill:cycle](.claude/skills/cycle/SKILL.md): 1周の skill 使用/省略をグラフに記録し、3指標を出す。ループ終了時に必ず使う。
-- [skill:harness-api-budget](.claude/skills/harness-api-budget/SKILL.md): Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Solは3体のみ）。壁打ち〜検証の席判断で使う。
-- [skill:harness-audit](.claude/skills/harness-audit/SKILL.md): ハーネス健全性を決定的にスコア化し履歴に記録。実行するほど成長しているかを可視化する。
-- [skill:harness-grow](.claude/skills/harness-grow/SKILL.md): 入場済み Feature だけ skill/rule/Rego に昇格し、判断を ADR/criteria に落とす。ハーネスを複利成長させる。
-- [skill:parallel-dispatch](.claude/skills/parallel-dispatch/SKILL.md): 実装の並列展開判断と起動手順（Task並列 / 作業ツリー分離 / 読み取り専用）。親Grokが計画を subagent に配る時に使う。
-- [skill:plan-confirm](.claude/skills/plan-confirm/SKILL.md): 並列展開前の計画確定レビュー（Opus backend-architect）。writing-plans完了直後・parallel-dispatch前に必ず使う
-- [skill:reflect](.claude/skills/reflect/SKILL.md): タスク後の内省（効いた/失敗/境界事例を言語化し learnings に追記）。自己成長ループ④の入口。
-- [skill:verify](.claude/skills/verify/SKILL.md): 完了の定義を機械判定（feature-gate / opa test / cycle 指標 / secret）。タスク検証段で必ず使う。
+- [ADR-0013](knowledge/decisions/0013-test-strategy.md) (accepted): テスト戦略（ハーネス テンプレート）
+- [ADR-0014](knowledge/decisions/0014-lint-format-types.md) (accepted): 検査 / 整形 / 型
+- [ADR-0016](knowledge/decisions/0016-definition-of-done.md) (accepted): 完了の定義
+- [ADR-0018](knowledge/decisions/0018-ai-security.md) (accepted): AI/エージェント・セキュリティ（OWASP LLM/Agentic Top 10）
+- [ADR-0026](knowledge/decisions/0026-model-strategy-accuracy.md) (superseded): ハーネスのモデル戦略＝精度優先（Fable 頭を廃し独立敵対レビューをゲート化）
+- [ADR-0031](knowledge/decisions/0031-model-strategy-cursor-multi-family.md) (accepted): Cursor ハーネスのモデル戦略＝クロスファミリー検証
+- [ADR-0032](knowledge/decisions/0032-ops-subagent-hotl.md) (superseded): 検証・UX・HOTL の subagent 化（廃止）
+- [ADR-0033](knowledge/decisions/0033-harness-api-budget-routing.md) (accepted): ハーネス API 予算ルーティング＝Grok 親 + Claude Task ゲート
+- [ADR-0034](knowledge/decisions/0034-architecture-fitness-gates.md) (superseded): アーキテクチャ適合ゲート（廃止）
+- [ADR-0037](knowledge/decisions/0037-opus5-gate-routing.md) (accepted): ハーネス Claude ゲート席＝Opus 5（骨格は 0033 維持）
+- [ADR-0038](knowledge/decisions/0038-feature-canon-opa-grow.md) (accepted): 自己改善の正本は Feature、入場は OPA
+- [ADR-0039](knowledge/decisions/0039-harness-template-cycle-graph.md) (accepted): ハーネス制約と有界サイクルグラフ
+- [ADR-0040](knowledge/decisions/0040-grok46-parent-routing.md) (accepted): 親/trio の Grok 席＝4.6（骨格は 0033 / 0037 維持）
+- [ADR-0041](knowledge/decisions/0041-pnpm-package-manager.md) (accepted): パッケージマネージャ＝pnpm
+- [ADR-0042](knowledge/decisions/0042-always-on-precommit-ja-conventional.md) (accepted): pre-commit は常時起動、コミット主語は日本語 conventional
+- [ADR-0043](knowledge/decisions/0043-tri-layer-knowledge.md) (proposed): 三層知識（machine / index / human）
+- [skill:adversarial-review](.claude/skills/adversarial-review/SKILL.md) (n/a): 独立敵対レビューの起動手順（全変更のデフォルトゲート）と高リスク3体3ファミリー多数決。実装完了後・前進判定の前に必ず使う。
+- [skill:cycle](.claude/skills/cycle/SKILL.md) (n/a): 1周の skill 使用/省略をグラフに記録し、3指標を出す。ループ終了時に必ず使う。
+- [skill:harness-api-budget](.claude/skills/harness-api-budget/SKILL.md) (n/a): Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Solは3体のみ）。壁打ち〜検証の席判断で使う。
+- [skill:harness-audit](.claude/skills/harness-audit/SKILL.md) (n/a): ハーネス健全性を決定的にスコア化し履歴に記録。実行するほど成長しているかを可視化する。
+- [skill:harness-grow](.claude/skills/harness-grow/SKILL.md) (n/a): 入場済み Feature だけ skill/rule/Rego に昇格し、判断を ADR/criteria に落とす。ハーネスを複利成長させる。
+- [skill:parallel-dispatch](.claude/skills/parallel-dispatch/SKILL.md) (n/a): 実装の並列展開判断と起動手順（Task並列 / 作業ツリー分離 / 読み取り専用）。親Grokが計画を subagent に配る時に使う。
+- [skill:plan-confirm](.claude/skills/plan-confirm/SKILL.md) (n/a): 並列展開前の計画確定レビュー（Opus backend-architect）。writing-plans完了直後・parallel-dispatch前に必ず使う
+- [skill:reflect](.claude/skills/reflect/SKILL.md) (n/a): タスク後の内省（効いた/失敗/境界事例を言語化し learnings に追記）。自己成長ループ④の入口。
+- [skill:verify](.claude/skills/verify/SKILL.md) (n/a): 完了の定義を機械判定（feature-gate / opa test / cycle 指標 / secret）。タスク検証段で必ず使う。

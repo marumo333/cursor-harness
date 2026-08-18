@@ -29,6 +29,10 @@ layers:
       - .claude/skills/
 
 # 実 ADR は「# ADR NNNN:」+「- 背景:」箇条書き。required_headings 検証は v1 対象外。
+# 生成器が必須にする形（欠けると catalog 全体を書かない）:
+adr_required_for_index:
+  heading: '# ADR NNNN: 題名'
+  status_line: '^- 状態:\\s*(提案|受理|廃止)'
 adr_shape: list_fields
 adr_fields: [背景, 決定, 結果, 関連]
 

@@ -9,4 +9,4 @@
 | `layer.schema.json` | 形の説明（ゲートは読まない） |
 
 再生成: `node scripts/knowledge-catalog.mjs --write`  
-鮮度: `node scripts/knowledge-catalog.mjs --check`（CI。pre-commit には載せない）
+鮮度: `node scripts/knowledge-catalog.mjs --check`（CI。pre-commit には載せない。引数なしは拒否）

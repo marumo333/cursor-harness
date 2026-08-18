@@ -1,11 +1,23 @@
 /**
  * 三層知識の索引カタログ（ADR 0043）。純関数。OPA は呼ばない。
  */
-import { relative, resolve } from 'node:path';
+import { existsSync, realpathSync } from 'node:fs';
+import { basename, dirname, join, relative, resolve } from 'node:path';
 
 export const FEATURE_NAME = /^F-\d{4}-.+\.ya?ml$/;
 export const SCHEMA_VERSION = '1';
 const SUMMARY_LIMIT = 80;
+export const ID_PATTERN = {
+	feature: /^F-\d{4}$/,
+	decision: /^ADR-\d{4}$/,
+	criterion: /^criterion:[a-z0-9][a-z0-9._-]{0,63}$/,
+	skill: /^skill:[A-Za-z0-9._-]{1,64}$/,
+	cycle: /^cycle:required$/
+};
+export const REL_TARGET = {
+	cites: /^ADR-\d{4}$/,
+	requires: /^skill:[A-Za-z0-9._-]{1,64}$/
+};
 const STATUS_MAP = { 提案: 'proposed', 受理: 'accepted', 廃止: 'superseded' };
 const LAYERS = new Set(['machine', 'index', 'human']);
 const KINDS = new Set(['decision', 'feature', 'criterion', 'skill', 'cycle']);
@@ -87,8 +99,25 @@ function entity(fields) {
 	};
 }
 
+export function cmpStr(a, b) {
+	if (a < b) return -1;
+	if (a > b) return 1;
+	return 0;
+}
+
+export function parseCatalogArgs(argv) {
+	const rest = argv.filter((a) => a !== '--');
+	const known = new Set(['--check', '--write']);
+	const unknown = rest.filter((a) => a.startsWith('-') && !known.has(a));
+	if (unknown.length) return { ok: false, error: `未知のフラグ: ${unknown.join(' ')}` };
+	const check = rest.includes('--check');
+	const write = rest.includes('--write');
+	if (check === write) return { ok: false, error: '`--check` か `--write` のどちらか一方' };
+	return { ok: true, check, write };
+}
+
 function sortRels(rels) {
-	return [...rels].sort((a, b) => a.rel.localeCompare(b.rel) || a.target.localeCompare(b.target));
+	return [...rels].sort((a, b) => cmpStr(a.rel, b.rel) || cmpStr(a.target, b.target));
 }
 
 export function buildCatalog(input) {
@@ -126,8 +155,12 @@ export function buildCatalog(input) {
 			continue;
 		}
 		const heading = String(d.text).match(/^# ADR (\d{4}):\s*(.+)$/m);
-		if (!heading || `ADR-${heading[1]}` !== id) {
-			denials.push(`decision 見出しがファイル名と不一致: ${d.path}`);
+		if (!heading) {
+			denials.push(`decision 見出しが無い（# ADR NNNN: 題名）: ${d.path}`);
+			continue;
+		}
+		if (`ADR-${heading[1]}` !== id) {
+			denials.push(`decision 見出し番号がファイル名と不一致: ${d.path}`);
 			continue;
 		}
 		entities.push(
@@ -163,9 +196,14 @@ export function buildCatalog(input) {
 			denials.push(`skill front matter が無い: ${s.path}`);
 			continue;
 		}
+		const skillId = `skill:${fm.name}`;
+		if (!ID_PATTERN.skill.test(skillId)) {
+			denials.push(`skill id が不正: ${s.path}`);
+			continue;
+		}
 		entities.push(
 			entity({
-				id: `skill:${fm.name}`,
+				id: skillId,
 				kind: 'skill',
 				layer: 'human',
 				path: s.path,
@@ -180,8 +218,12 @@ export function buildCatalog(input) {
 		const json = input.cycle.json;
 		if (!json || !Array.isArray(json.nodes)) {
 			denials.push(`cycle JSON が不正: ${input.cycle.path}`);
+		} else if (json.optional_nodes != null && !Array.isArray(json.optional_nodes)) {
+			denials.push(`cycle optional_nodes が配列ではない: ${input.cycle.path}`);
+		} else if (json.nodes.some((n) => !n?.id || !REL_TARGET.requires.test(n.id))) {
+			denials.push(`cycle ノード id が不正: ${input.cycle.path}`);
 		} else {
-			const required = json.nodes.map((n) => n.id).filter(Boolean);
+			const required = json.nodes.map((n) => n.id);
 			const optional = (json.optional_nodes ?? []).length;
 			entities.push(
 				entity({
@@ -199,7 +241,7 @@ export function buildCatalog(input) {
 
 	if (denials.length) return { ok: false, catalog: null, denials };
 
-	entities.sort((a, b) => a.path.localeCompare(b.path) || a.id.localeCompare(b.id));
+	entities.sort((a, b) => cmpStr(a.path, b.path) || cmpStr(a.id, b.id));
 	const catalog = {
 		advisory: true,
 		entities,
@@ -224,12 +266,18 @@ export function validateCatalog(catalog) {
 		if (!e.id || !KINDS.has(e.kind) || !LAYERS.has(e.layer) || !e.path) {
 			denials.push(`必須キー欠落: ${e.id ?? e.path ?? '?'}`);
 		}
+		if (e.id && ID_PATTERN[e.kind] && !ID_PATTERN[e.kind].test(e.id)) {
+			denials.push(`id が不正: ${e.id}`);
+		}
 		if (seen.has(e.id)) denials.push(`id 衝突: ${e.id}`);
 		seen.add(e.id);
 		if (!Array.isArray(e.rels)) denials.push(`rels が配列ではない: ${e.id}`);
 		else {
 			for (const r of e.rels) {
 				if (!RELS.has(r.rel) || !r.target) denials.push(`rel 不正: ${e.id}`);
+				else if (REL_TARGET[r.rel] && !REL_TARGET[r.rel].test(r.target)) {
+					denials.push(`rel target が不正: ${e.id} ${r.target}`);
+				}
 			}
 		}
 		if (typeof e.summary !== 'string' || e.summary.includes('\n')) {
@@ -241,7 +289,7 @@ export function validateCatalog(catalog) {
 
 export function renderLlmsTxt(catalog) {
 	const byLayer = { machine: [], human: [], index: [] };
-	for (const e of [...catalog.entities].sort((a, b) => a.id.localeCompare(b.id))) {
+	for (const e of [...catalog.entities].sort((a, b) => cmpStr(a.id, b.id))) {
 		(byLayer[e.layer] ?? byLayer.index).push(e);
 	}
 	const lines = [
@@ -255,7 +303,7 @@ export function renderLlmsTxt(catalog) {
 		lines.push(`## ${layer}`, '');
 		for (const e of byLayer[layer]) {
 			const note = e.summary ? `: ${e.summary}` : '';
-			lines.push(`- [${e.id}](${e.path})${note}`);
+			lines.push(`- [${e.id}](${e.path}) (${e.status})${note}`);
 		}
 		lines.push('');
 	}
@@ -279,9 +327,17 @@ export function dumpJson(obj) {
 }
 
 export function assertIndexPath(root, dest) {
+	const knowledge = resolve(root, 'knowledge');
 	const indexDir = resolve(root, 'knowledge', 'index');
-	const abs = resolve(dest);
-	const rel = relative(indexDir, abs);
+	const knowledgeReal = existsSync(knowledge) ? realpathSync(knowledge) : knowledge;
+	const expectedIndex = join(knowledgeReal, 'index');
+	if (existsSync(indexDir) && realpathSync(indexDir) !== expectedIndex) {
+		throw new Error('knowledge/index の実体がずれている');
+	}
+	const parent = dirname(resolve(dest));
+	const parentReal = existsSync(parent) ? realpathSync(parent) : parent;
+	const absDest = join(parentReal, basename(dest));
+	const rel = relative(expectedIndex, absDest);
 	if (!rel || rel.startsWith('..') || rel.startsWith('/') || rel.split(/[\\/]/).includes('..')) {
 		throw new Error(`書き込み先は knowledge/index/ のみ: ${dest}`);
 	}

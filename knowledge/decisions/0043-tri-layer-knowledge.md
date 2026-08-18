@@ -16,5 +16,6 @@
   6. **id 空間。** kind 接頭辞で分割し全エントリ一意。cycle ノードは `rels.requires`。
      Pydantic は導入しない。形の正本は Rego。Schema 文書は横ファイル。
 - 結果: 着手時は catalog を地図にし、必要な原文だけ読む。ベクトル層は別 Feature。
+  導入中の CI 鮮度検査は PR 側 scripts を使う。main に載った次 PR で origin/main の scripts に切り替える。
 - 関連: [[0016-definition-of-done]] [[0018-ai-security]] [[0033-harness-api-budget-routing]]
   [[0038-feature-canon-opa-grow]] [[0039-harness-template-cycle-graph]]
