@@ -1,0 +1,54 @@
+# 三層知識の型 — ハーネスが参照。出典: ADR 0043
+# ゲートは読まない。入場の正本は policy/*.rego。
+name: knowledge-layers
+schema_version: '1'
+advisory_index: knowledge/index/catalog.json
+
+layers:
+  machine:
+    audience: agent_and_gate
+    form: yaml_or_json
+    examples:
+      - knowledge/features/
+      - knowledge/criteria/
+      - knowledge/graph/required-cycle.json
+  index:
+    audience: both_short
+    form: catalog
+    canon: false
+    decides: false
+    examples:
+      - knowledge/index/catalog.json
+      - knowledge/index/llms.txt
+  human:
+    audience: human
+    form: markdown
+    examples:
+      - knowledge/decisions/
+      - knowledge/learnings.md
+      - .claude/skills/
+
+# 実 ADR は「# ADR NNNN:」+「- 背景:」箇条書き。required_headings 検証は v1 対象外。
+# 生成器が必須にする形（欠けると catalog 全体を書かない）:
+adr_required_for_index:
+  heading: '# ADR NNNN: 題名'
+  status_line: "^- 状態:\\s*(提案|受理|廃止)"
+adr_shape: list_fields
+adr_fields: [背景, 決定, 結果, 関連]
+
+id_space:
+  feature: F-NNNN
+  decision: ADR-NNNN
+  criterion: 'criterion:<stem>'
+  skill: 'skill:<name>'
+  cycle: cycle:required
+  unique: true
+  cycle_nodes: rels.requires
+
+summary:
+  max_code_points: 80
+  command_filter: false
+
+vectors:
+  allowed_in_opa: false
+  allowed_in_admit: false
