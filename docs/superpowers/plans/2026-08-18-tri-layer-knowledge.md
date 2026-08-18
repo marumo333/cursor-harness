@@ -61,7 +61,7 @@ catalog は **advisory**。ゲート・入場・被覆は catalog を読まな�
 | kind | `id` | `status` | `summary` の元 | `layer` |
 | --- | --- | --- | --- | --- |
 | feature | OPA `data.feature.id`（`feature-gate.loadFeature` と同じ `opa eval -d <yaml> data`） | 同上 `status` | 同上 `title` | machine |
-| decision | ファイル名 `^(\d{4})-` → `ADR-NNNN`。本文の `id:` は見ない | `- 状態:` の先頭語を `提案→proposed` `受理→accepted` `廃止→superseded`。無ければ deny | `# ADR NNNN:` のコロン以降。無ければ deny | human |
+| decision | ファイル名 `^(\d{4})-` → `ADR-NNNN`。本文の `id:` は見ない | `^- 状態:\s*(提案|受理|廃止)`。括弧以降は無視。無ければ deny | `# ADR NNNN:` のコロン以降。無ければ deny | human |
 | criterion | `criterion:<ファイル stem>`。**本文の `id:` は見ない**（`grow-admission.yaml` の `id: F-0001` を拾わない） | 常に `n/a`。本文をスクレイプしない | 先頭の `#` 行（無ければ stem） | machine |
 | skill | front matter の `name` → `skill:<name>`。`---` 外は見ない | 常に `n/a` | front matter の `description` を切り詰め | human |
 | cycle | ファイルだけ `cycle:required`。**ノードはエントリにしない**（`skill:verify` と衝突する） | 常に `n/a` | `required N / optional M` の 1 行 | machine |

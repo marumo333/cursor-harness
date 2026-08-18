@@ -19,7 +19,7 @@ Node.js 製のガバナンスハーネス。npm 依存パッケージは無い�
 ### コマンド（lint / test / build / run に相当）
 
 - 依存導入 + git hooks 設定: `pnpm install`（`prepare` が `core.hooksPath=scripts/githooks` を設定）。
-- 自動テスト: `pnpm test`（`node --test`、58 件）。
+- 自動テスト: `pnpm test`（`node --test`、72 件）。
 - ポリシー lint / test（OPA のみ）: `node scripts/feature-gate.mjs --test`。
 - 正本ゲート本体（build/run 相当）: `node scripts/feature-gate.mjs`。canon パス（`scripts/` `policy/` `.claude/skills/` `knowledge/features/` など、正本は `policy/canon.rego`）を変更する場合は Feature 起票 + OPA allow が必要。
 

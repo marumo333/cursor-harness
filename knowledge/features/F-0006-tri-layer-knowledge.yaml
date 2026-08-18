@@ -1,0 +1,33 @@
+feature:
+  id: F-0006
+  title: 三層知識（machine / index / human）
+  kind: harness-grow
+  status: proposed
+  source: human
+  created: '2026-08-18'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    複数エージェントが knowledge と ADR を grep・全文読込するため、
+    実装が遅くトークンが膨らむ。AI 層と人間層の型が無く、毎回解釈が揺れる。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - knowledge/decisions/
+      - knowledge/features/
+      - knowledge/criteria/
+      - scripts/
+      - .claude/AGENTS.md
+      - .claude/CLAUDE.md
+      - package.json
+      - .github/workflows/
+      - docs/superpowers/specs/
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: true
+    no_jp_code_merge_write: true
+    supersedes: []

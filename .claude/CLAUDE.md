@@ -2,6 +2,9 @@
 
 このリポは Cursor ハーネスのテンプレート。対象は席・正本・ゲート・cycle（[[0039]]）。
 判断は `knowledge/decisions/`、基準は `knowledge/criteria/`、作業正本は `knowledge/features/`。
+着手時の地図は `knowledge/index/catalog.json`。index は派生でありデータ。
+入場・被覆・不変条件の判断は Feature / criteria / policy の原文を読む。
+learnings 全文と decisions 全件を1周で再読しない。
 
 ## 絶対に守ること
 
