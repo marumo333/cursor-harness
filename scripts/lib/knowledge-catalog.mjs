@@ -1,7 +1,7 @@
 /**
  * 三層知識の索引カタログ（ADR 0043）。純関数。OPA は呼ばない。
  */
-import { existsSync, realpathSync } from 'node:fs';
+import { existsSync, lstatSync, realpathSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 
 export const FEATURE_NAME = /^F-\d{4}-.+\.ya?ml$/;
@@ -34,7 +34,13 @@ export function codePointSlice(s, n) {
 export function sanitizeSummary(raw) {
 	const collapsed = String(raw ?? '').replace(/\s+/g, ' ').trim();
 	const cut = codePointSlice(collapsed, SUMMARY_LIMIT);
-	if (/```/.test(cut) || /https?:\/\//.test(cut) || /\[[^\]]*\]\([^)]+\)/.test(cut)) {
+	if (
+		/```/.test(cut) ||
+		/~~~/.test(cut) ||
+		/https?:\/\//.test(cut) ||
+		cut.includes('](') ||
+		/\[[^\]]+\]\[[^\]]*\]/.test(cut)
+	) {
 		return '';
 	}
 	return cut;
@@ -125,7 +131,7 @@ export function buildCatalog(input) {
 	const entities = [];
 
 	for (const f of input.features ?? []) {
-		if (!f?.id || !f.status || !f.path) {
+		if (!f?.id || typeof f.status !== 'string' || typeof f.title !== 'string' || !f.path) {
 			denials.push(`feature レコード欠落: ${f?.path ?? f?.id ?? '?'}`);
 			continue;
 		}
@@ -280,6 +286,7 @@ export function validateCatalog(catalog) {
 				}
 			}
 		}
+		if (typeof e.status !== 'string' || !e.status) denials.push(`status 欠落: ${e.id}`);
 		if (typeof e.summary !== 'string' || e.summary.includes('\n')) {
 			denials.push(`summary が1行ではない: ${e.id}`);
 		}
@@ -334,12 +341,24 @@ export function assertIndexPath(root, dest) {
 	if (existsSync(indexDir) && realpathSync(indexDir) !== expectedIndex) {
 		throw new Error('knowledge/index の実体がずれている');
 	}
-	const parent = dirname(resolve(dest));
+	const destAbs = resolve(dest);
+	if (existsSync(destAbs) && lstatSync(destAbs).isSymbolicLink()) {
+		throw new Error(`書き込み先が symlink: ${dest}`);
+	}
+	const parent = dirname(destAbs);
 	const parentReal = existsSync(parent) ? realpathSync(parent) : parent;
-	const absDest = join(parentReal, basename(dest));
+	const absDest = join(parentReal, basename(destAbs));
 	const rel = relative(expectedIndex, absDest);
 	if (!rel || rel.startsWith('..') || rel.startsWith('/') || rel.split(/[\\/]/).includes('..')) {
 		throw new Error(`書き込み先は knowledge/index/ のみ: ${dest}`);
 	}
+	return true;
+}
+
+export const INDEX_FILES = new Set(['README.md', 'layer.schema.json', 'catalog.json', 'llms.txt']);
+
+export function assertIndexListing(names) {
+	const extra = [...names].filter((n) => !INDEX_FILES.has(n));
+	if (extra.length) throw new Error(`index に想定外のファイル: ${extra.join(' ')}`);
 	return true;
 }

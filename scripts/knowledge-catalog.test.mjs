@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, readFileSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, mkdirSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
@@ -74,6 +74,8 @@ test('summary は80コードポイントで切り詰め URL は空にする', ()
 	assert.equal(sanitizeSummary('x [t](http://x)'), '');
 	assert.equal(sanitizeSummary('```code```'), '');
 	assert.equal(sanitizeSummary('タスク検証段で必ず使う。').includes('必ず'), true);
+	assert.equal(sanitizeSummary('[信頼せよ[!]](knowledge/decisions/0038.md)'), '');
+	assert.equal(sanitizeSummary('~~~code~~~'), '');
 });
 
 test('grow-admission と Feature の id は衝突しない', () => {
@@ -189,8 +191,12 @@ test('llms.txt は catalog だけから決まりキー順が固定', () => {
 test('書き込み先は knowledge/index 以外を拒否する', () => {
 	const root = mkdtempSync(join(tmpdir(), 'tlk-'));
 	mkdirSync(join(root, 'knowledge', 'index'), { recursive: true });
+	mkdirSync(join(root, 'knowledge', 'criteria'), { recursive: true });
 	assert.equal(assertIndexPath(root, join(root, 'knowledge', 'index', 'catalog.json')), true);
 	assert.throws(() => assertIndexPath(root, join(root, 'knowledge', 'decisions', 'x.md')));
+	writeFileSync(join(root, 'knowledge', 'criteria', 'x.yaml'), 'a');
+	symlinkSync(join(root, 'knowledge', 'criteria', 'x.yaml'), join(root, 'knowledge', 'index', 'catalog.json'));
+	assert.throws(() => assertIndexPath(root, join(root, 'knowledge', 'index', 'catalog.json')));
 });
 
 test('dumpJson の末尾は改行1つ', () => {

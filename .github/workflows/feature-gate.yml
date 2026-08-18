@@ -24,13 +24,20 @@ jobs:
           fi
       - name: ハーネス単体テスト
         run: node --test scripts/cycle-metrics.test.mjs scripts/commit-msg-lint.test.mjs scripts/git-commit-cmd.test.mjs scripts/commit-guard.test.mjs scripts/blocked-env.test.mjs scripts/lint-commit-range.test.mjs scripts/knowledge-catalog.test.mjs
-      # 導入中は PR ワークスペースの scripts を使う。main に載った次 PR で origin/main に切り替える（ADR 0043）。
-      - name: 三層知識カタログの鮮度と OPA 突合（PR ワークスペースの scripts）
+      - name: 三層知識カタログの鮮度と OPA 突合
         run: |
           set -euo pipefail
           test -x .tools/opa
-          node scripts/knowledge-catalog.mjs --check
-          node --test scripts/knowledge-catalog.opa.test.mjs
+          catalog_script="scripts/knowledge-catalog.mjs"
+          opa_test="scripts/knowledge-catalog.opa.test.mjs"
+          if git cat-file -e origin/main:scripts/knowledge-catalog.mjs 2>/dev/null; then
+            tmp="$(mktemp -d)"
+            git archive origin/main scripts | tar -x -C "$tmp"
+            catalog_script="$tmp/scripts/knowledge-catalog.mjs"
+            opa_test="$tmp/scripts/knowledge-catalog.opa.test.mjs"
+          fi
+          node "$catalog_script" --check
+          node --test "$opa_test"
       - name: コミット主語を検査する
         env:
           PR_HEAD: ${{ github.event.pull_request.head.sha }}

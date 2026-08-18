@@ -18,7 +18,8 @@ description: 完了の定義を機械判定（feature-gate / opa test / cycle �
 4. 秘密スキャン（`.claude/hooks/block_secret_write` と二重）。
 5. **並列展開案件**: 計画ファイルに `plan_confirm.status: approved` 証跡があること（[[0033]]）。
 6. 必須 skill の used/skipped を `cycle` に記録したこと（[[0039]]）。
-7. ADR / Feature / criteria / skill を触ったら `node scripts/knowledge-catalog.mjs --write` のあと `--check`（[[0043]]）。
+7. ADR / Feature / criteria / skill / `required-cycle.json` / `knowledge/index/` を触ったら
+   `node scripts/knowledge-catalog.mjs --write` のあと `--check`（[[0043]]）。
 
 ## 出力
 

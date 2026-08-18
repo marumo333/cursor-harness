@@ -10,6 +10,7 @@ import { ensureOpa } from './ensure-opa.mjs';
 import { loadFeatureViaOpa } from './lib/feature-opa.mjs';
 import {
 	FEATURE_NAME,
+	assertIndexListing,
 	assertIndexPath,
 	buildCatalog,
 	dumpJson,
@@ -107,6 +108,7 @@ if (flags.check) {
 	try {
 		assertIndexPath(ROOT, CATALOG_PATH);
 		assertIndexPath(ROOT, LLMS_PATH);
+		if (existsSync(INDEX)) assertIndexListing(readdirSync(INDEX));
 	} catch (e) {
 		fail(e.message);
 	}
@@ -122,6 +124,7 @@ mkdirSync(INDEX, { recursive: true });
 try {
 	assertIndexPath(ROOT, CATALOG_PATH);
 	assertIndexPath(ROOT, LLMS_PATH);
+	assertIndexListing(readdirSync(INDEX));
 } catch (e) {
 	fail(e.message);
 }
