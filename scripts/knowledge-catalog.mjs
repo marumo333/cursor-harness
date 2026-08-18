@@ -15,7 +15,8 @@ import {
 	buildCatalog,
 	dumpJson,
 	parseCatalogArgs,
-	renderLlmsTxt
+	renderLlmsTxt,
+	writeIndexFile
 } from './lib/knowledge-catalog.mjs';
 
 const ROOT = process.env.HARNESS_ROOT || join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -128,6 +129,6 @@ try {
 } catch (e) {
 	fail(e.message);
 }
-writeFileSync(CATALOG_PATH, catalogText);
-writeFileSync(LLMS_PATH, llmsText);
+writeIndexFile(CATALOG_PATH, catalogText);
+writeIndexFile(LLMS_PATH, llmsText);
 console.log('[knowledge-catalog] wrote knowledge/index/catalog.json knowledge/index/llms.txt');

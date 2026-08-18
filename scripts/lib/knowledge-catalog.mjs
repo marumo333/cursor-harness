@@ -1,7 +1,7 @@
 /**
  * 三層知識の索引カタログ（ADR 0043）。純関数。OPA は呼ばない。
  */
-import { existsSync, lstatSync, realpathSync } from 'node:fs';
+import { closeSync, constants, existsSync, lstatSync, openSync, realpathSync, writeSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 
 export const FEATURE_NAME = /^F-\d{4}-.+\.ya?ml$/;
@@ -342,9 +342,9 @@ export function assertIndexPath(root, dest) {
 		throw new Error('knowledge/index の実体がずれている');
 	}
 	const destAbs = resolve(dest);
-	if (existsSync(destAbs) && lstatSync(destAbs).isSymbolicLink()) {
-		throw new Error(`書き込み先が symlink: ${dest}`);
-	}
+	const destStat = lstatOrNull(destAbs);
+	if (destStat?.isSymbolicLink()) throw new Error(`書き込み先が symlink: ${dest}`);
+	if (destStat && destStat.nlink > 1) throw new Error(`書き込み先がハードリンク: ${dest}`);
 	const parent = dirname(destAbs);
 	const parentReal = existsSync(parent) ? realpathSync(parent) : parent;
 	const absDest = join(parentReal, basename(destAbs));
@@ -353,6 +353,29 @@ export function assertIndexPath(root, dest) {
 		throw new Error(`書き込み先は knowledge/index/ のみ: ${dest}`);
 	}
 	return true;
+}
+
+function lstatOrNull(p) {
+	try {
+		return lstatSync(p);
+	} catch (e) {
+		if (e.code === 'ENOENT') return null;
+		throw e;
+	}
+}
+
+export function writeIndexFile(path, text) {
+	const flags = constants.O_WRONLY | constants.O_CREAT | constants.O_TRUNC | constants.O_NOFOLLOW;
+	let fd;
+	try {
+		fd = openSync(path, flags, 0o644);
+		writeSync(fd, text);
+	} catch (e) {
+		if (e.code === 'ELOOP') throw new Error(`書き込み先が symlink: ${path}`);
+		throw e;
+	} finally {
+		if (fd !== undefined) closeSync(fd);
+	}
 }
 
 export const INDEX_FILES = new Set(['README.md', 'layer.schema.json', 'catalog.json', 'llms.txt']);

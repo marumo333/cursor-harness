@@ -36,8 +36,8 @@ jobs:
             catalog_script="$tmp/scripts/knowledge-catalog.mjs"
             opa_test="$tmp/scripts/knowledge-catalog.opa.test.mjs"
           fi
-          node "$catalog_script" --check
-          node --test "$opa_test"
+          HARNESS_ROOT="$GITHUB_WORKSPACE" node "$catalog_script" --check
+          HARNESS_ROOT="$GITHUB_WORKSPACE" node --test "$opa_test"
       - name: コミット主語を検査する
         env:
           PR_HEAD: ${{ github.event.pull_request.head.sha }}

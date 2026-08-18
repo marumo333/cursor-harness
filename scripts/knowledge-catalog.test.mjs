@@ -197,6 +197,9 @@ test('書き込み先は knowledge/index 以外を拒否する', () => {
 	writeFileSync(join(root, 'knowledge', 'criteria', 'x.yaml'), 'a');
 	symlinkSync(join(root, 'knowledge', 'criteria', 'x.yaml'), join(root, 'knowledge', 'index', 'catalog.json'));
 	assert.throws(() => assertIndexPath(root, join(root, 'knowledge', 'index', 'catalog.json')));
+	const dangling = join(root, 'knowledge', 'index', 'llms.txt');
+	symlinkSync(join(root, 'does-not-exist'), dangling);
+	assert.throws(() => assertIndexPath(root, dangling));
 });
 
 test('dumpJson の末尾は改行1つ', () => {
