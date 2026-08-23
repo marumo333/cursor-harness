@@ -23,7 +23,21 @@ jobs:
             node scripts/feature-gate.mjs
           fi
       - name: ハーネス単体テスト
-        run: node --test scripts/cycle-metrics.test.mjs scripts/commit-msg-lint.test.mjs scripts/git-commit-cmd.test.mjs scripts/commit-guard.test.mjs scripts/blocked-env.test.mjs scripts/lint-commit-range.test.mjs
+        run: node --test scripts/cycle-metrics.test.mjs scripts/commit-msg-lint.test.mjs scripts/git-commit-cmd.test.mjs scripts/commit-guard.test.mjs scripts/blocked-env.test.mjs scripts/lint-commit-range.test.mjs scripts/knowledge-catalog.test.mjs
+      - name: 三層知識カタログの鮮度と OPA 突合
+        run: |
+          set -euo pipefail
+          test -x .tools/opa
+          catalog_script="scripts/knowledge-catalog.mjs"
+          opa_test="scripts/knowledge-catalog.opa.test.mjs"
+          if git cat-file -e origin/main:scripts/knowledge-catalog.mjs 2>/dev/null; then
+            tmp="$(mktemp -d)"
+            git archive origin/main scripts | tar -x -C "$tmp"
+            catalog_script="$tmp/scripts/knowledge-catalog.mjs"
+            opa_test="$tmp/scripts/knowledge-catalog.opa.test.mjs"
+          fi
+          HARNESS_ROOT="$GITHUB_WORKSPACE" node "$catalog_script" --check
+          HARNESS_ROOT="$GITHUB_WORKSPACE" node --test "$opa_test"
       - name: コミット主語を検査する
         env:
           PR_HEAD: ${{ github.event.pull_request.head.sha }}

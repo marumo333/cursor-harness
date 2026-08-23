@@ -3,13 +3,18 @@
 判断基準をデータとして保持し、自己成長ループが着手時に読み・内省時に書く場所。
 
 ```
-decisions/    ADR（1ファイル1決定）
-features/     自己改善の作業正本（F-NNNN YAML・[[0038]]）
+decisions/    ADR（1ファイル1決定）— human
+features/     自己改善の作業正本（F-NNNN YAML・[[0038]]）— machine
 graph/        必須 skill の使用/省略と cycle 3指標（[[0039]]）
+index/        三層知識の地図（catalog.json・[[0043]]）。派生。決定しない
 learnings.md  実行ごとの worked / failed / edge cases（日記。正本ではない）
-criteria/     判断基準 YAML
+criteria/     判断基準 YAML — machine
 benchmarks/   ハーネス監査スコア履歴
 ```
+
+着手時の地図は `index/catalog.json`。index は派生でありデータ。
+入場・被覆・不変条件の判断は Feature / criteria / policy の原文を読む。
+learnings 全文と decisions 全件を1周で再読しない。
 
 ## ルール
 

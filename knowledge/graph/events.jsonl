@@ -32,3 +32,12 @@
 {"t":"2026-08-15T07:56:52.030Z","type":"node_state","cycle":"C-0004","node":"skill:verify","state":"used"}
 {"t":"2026-08-15T07:56:52.051Z","type":"edge_state","cycle":"C-0004","from":"skill:verify","to":"skill:reflect","state":"taken","reason":"docs_only"}
 {"t":"2026-08-15T08:02:01.446Z","type":"human_approved","cycle":"C-0003","merge_sha":"b81edd0a7e64564dbad72a26975f4dfc20d1aae2","pr":"7"}
+{"t":"2026-08-18T13:51:44.757Z","type":"cycle_open","cycle":"C-0005","source":"manual"}
+{"t":"2026-08-18T13:51:44.780Z","type":"node_state","cycle":"C-0005","node":"skill:harness-api-budget","state":"used"}
+{"t":"2026-08-18T13:51:44.800Z","type":"node_state","cycle":"C-0005","node":"skill:plan-confirm","state":"used"}
+{"t":"2026-08-18T13:51:44.821Z","type":"node_state","cycle":"C-0005","node":"skill:adversarial-review","state":"used"}
+{"t":"2026-08-18T13:51:44.843Z","type":"node_state","cycle":"C-0005","node":"skill:harness-grow","state":"skipped"}
+{"t":"2026-08-18T13:53:56.982Z","type":"node_state","cycle":"C-0005","node":"skill:verify","state":"used"}
+{"t":"2026-08-18T13:53:57.004Z","type":"edge_state","cycle":"C-0005","from":"skill:adversarial-review","to":"skill:verify","state":"taken","reason":"review approved after 4 rounds"}
+{"t":"2026-08-18T13:53:57.024Z","type":"edge_state","cycle":"C-0005","from":"skill:verify","to":"skill:reflect","state":"taken","reason":"pnpm test 77 / feature-gate green"}
+{"t":"2026-08-18T13:53:57.044Z","type":"node_state","cycle":"C-0005","node":"skill:reflect","state":"used"}

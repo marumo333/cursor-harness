@@ -8,6 +8,49 @@
 
 ---
 
+## 2026-08-18 — 三層知識 TLK（F-0006 / C-0005）
+
+**問い**
+
+- 複数エージェントが knowledge と ADR を全文読込するので、AI 層 / 中間層 / 人間層の三層と
+  「764 次元 ontology」を作れと求められた。
+
+**worked**
+
+- 調査で「3 聴衆 × 764 次元」の完成規格は存在しないと確認した。外部記事の 764 は
+  埋め込み次元 768 の誤記が大半だった。数値を仕様の主語にしないと決めた。
+- 埋め込みベクトルを入場判定に使う案は落とした。取得内容を判断根拠に昇格させる形になり
+  [[0018]]（取得内容/ツール出力はデータ扱い）と衝突する。
+- 採用は三層知識 TLK。machine（Feature / criteria / policy）が正本、index（`catalog.json`）は
+  advisory な地図、human（ADR / learnings）は読み物。index は派生で何も決定しない。
+- Pydantic は入れない。依存ゼロ（Node のみ）を保ち、形の正本は OPA / Rego 側に置いた。
+- 差し戻しは全部実装前・マージ前に落ちた。plan-confirm 3 回 → 敵対レビュー 4 回で計 7 件。
+- 席は親 Grok 4.6、設計 / レビュー / 検証は Opus Task。Sol は 3 体多数決の条件に届かず未使用。
+- 検証は `pnpm test` 77 件と feature-gate が緑。
+
+**failed**
+
+- plan-confirm の差し戻し 4 点: index の識別子が Feature / ADR と衝突（id 衝突）、
+  catalog が古いまま参照される鮮度、CI での再生成・検証が無い、
+  `summary` が原文の代替として読まれる。設計段で 3 回往復してから承認になった。
+- 敵対レビューの差し戻し 4 点: 外部由来 id を catalog キーにできる id 注入、
+  Feature の `status` 欠落を許容、生成器が symlink 経由でツリー外を読む、
+  `HARNESS_ROOT` 差し替えでゲート外のファイルを正本として読める。
+- F-0006 は `proposed` のまま。今回の canon 適用は F-0001 の広域被覆に依存する（既知 C1 の続き）。
+- `adversarial_review: approved` は依然自己申告。レビュー成果物ハッシュとの突合は未実装。
+
+**edge cases**
+
+- 「index は決定しない派生」と明文化しないと、agent が `catalog.summary` を根拠に入場を判断する。
+  README に「入場・被覆・不変条件は Feature / criteria / policy の原文を読む」を書いた。
+- `HARNESS_ROOT` はテストに必要で消せない。ゲート内スクリプトはルート由来のパスだけ信頼する。
+- `catalog.json` は生成物で canon 外。生成器（`scripts/`）と `required-cycle.json` は canon 側。
+- 764 / 768 のような外部由来の数値は ADR に書かない。必要になったら根拠付きで criteria に落とす。
+- 新規 Feature は起票しない。今周の改善は F-0006 に収まり、残る 2 件（F-0001 広域被覆・
+  レビュー証跡の突合）は新発見ではなく既知限界の持ち越しなので重複起票しない。
+
+---
+
 ## 2026-08-15 — ADR 0039 をハーネス制約に言い換え（文書）
 
 **問い**

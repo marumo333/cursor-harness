@@ -1,0 +1,48 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://cursor-harness.local/schemas/knowledge-layer.json",
+	"title": "三層知識の索引カタログ",
+	"description": "エディタと人間向け。入場ゲートは読まない（ADR 0043）。",
+	"type": "object",
+	"required": ["schema_version", "layer", "advisory", "entities"],
+	"additionalProperties": false,
+	"properties": {
+		"schema_version": { "type": "string", "const": "1" },
+		"layer": { "type": "string", "const": "index" },
+		"advisory": { "type": "boolean", "const": true },
+		"entities": {
+			"type": "array",
+			"items": { "$ref": "#/definitions/entity" }
+		}
+	},
+	"definitions": {
+		"entity": {
+			"type": "object",
+			"required": ["id", "kind", "layer", "path", "status", "summary", "rels"],
+			"additionalProperties": false,
+			"properties": {
+				"id": { "type": "string", "minLength": 1 },
+				"kind": {
+					"type": "string",
+					"enum": ["decision", "feature", "criterion", "skill", "cycle"]
+				},
+				"layer": { "type": "string", "enum": ["machine", "index", "human"] },
+				"path": { "type": "string", "minLength": 1 },
+				"status": { "type": "string" },
+				"summary": { "type": "string" },
+				"rels": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": ["rel", "target"],
+						"additionalProperties": false,
+						"properties": {
+							"rel": { "type": "string", "enum": ["cites", "requires"] },
+							"target": { "type": "string", "minLength": 1 }
+						}
+					}
+				}
+			}
+		}
+	}
+}

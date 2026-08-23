@@ -1,0 +1,658 @@
+{
+	"advisory": true,
+	"entities": [
+		{
+			"id": "skill:adversarial-review",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/adversarial-review/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "独立敵対レビューの起動手順（全変更のデフォルトゲート）と高リスク3体3ファミリー多数決。実装完了後・前進判定の前に必ず使う。"
+		},
+		{
+			"id": "skill:cycle",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/cycle/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "1周の skill 使用/省略をグラフに記録し、3指標を出す。ループ終了時に必ず使う。"
+		},
+		{
+			"id": "skill:harness-api-budget",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/harness-api-budget/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Solは3体のみ）。壁打ち〜検証の席判断で使う。"
+		},
+		{
+			"id": "skill:harness-audit",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/harness-audit/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "ハーネス健全性を決定的にスコア化し履歴に記録。実行するほど成長しているかを可視化する。"
+		},
+		{
+			"id": "skill:harness-grow",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/harness-grow/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "入場済み Feature だけ skill/rule/Rego に昇格し、判断を ADR/criteria に落とす。ハーネスを複利成長させる。"
+		},
+		{
+			"id": "skill:parallel-dispatch",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/parallel-dispatch/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "実装の並列展開判断と起動手順（Task並列 / 作業ツリー分離 / 読み取り専用）。親Grokが計画を subagent に配る時に使う。"
+		},
+		{
+			"id": "skill:plan-confirm",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/plan-confirm/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "並列展開前の計画確定レビュー（Opus backend-architect）。writing-plans完了直後・parallel-dispatch前に必ず使う"
+		},
+		{
+			"id": "skill:reflect",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/reflect/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "タスク後の内省（効いた/失敗/境界事例を言語化し learnings に追記）。自己成長ループ④の入口。"
+		},
+		{
+			"id": "skill:verify",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/verify/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "完了の定義を機械判定（feature-gate / opa test / cycle 指標 / secret）。タスク検証段で必ず使う。"
+		},
+		{
+			"id": "criterion:code-quality",
+			"kind": "criterion",
+			"layer": "machine",
+			"path": "knowledge/criteria/code-quality.yaml",
+			"rels": [],
+			"status": "n/a",
+			"summary": "コード品質バー — ハーネス テンプレート。出典: ADR 0013-0016 / 0038 / 0039"
+		},
+		{
+			"id": "criterion:cycle-metrics",
+			"kind": "criterion",
+			"layer": "machine",
+			"path": "knowledge/criteria/cycle-metrics.yaml",
+			"rels": [],
+			"status": "n/a",
+			"summary": "サイクル3指標 — ADR 0039。実装は scripts/cycle-metrics.mjs / policy/cycle.rego"
+		},
+		{
+			"id": "criterion:grow-admission",
+			"kind": "criterion",
+			"layer": "machine",
+			"path": "knowledge/criteria/grow-admission.yaml",
+			"rels": [],
+			"status": "n/a",
+			"summary": "Feature 正本 + OPA grow 入場 — ハーネス/reflector/verify が参照。出典: ADR 0038"
+		},
+		{
+			"id": "criterion:knowledge-layers",
+			"kind": "criterion",
+			"layer": "machine",
+			"path": "knowledge/criteria/knowledge-layers.yaml",
+			"rels": [],
+			"status": "n/a",
+			"summary": "三層知識の型 — ハーネスが参照。出典: ADR 0043"
+		},
+		{
+			"id": "criterion:model-routing",
+			"kind": "criterion",
+			"layer": "machine",
+			"path": "knowledge/criteria/model-routing.yaml",
+			"rels": [],
+			"status": "n/a",
+			"summary": "ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040"
+		},
+		{
+			"id": "criterion:security-policy",
+			"kind": "criterion",
+			"layer": "machine",
+			"path": "knowledge/criteria/security-policy.yaml",
+			"rels": [],
+			"status": "n/a",
+			"summary": "ハーネス側の AI セキュリティ（ADR 0018）。"
+		},
+		{
+			"id": "ADR-0013",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0013-test-strategy.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0038"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				}
+			],
+			"status": "accepted",
+			"summary": "テスト戦略（ハーネス テンプレート）"
+		},
+		{
+			"id": "ADR-0014",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0014-lint-format-types.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				}
+			],
+			"status": "accepted",
+			"summary": "検査 / 整形 / 型"
+		},
+		{
+			"id": "ADR-0016",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0016-definition-of-done.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0013"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0038"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0041"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0042"
+				}
+			],
+			"status": "accepted",
+			"summary": "完了の定義"
+		},
+		{
+			"id": "ADR-0018",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0018-ai-security.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0038"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				}
+			],
+			"status": "accepted",
+			"summary": "AI/エージェント・セキュリティ（OWASP LLM/Agentic Top 10）"
+		},
+		{
+			"id": "ADR-0026",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0026-model-strategy-accuracy.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0018"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0040"
+				}
+			],
+			"status": "superseded",
+			"summary": "ハーネスのモデル戦略＝精度優先（Fable 頭を廃し独立敵対レビューをゲート化）"
+		},
+		{
+			"id": "ADR-0031",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0031-model-strategy-cursor-multi-family.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0018"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0026"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0040"
+				}
+			],
+			"status": "accepted",
+			"summary": "Cursor ハーネスのモデル戦略＝クロスファミリー検証"
+		},
+		{
+			"id": "ADR-0032",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0032-ops-subagent-hotl.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				}
+			],
+			"status": "superseded",
+			"summary": "検証・UX・HOTL の subagent 化（廃止）"
+		},
+		{
+			"id": "ADR-0033",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0033-harness-api-budget-routing.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0038"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0040"
+				}
+			],
+			"status": "accepted",
+			"summary": "ハーネス API 予算ルーティング＝Grok 親 + Claude Task ゲート"
+		},
+		{
+			"id": "ADR-0034",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0034-architecture-fitness-gates.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				}
+			],
+			"status": "superseded",
+			"summary": "アーキテクチャ適合ゲート（廃止）"
+		},
+		{
+			"id": "ADR-0037",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0037-opus5-gate-routing.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0018"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0026"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0040"
+				}
+			],
+			"status": "accepted",
+			"summary": "ハーネス Claude ゲート席＝Opus 5（骨格は 0033 維持）"
+		},
+		{
+			"id": "ADR-0038",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0038-feature-canon-opa-grow.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				}
+			],
+			"status": "accepted",
+			"summary": "自己改善の正本は Feature、入場は OPA"
+		},
+		{
+			"id": "ADR-0039",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0039-harness-template-cycle-graph.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0038"
+				}
+			],
+			"status": "accepted",
+			"summary": "ハーネス制約と有界サイクルグラフ"
+		},
+		{
+			"id": "ADR-0040",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0040-grok46-parent-routing.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				}
+			],
+			"status": "accepted",
+			"summary": "親/trio の Grok 席＝4.6（骨格は 0033 / 0037 維持）"
+		},
+		{
+			"id": "ADR-0041",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0041-pnpm-package-manager.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0014"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				}
+			],
+			"status": "accepted",
+			"summary": "パッケージマネージャ＝pnpm"
+		},
+		{
+			"id": "ADR-0042",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0042-always-on-precommit-ja-conventional.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0038"
+				}
+			],
+			"status": "accepted",
+			"summary": "pre-commit は常時起動、コミット主語は日本語 conventional"
+		},
+		{
+			"id": "ADR-0043",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0043-tri-layer-knowledge.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0018"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0038"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				}
+			],
+			"status": "proposed",
+			"summary": "三層知識（machine / index / human）"
+		},
+		{
+			"id": "F-0001",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0001-feature-canon-opa-grow.yaml",
+			"rels": [],
+			"status": "in_progress",
+			"summary": "Feature 正本と OPA grow 入場"
+		},
+		{
+			"id": "F-0002",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0002-harness-template-cycle.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "ハーネス制約と有界サイクルグラフ"
+		},
+		{
+			"id": "F-0003",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0003-grok46-parent.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "親/trio の Grok 席を 4.6 に更新"
+		},
+		{
+			"id": "F-0004",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0004-review-followups.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "レビュー指摘の再修正（4.6 本文・pnpm・起動手順）"
+		},
+		{
+			"id": "F-0005",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0005-always-on-precommit.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "常時 pre-commit と日本語 conventional 主語"
+		},
+		{
+			"id": "F-0006",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0006-tri-layer-knowledge.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "三層知識（machine / index / human）"
+		},
+		{
+			"id": "cycle:required",
+			"kind": "cycle",
+			"layer": "machine",
+			"path": "knowledge/graph/required-cycle.json",
+			"rels": [
+				{
+					"rel": "requires",
+					"target": "skill:adversarial-review"
+				},
+				{
+					"rel": "requires",
+					"target": "skill:harness-api-budget"
+				},
+				{
+					"rel": "requires",
+					"target": "skill:reflect"
+				},
+				{
+					"rel": "requires",
+					"target": "skill:verify"
+				}
+			],
+			"status": "n/a",
+			"summary": "required 4 / optional 2"
+		}
+	],
+	"layer": "index",
+	"schema_version": "1"
+}
