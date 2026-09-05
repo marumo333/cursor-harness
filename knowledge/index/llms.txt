@@ -36,6 +36,7 @@
 - [ADR-0041](knowledge/decisions/0041-pnpm-package-manager.md) (accepted): パッケージマネージャ＝pnpm
 - [ADR-0042](knowledge/decisions/0042-always-on-precommit-ja-conventional.md) (accepted): pre-commit は常時起動、コミット主語は日本語 conventional
 - [ADR-0043](knowledge/decisions/0043-tri-layer-knowledge.md) (proposed): 三層知識（machine / index / human）
+- [ADR-0044](knowledge/decisions/0044-token-efficiency.md) (proposed): トークン効率（code_mode パケット）と第3レンズ後継
 - [skill:adversarial-review](.claude/skills/adversarial-review/SKILL.md) (n/a): 独立敵対レビューの起動手順（全変更のデフォルトゲート）と高リスク3体3ファミリー多数決。実装完了後・前進判定の前に必ず使う。
 - [skill:cycle](.claude/skills/cycle/SKILL.md) (n/a): 1周の skill 使用/省略をグラフに記録し、3指標を出す。ループ終了時に必ず使う。
 - [skill:harness-api-budget](.claude/skills/harness-api-budget/SKILL.md) (n/a): Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Solは3体のみ）。壁打ち〜検証の席判断で使う。
