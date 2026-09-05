@@ -16,7 +16,7 @@ GPT-6 Astra への差し替えと Uber 工場の縮小コピーは v1 の正本�
 
 | 候補 | 入力/出力 | この Task | 判断 |
 | --- | --- | --- | --- |
-| GPT-6 Astra | $10 / $50 | 無し。Cursor 同梱にも来ない | ピンしない |
+| GPT-6 Astra | $10 / $50 | 無し。Cursor 同梱にも来ない | ピンしない。**recurrent depth で観測性が下がる** |
 | GPT-5.6 Sol | $4 / $20 | あり | 現行第3。同梱は 2026-11-12 まで |
 | Gemini 3.8 Flash | $0.75 / $3.50 | 無し（製品カタログにはある） | **後継。effort medium** |
 | Gemini 3.1 Pro | $2 / $12 | 無し | 同じ Google。Flash が秘密レンズで弱いときだけ上げる（v1 ではピンしない） |
@@ -24,6 +24,8 @@ GPT-6 Astra への差し替えと Uber 工場の縮小コピーは v1 の正本�
 | Composer 2.5 | $0.50 / $2.50 | あり | 第3レンズ禁止。Grok と同プール |
 
 Astra が得になるのは長いエージェントループだけである。Artificial Analysis の Codex harness では Sol max の約 1/3、Opus 5 xhigh の約 1/5 のトークンだが、Intelligence Index（短文）では Sol より約 75% 高い。このハーネスの第3席は短文レビューなので、単価増だけが残る。
+
+加えて **recurrent depth（opaque recurrence / current depth）** が観測性を下げる。同じ照会を内部レイヤで何周も回し、従来の逐次 CoT を残さない。手数とトークンは減るが、書かれた思考とツール軌跡が薄くなる。OpenAI 自身の system card も、monitorability が GPT-5.6 Sol より下がったと書いている（[集計](https://deploymentsafety.openai.com/gpt-6-astra/aggregate-monitorability-findings)）。no-CoT の作業地平は Sol の約 3–4 分から約 30 分へ伸びる。効率に見える部分が、cycle の中間 3 項（turns / requests / 見えるトークン）と敵対レビューの材料を消す。第3レンズ（秘密・allow 信用）に置くと、指摘の根拠が出力だけになり 0031 の独立検証が弱る。code_mode はゼロ価値トレースを外に出すのであって、判断の根拠まで隠すことではない。
 
 Fable 5.1 の得は cache read が 1/4 になる長いセッションである。ゲート Task は成果物パケットだけなので、天井席以外では効かない。Anthropic 自身が「まず Opus 5」と書いている。
 
@@ -86,7 +88,7 @@ compaction 400k、cache TTL、MCP gateway、SQLite 照会言語。
 | 第3レンズ後継 | Gemini 3.8 Flash、effort medium |
 | 切替条件 | allowlist にスラッグがある + trio 第3席で 1 回完走（0040 と同じ） |
 | 間に合わないとき | Composer で埋めない。2 ファミリーに一時縮小。重大指摘 0 は維持 |
-| Astra | ピンしない。BYOK を正本にしない |
+| Astra | ピンしない。BYOK を正本にしない。recurrent depth による観測性低下も却下理由 |
 | Composer | 第3レンズに使わない |
 | リポ名 | `marumo333-harness`。clone は `github.com/marumo333/marumo333-harness` |
 | 由来 | `no_jp_code_merge_write` と「jp-code-agent から分離」の叙述は持たない |
@@ -199,3 +201,4 @@ zero_value_reinject: boolean
 - 親スラッグを medium に変えると Task が静かに落ちる → 方針と実在スラッグを分ける。
 - GitHub リポがまだ `cursor-harness` のまま → clone URL は先に書く。改名は人間。
 - 索引や learnings をパケットに全文入れる → 禁則キーで deny。
+- Astra を「手数削減」だけで再評価する → recurrent depth は見える軌跡を削る。観測できない完了単価は採用条件にしない。
