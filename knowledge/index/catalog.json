@@ -573,6 +573,40 @@
 			"summary": "三層知識（machine / index / human）"
 		},
 		{
+			"id": "ADR-0044",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0044-token-efficiency.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0040"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0043"
+				}
+			],
+			"status": "proposed",
+			"summary": "トークン効率（code_mode パケット）と第3レンズ後継"
+		},
+		{
 			"id": "F-0001",
 			"kind": "feature",
 			"layer": "machine",
