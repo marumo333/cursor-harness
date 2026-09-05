@@ -64,18 +64,13 @@ export function foldCycle(events, cycleId) {
 	return cycle;
 }
 
-/** まだ人間承認が無い、最新の cycle_open。 */
+/** 最後に開いた cycle。新しい cycle_open のあと、古い未承認へ戻らない。 */
 export function latestOpenCycle(events, fallback = 'C-0001') {
-	const opens = [];
-	const approved = new Set();
+	let latest = fallback;
 	for (const ev of events) {
-		if (ev.type === 'cycle_open' && ev.cycle) opens.push(ev.cycle);
-		if (ev.type === 'human_approved' && ev.cycle) approved.add(ev.cycle);
+		if (ev.type === 'cycle_open' && ev.cycle) latest = ev.cycle;
 	}
-	for (let i = opens.length - 1; i >= 0; i -= 1) {
-		if (!approved.has(opens[i])) return opens[i];
-	}
-	return opens[opens.length - 1] || fallback;
+	return latest;
 }
 
 export function nextCycleId(id) {
