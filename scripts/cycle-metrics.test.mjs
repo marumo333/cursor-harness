@@ -73,3 +73,14 @@ test('latestOpenCycle は承認済み id を飛ばす', () => {
 	);
 	assert.equal(nextCycleId('C-0002'), 'C-0003');
 });
+
+test('新しい cycle を開いたら古い未承認には戻らない', () => {
+	assert.equal(
+		latestOpenCycle([
+			{ type: 'cycle_open', cycle: 'C-0004' },
+			{ type: 'cycle_open', cycle: 'C-0005' },
+			{ type: 'human_approved', cycle: 'C-0005' }
+		]),
+		'C-0005'
+	);
+});

@@ -24,7 +24,7 @@ jobs:
           set -euo pipefail
           out="$(node scripts/cycle-after-merge.mjs)"
           echo "$out"
-          recurse="$(node -e 'const o=JSON.parse(process.argv[1]); process.stdout.write(String(o.recurse))' "$out")"
+          recurse="$(node -e 'const t=process.argv[1]; const o=JSON.parse(t.slice(t.indexOf("{"))); process.stdout.write(String(o.recurse))' "$out")"
           git config user.name "harness-cycle"
           git config user.email "harness-cycle@users.noreply.github.com"
           git add knowledge/graph/events.jsonl
