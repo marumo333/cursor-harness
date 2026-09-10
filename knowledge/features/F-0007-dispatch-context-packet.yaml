@@ -16,17 +16,32 @@ feature:
     mutates_canon: true
     paths:
       - knowledge/graph/required-cycle.json
-      - knowledge/criteria/
-      - knowledge/decisions/
-      - knowledge/features/
-      - policy/
-      - scripts/
-      - .claude/skills/
+      - knowledge/criteria/model-routing.yaml
+      - knowledge/decisions/0045-dispatch-context-packet.md
+      - policy/packet.rego
+      - policy/packet_test.rego
+      - scripts/feature-gate.mjs
+      - scripts/harness-query.mjs
+      - scripts/lib/harness-query.mjs
+      - scripts/harness-query.test.mjs
+      - scripts/lib/cycle-metrics.mjs
+      - scripts/cycle-metrics.test.mjs
+      - scripts/cycle-record.mjs
+      - package.json
+      - .github/workflows/feature-gate.yml
+      - .gitignore
+      - .claude/skills/harness-api-budget/SKILL.md
+      - .claude/skills/parallel-dispatch/SKILL.md
+      - .claude/skills/adversarial-review/SKILL.md
+      - .claude/skills/verify/SKILL.md
+      - .claude/skills/reflect/SKILL.md
+      - .claude/skills/cycle/SKILL.md
   evidence:
     adversarial_review: pending
     review_agent: security-reviewer
     verification: pending
     opa_decision: pending
   constraints:
-    supersede_adr: true
+    supersede_adr: false
+    no_jp_code_merge_write: true
     supersedes: []

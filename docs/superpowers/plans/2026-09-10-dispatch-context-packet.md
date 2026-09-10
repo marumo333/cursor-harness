@@ -34,19 +34,23 @@ plan_confirm:
 
 | タスク | ファイル | 備考 |
 | --- | --- | --- |
-| 1 起票 | `knowledge/features/F-0007-dispatch-context-packet.yaml` | 本 PR。proposed + pending |
+| 1 起票 | `knowledge/features/F-0007-dispatch-context-packet.yaml` | 本 PR。proposed + pending。paths はファイル単位 |
 | 2 設計 | `docs/superpowers/specs/2026-09-10-dispatch-context-packet-design.md` | 本 PR。canon 外 |
-| 3 ADR | `knowledge/decisions/0045-dispatch-context-packet.md` | 適用 PR。新規のみ。既存 ADR を上書きしない |
+| 3 ADR | `knowledge/decisions/0045-dispatch-context-packet.md` | 適用 PR。**新規のみ。** 既存 ADR を差分に入れない |
 | 4 cycle 宣言 | `knowledge/graph/required-cycle.json` | ノードに `context_mode` |
-| 5 criteria | `knowledge/criteria/model-routing.yaml` | 既定 effort と許容幅 |
-| 6 packet CLI | `scripts/lib/harness-query.mjs` `scripts/harness-query.mjs` | 0044 の未実装 |
-| 7 テスト | `scripts/harness-query.test.mjs` | TDD。禁則キー・上限・空禁止・子キー無視 |
-| 8 Rego | `policy/packet.rego` `policy/packet_test.rego` | 形と escalate 列挙 |
-| 9 skill | budget / dispatch / review / verify / reflect / cycle | パケット必須を verify が見る |
-| 10 計測 | `scripts/lib/cycle-metrics.mjs` | token_ledger。既存 3 指標は壊さない |
-| 11 完了記録 | learnings / events / catalog `--write` | [[0016]] |
+| 5 criteria | `knowledge/criteria/model-routing.yaml` | 既定 effort と許容幅。幅1は上書き deny |
+| 6 packet CLI | `scripts/lib/harness-query.mjs` `scripts/harness-query.mjs` | 名前は `C-NNNN.<node>.<seq>.json` |
+| 7 テスト | `scripts/harness-query.test.mjs` | TDD。禁則キー・上限・空禁止・子キー deny |
+| 8 配線 | `package.json` `.github/workflows/feature-gate.yml` | 新テストを列挙。偽グリーン禁止 |
+| 9 ゲート許可 | `scripts/feature-gate.mjs` | PACKAGE_HOME に `packet.canon` だけ足す |
+| 10 Rego | `policy/packet.rego` `policy/packet_test.rego` | deny 空だけ。grow/canon/feature は触らない |
+| 11 計測 | `scripts/lib/cycle-metrics.mjs` `scripts/cycle-metrics.test.mjs` `scripts/cycle-record.mjs` | 観測専用。need_rerun を増やさない |
+| 12 skill | 列挙した 6 本だけ | パケット必須。スポットライト囲み |
+| 13 gitignore | `.gitignore` `knowledge/graph/packets/.gitkeep` | `*.json` を無視 |
+| 14 完了記録 | learnings / events / catalog `--write` | [[0016]] |
 
-**書き換えない:** F-0001 本体、既存受理 ADR の本文、LangGraph 導入、`.ts` 化。
+**書き換えない:** F-0001 本体、既存 `knowledge/decisions/00*.md`（0045 以外）、`policy/grow.rego` `policy/canon.rego` `policy/feature.rego`、LangGraph、`.ts` 化。
+票の paths を部分木に広げない。適用 PR で paths を足して自己拡幅しない。
 
 ## タスク
 
@@ -67,5 +71,6 @@ plan_confirm:
 - [ ] packet Rego と OPA テスト
 - [ ] required-cycle と model-routing に mode / effort を書く
 - [ ] skill をパケット入力に更新する
-- [ ] plan-confirm（C トリガ）→ 敵対レビュー → verify
+- [ ] plan-confirm（C トリガ）→ 敵対レビュー **モード2（trio）** → verify
+- [ ] 票の `proposed_change.paths` を適用 PR で広げない
 - [ ] catalog `--write` / `--check`

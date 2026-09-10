@@ -28,6 +28,8 @@
 - 指名できる xAI 個人の「evals をエージェントが持て」ツイートは一次ソース未確定。
   公式は Grok 4.6 カード §5。採点関数はループの外（InferenceEval / 本リポの OPA）。
 - F-0001 の `approved` 自己申告（C1）はこの PR では直さない。
+- 初回敵対レビューは差し戻し。paths の部分木被覆、supersede_adr、escalate の引き下げ、
+  平文 writer、packet 保管が抜けていた。票をファイル単位に直し、spec に閉じた。
 
 ---
 

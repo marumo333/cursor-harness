@@ -7,6 +7,7 @@ node_modules/
 !.cursor/log_subagent_model.mjs
 .claude/settings.local.json
 knowledge/state.sqlite
+knowledge/graph/packets/*.json
 .tools/
 .env
 .env.*
