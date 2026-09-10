@@ -8,6 +8,29 @@
 
 ---
 
+## 2026-09-10 — ディスパッチ packet 起票（F-0007 / C-0006）
+
+**問い**
+
+- Graph / Loop / Judge / LangChain context mode をこのハーネスに写すとき、
+  親から子へ何を継ぎ、誰が model / effort を変えてよいか。
+
+**worked**
+
+- 会話 fork は不採用。写すのはリポに落ちた事実の JSON packet（isolated / packet）。
+- 親の effort / escalate 上書きはノード属性として残す。子の自己昇格は不可。
+- 型の正本は TypeScript ではなく Rego（0014 / 0043）。
+- 本周は出生規則どおり F-0007 を `proposed` だけ起票。admit しない。
+
+**failed / edge cases**
+
+- 0044 の `harness-query` は未実装のまま。本票が入場後に実装する。
+- 指名できる xAI 個人の「evals をエージェントが持て」ツイートは一次ソース未確定。
+  公式は Grok 4.6 カード §5。採点関数はループの外（InferenceEval / 本リポの OPA）。
+- F-0001 の `approved` 自己申告（C1）はこの PR では直さない。
+
+---
+
 ## 2026-08-18 — 三層知識 TLK（F-0006 / C-0005）
 
 **問い**
