@@ -43,3 +43,12 @@
 {"t":"2026-08-18T13:53:57.044Z","type":"node_state","cycle":"C-0005","node":"skill:reflect","state":"used"}
 {"t":"2026-08-23T09:29:16.883Z","type":"human_approved","cycle":"C-0005","merge_sha":"4a135447c5d64e5b98eb878a0f99dc1cbfd9fac0","pr":"9"}
 {"t":"2026-09-09T04:24:11.133Z","type":"human_approved","cycle":"C-0005","merge_sha":"b23d5c7395bad8a6a15de75c650f8c51427ec493","pr":"11"}
+{"t":"2026-09-10T06:24:32.868Z","type":"cycle_open","cycle":"C-0006","source":"manual"}
+{"t":"2026-09-10T06:24:32.889Z","type":"node_state","cycle":"C-0006","node":"skill:harness-api-budget","state":"used"}
+{"t":"2026-09-10T06:24:32.908Z","type":"node_state","cycle":"C-0006","node":"skill:adversarial-review","state":"used"}
+{"t":"2026-09-10T06:24:32.929Z","type":"node_state","cycle":"C-0006","node":"skill:verify","state":"used"}
+{"t":"2026-09-10T06:24:32.949Z","type":"node_state","cycle":"C-0006","node":"skill:reflect","state":"used"}
+{"t":"2026-09-10T06:24:32.969Z","type":"node_state","cycle":"C-0006","node":"skill:plan-confirm","state":"skipped"}
+{"t":"2026-09-10T06:24:32.989Z","type":"node_state","cycle":"C-0006","node":"skill:harness-grow","state":"skipped"}
+{"t":"2026-09-10T06:24:33.009Z","type":"edge_state","cycle":"C-0006","from":"skill:adversarial-review","to":"skill:verify","state":"taken","reason":"4回差し戻しのあと承認。票は pending"}
+{"t":"2026-09-10T06:24:33.030Z","type":"edge_state","cycle":"C-0006","from":"skill:verify","to":"skill:reflect","state":"taken","reason":"pnpm test / feature-gate 緑。起票のみ"}

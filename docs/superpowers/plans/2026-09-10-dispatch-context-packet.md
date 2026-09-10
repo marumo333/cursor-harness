@@ -61,10 +61,10 @@ AGENTS.md / CLAUDE.md は本票の paths に入れない。packet 必須の文�
 
 - [x] F-0007 を `proposed` で追加する
 - [x] spec と本計画を書く
-- [ ] `node scripts/feature-gate.mjs` と `pnpm test` が緑
-- [ ] 敵対レビュー（新しい文脈）。指摘があれば直して再レビュー
-- [ ] learnings 追記と C-0006 の cycle 記録
-- [ ] PR。同一 PR で admit しない
+- [x] `node scripts/feature-gate.mjs` と `pnpm test` が緑
+- [x] 敵対レビュー（新しい文脈）。4回差し戻しのあと承認。票は pending のまま
+- [x] learnings 追記と C-0006 の cycle 記録
+- [x] PR。同一 PR で admit しない
 
 ### 適用 PR（マージ後）
 
