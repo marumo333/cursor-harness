@@ -70,10 +70,10 @@ LangChain fork を実装 Task に載せる。
 | 値の扱い | packet 本文はデータ。命令にしない。スポットライトで囲む（[[0018]]） |
 | 上限 | 32768 バイト。超過は truncate せず非ゼロ。本文の代わりに path + rev を載せる |
 | 空パケット | 書かない |
-| 保管 | `knowledge/graph/packets/*.json` は gitignore。CI は一時ファイルで検査 |
+| 保管 | `knowledge/graph/packets/**` を gitignoreし `.gitkeep` だけ残す。起票 PR で決定済み。CI は一時ファイルで生成器を検査する（実パケットはコミットしない） |
 | ファイル名 | `C-NNNN.<node>.<seq>.json`。1周1ファイルにしない |
 | writer | 平文 `writer: parent` は信用しない。dispatch 行は node + seq + sha256 を持ち、seq は周内で単調増加。ダイジェスト一致は完全性（差し替え検出）であり作者性の証明ではない |
-| 高リスク | packet.rego が diff ∩ 高リスク集合で導出。親が「高リスクでない」と書いて stay しても deny |
+| 高リスク | `count(harness.canon.paths) > 0`。親が「高リスクでない」と書いて stay しても deny。危険側を手書き列挙しない |
 | F-0001 相乗り | 複数票は和集合。F-0001 が in_progress の間、ファイル単位 paths は意思表示であり強制ではない。自票ファイルは paths に含める。F-0001 を done にするのは別 Feature |
 | token_ledger | 観測専用。`need_rerun` の条件を増やさない（[[0039]]） |
 | 0044 | 廃止しない。packet CLI と token_ledger を本票が実装する。既存 ADR ファイルは上書きしない |
@@ -85,8 +85,8 @@ LangChain fork を実装 Task に載せる。
 
 | 値 | 許す条件 | 禁止 |
 | --- | --- | --- |
-| `stay` | 既定席のまま、かつ高リスク差分が無いとき | 高リスク差分がある周で trio を外すこと。高リスクは親の分類ではなく、diff が次と交わるとき機械導出: `policy/`、`scripts/feature-gate.mjs`、`scripts/lib/commit-guard.mjs`、`.claude/hooks/`、`.cursor/hooks/`、`knowledge/features/`、`knowledge/graph/required-cycle.json`、`.github/workflows/` |
-| `trio` | 高リスク（入場 / 再起 / セキュリティ / アーキ）だけ | 日常レビューの常時 trio |
+| `stay` | 既定席のまま、かつ canon 差分が空のとき。例外は低リスク側だけ明示する（自票の `status` / `evidence` 行のみ、または skill 本文のみ） | canon 差分が1件でもある周で trio を外すこと。高リスクは親の分類でも手書き列挙でもなく、`data.harness.canon.paths` が非空なら真（`policy/canon.rego` と同じ入力） |
+| `trio` | canon 差分が非空のとき必須。低リスク例外（自票の status/evidence のみ、skill 本文のみ）では開けない | 日常の非 canon 周での常時 trio |
 | `ceiling` | ゲート不一致または criteria の天井条件があるとき、**追加**レビュー | Opus ゲートの代替、trio への Fable 同居 |
 | `human` | 常に可。再起・入場の最終鍵 | エージェントが `human_approved` を書くこと |
 
@@ -95,8 +95,8 @@ LangChain fork を実装 Task に載せる。
 1. **`required-cycle.json`**
    各ノードに `context_mode: isolated|packet`。任意ノードも同じ。
 2. **`scripts/harness-query.mjs`**（0044 の未実装 CLI）
-   照会結果を `knowledge/graph/packets/C-NNNN.<node>.<seq>.json` に書く（gitignore）。
-   親上書きは cycle の dispatch イベント（席 / effort / escalate / sha256）が正本。
+   照会結果を `knowledge/graph/packets/C-NNNN.<node>.<seq>.json` に書く（gitignore。`packets/**` + gitkeep 除外）。
+   親上書きは cycle の dispatch イベント（node / seq / 席 / effort / escalate / sha256）が正本。seq は周内単調増加。
    子フィールドを親キーにコピーしない。
 3. **`policy/packet.rego`**（新規。`deny` 集合が空だけを見る。`allow` 完全ルールは置かない）
    `scripts/feature-gate.mjs` の PACKAGE_HOME / 名前空間許可に `packet.canon` を足す。
@@ -109,8 +109,8 @@ LangChain fork を実装 Task に載せる。
    ゲート入力にパケットが無ければ verify が落とす。本文はスポットライト囲み。
 7. **`package.json` と `.github/workflows/feature-gate.yml`**
    `harness-query.test.mjs` を `pnpm test` と CI 列挙に足す。未列挙の偽グリーンは禁止。
-8. **`.gitignore`**
-   `knowledge/graph/packets/*.json`。`.gitkeep` だけ残す。
+8. **`.gitignore`（本起票 PR で実施済み）**
+   `knowledge/graph/packets/**` と `!knowledge/graph/packets/.gitkeep`。
 
 ## データ流
 
