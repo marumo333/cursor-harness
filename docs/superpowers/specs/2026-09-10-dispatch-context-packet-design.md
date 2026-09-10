@@ -85,8 +85,8 @@ LangChain fork を実装 Task に載せる。
 
 | 値 | 許す条件 | 禁止 |
 | --- | --- | --- |
-| `stay` | 既定席のまま、かつ canon 差分が空のとき。例外は低リスク側だけ明示する（自票の `status` / `evidence` 行のみ、または skill 本文のみ） | canon 差分が1件でもある周で trio を外すこと。高リスクは親の分類でも手書き列挙でもなく、`data.harness.canon.paths` が非空なら真（`policy/canon.rego` と同じ入力） |
-| `trio` | canon 差分が非空のとき必須。低リスク例外（自票の status/evidence のみ、skill 本文のみ）では開けない | 日常の非 canon 周での常時 trio |
+| `stay` | 既定席のまま、かつ canon 差分が空のとき | canon 差分が1件でもある周で trio を外すこと。高リスクは `data.harness.canon.paths` が非空なら真。低リスク例外は置かない（`evidence` や skill 本文を単独レンズに落とさない） |
+| `trio` | canon 差分が非空のとき必須。非 canon 周では任意（禁止しない） | 非 canon 周での常時 trio を必須にすること |
 | `ceiling` | ゲート不一致または criteria の天井条件があるとき、**追加**レビュー | Opus ゲートの代替、trio への Fable 同居 |
 | `human` | 常に可。再起・入場の最終鍵 | エージェントが `human_approved` を書くこと |
 
