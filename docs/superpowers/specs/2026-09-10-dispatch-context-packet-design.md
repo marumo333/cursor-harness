@@ -72,7 +72,9 @@ LangChain fork を実装 Task に載せる。
 | 空パケット | 書かない |
 | 保管 | `knowledge/graph/packets/*.json` は gitignore。CI は一時ファイルで検査 |
 | ファイル名 | `C-NNNN.<node>.<seq>.json`。1周1ファイルにしない |
-| writer | 平文 `writer: parent` は信用しない。親が `cycle-record` した dispatch 行とバイトダイジェストが一致すること |
+| writer | 平文 `writer: parent` は信用しない。dispatch 行は node + seq + sha256 を持ち、seq は周内で単調増加。ダイジェスト一致は完全性（差し替え検出）であり作者性の証明ではない |
+| 高リスク | packet.rego が diff ∩ 高リスク集合で導出。親が「高リスクでない」と書いて stay しても deny |
+| F-0001 相乗り | 複数票は和集合。F-0001 が in_progress の間、ファイル単位 paths は意思表示であり強制ではない。自票ファイルは paths に含める。F-0001 を done にするのは別 Feature |
 | token_ledger | 観測専用。`need_rerun` の条件を増やさない（[[0039]]） |
 | 0044 | 廃止しない。packet CLI と token_ledger を本票が実装する。既存 ADR ファイルは上書きしない |
 | ADR 0045 | 新規ファイルのみ。`supersede_adr: false` |
@@ -83,7 +85,7 @@ LangChain fork を実装 Task に載せる。
 
 | 値 | 許す条件 | 禁止 |
 | --- | --- | --- |
-| `stay` | 既定席のまま | 高リスク条件を満たす周で trio を外すこと |
+| `stay` | 既定席のまま、かつ高リスク差分が無いとき | 高リスク差分がある周で trio を外すこと。高リスクは親の分類ではなく、diff が次と交わるとき機械導出: `policy/`、`scripts/feature-gate.mjs`、`scripts/lib/commit-guard.mjs`、`.claude/hooks/`、`.cursor/hooks/`、`knowledge/features/`、`knowledge/graph/required-cycle.json`、`.github/workflows/` |
 | `trio` | 高リスク（入場 / 再起 / セキュリティ / アーキ）だけ | 日常レビューの常時 trio |
 | `ceiling` | ゲート不一致または criteria の天井条件があるとき、**追加**レビュー | Opus ゲートの代替、trio への Fable 同居 |
 | `human` | 常に可。再起・入場の最終鍵 | エージェントが `human_approved` を書くこと |
@@ -142,8 +144,8 @@ LangChain fork を実装 Task に載せる。
 - 会話 fork を「速いから」で足す → isolated ゲートがアンカーされる。
 - 親上書きを散文で行う → cycle から消え、空成功になる。
 - TS を正本にする → 0014 の偽グリーンと 0038 の二重正本。
-- F-0001 の広域被覆に乗せて同一 PR で skill/Rego を適用する → 出生規則違反。
-- `policy/` や `scripts/` を部分木で被覆する → ゲート自身を書き換えられる。票の paths はファイル単位。
+- F-0001 が開いたまま適用すると和集合で全域が F-0001 に帰属する。本票は自票1件を paths に含め、閉じる作業は別 Feature。
+- `policy/` や `scripts/` を部分木で被覆する → ゲート自身を書き換えられる。票の paths はファイル単位（意思表示）。
 - 既存 ADR に `supersede_adr: true` で空の supersedes → 17 本の無言上書き。0045 は新規のみ。
 - `escalate: stay` で高リスク trio を外す / `ceiling` で Opus を代替する → 0033 / 0037。
 - 平文 `writer: parent` だけを信じる → 子が自己昇格を書ける。cycle ダイジェスト必須。

@@ -15,6 +15,7 @@ feature:
   proposed_change:
     mutates_canon: true
     paths:
+      - knowledge/features/F-0007-dispatch-context-packet.yaml
       - knowledge/graph/required-cycle.json
       - knowledge/criteria/model-routing.yaml
       - knowledge/decisions/0045-dispatch-context-packet.md

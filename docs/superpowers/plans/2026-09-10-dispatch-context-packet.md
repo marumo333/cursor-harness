@@ -34,7 +34,7 @@ plan_confirm:
 
 | タスク | ファイル | 備考 |
 | --- | --- | --- |
-| 1 起票 | `knowledge/features/F-0007-dispatch-context-packet.yaml` | 本 PR。proposed + pending。paths はファイル単位 |
+| 1 起票 | `knowledge/features/F-0007-dispatch-context-packet.yaml` | 本 PR。proposed + pending。paths はファイル単位＋自票1件 |
 | 2 設計 | `docs/superpowers/specs/2026-09-10-dispatch-context-packet-design.md` | 本 PR。canon 外 |
 | 3 ADR | `knowledge/decisions/0045-dispatch-context-packet.md` | 適用 PR。**新規のみ。** 既存 ADR を差分に入れない |
 | 4 cycle 宣言 | `knowledge/graph/required-cycle.json` | ノードに `context_mode` |
@@ -46,11 +46,14 @@ plan_confirm:
 | 10 Rego | `policy/packet.rego` `policy/packet_test.rego` | deny 空だけ。grow/canon/feature は触らない |
 | 11 計測 | `scripts/lib/cycle-metrics.mjs` `scripts/cycle-metrics.test.mjs` `scripts/cycle-record.mjs` | 観測専用。need_rerun を増やさない |
 | 12 skill | 列挙した 6 本だけ | パケット必須。スポットライト囲み |
-| 13 gitignore | `.gitignore` `knowledge/graph/packets/.gitkeep` | `*.json` を無視 |
+| 13 gitignore | `.gitignore` `knowledge/graph/packets/.gitkeep` | 起票 PR で保管決定（canon 外）。`packets/**` + gitkeep 除外 |
 | 14 完了記録 | learnings / events / catalog `--write` | [[0016]] |
 
 **書き換えない:** F-0001 本体、既存 `knowledge/decisions/00*.md`（0045 以外）、`policy/grow.rego` `policy/canon.rego` `policy/feature.rego`、LangGraph、`.ts` 化。
-票の paths を部分木に広げない。適用 PR で paths を足して自己拡幅しない。
+票の paths を部分木に広げない。適用 PR で F-0007 の paths を足して自己拡幅しない。
+F-0001 が in_progress の間、ゲートの和集合は F-0001 が先に被覆する。ファイル単位は意思表示。
+F-0001 を done にする別 Feature を起票するまで、既存 ADR 上書き防止は機械強制できない。
+AGENTS.md / CLAUDE.md は本票の paths に入れない。packet 必須の文書は skill 6本だけ。
 
 ## タスク
 
