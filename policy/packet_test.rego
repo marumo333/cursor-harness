@@ -38,6 +38,7 @@ ok_input := {
 	"effort_default": "high",
 	"canon_path_count": 0,
 	"required_mode": "isolated",
+	"expected_seats": ["opus"],
 	"trio_third": false,
 	"ceiling_replaces_gate": false,
 	"role_swap_to_opus": false,
@@ -149,7 +150,22 @@ test_allow_muse_as_third if {
 		"dispatch": d,
 		"trio_third": true,
 		"canon_path_count": 1,
+		"expected_seats": ["fable", "muse"],
 	})
+}
+
+test_deny_muse_stay if {
+	d := object.union(ok_dispatch, {"seat": "muse", "escalate": "stay"})
+	count(canon.deny) > 0 with input as object.union(ok_input, {
+		"dispatch": d,
+		"trio_third": true,
+		"expected_seats": ["fable", "muse"],
+	})
+}
+
+test_deny_verify_seat_grok if {
+	d := object.union(ok_dispatch, {"seat": "grok"})
+	count(canon.deny) > 0 with input as object.union(ok_input, {"dispatch": d})
 }
 
 test_deny_implement_to_opus if {

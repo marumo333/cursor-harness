@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
-import { packetFileName } from './harness-query.mjs';
+import { assertAdrPaths, assertNoForbiddenKeys, packetFileName } from './harness-query.mjs';
 
 const WORKSPACE = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -15,6 +15,15 @@ const ROLE_BY_NODE = {
 	'skill:reflect': 'gate',
 	'skill:plan-confirm': 'gate',
 	'skill:harness-grow': 'gate'
+};
+
+const SEATS_BY_NODE = {
+	'skill:harness-api-budget': ['grok'],
+	'skill:adversarial-review': ['fable', 'muse'],
+	'skill:verify': ['opus'],
+	'skill:reflect': ['opus'],
+	'skill:plan-confirm': ['fable'],
+	'skill:harness-grow': ['fable']
 };
 
 const EFFORT_ALLOW = {
@@ -86,7 +95,11 @@ export function buildDispatchPolicyInput({
 		effort_default: effortAllowFor(role)[0],
 		canon_path_count,
 		required_mode,
-		trio_third: dispatch.node === 'skill:adversarial-review' && dispatch.seat === 'muse',
+		expected_seats: SEATS_BY_NODE[dispatch.node] ?? [],
+		trio_third:
+			dispatch.node === 'skill:adversarial-review' &&
+			dispatch.seat === 'muse' &&
+			dispatch.escalate === 'trio',
 		ceiling_replaces_gate:
 			dispatch.escalate === 'ceiling' && (dispatch.node === 'skill:verify' || dispatch.node === 'skill:reflect'),
 		role_swap_to_opus: (role === 'parent' || role === 'implement') && dispatch.seat === 'opus'
@@ -128,6 +141,11 @@ export function assertDispatchPolicy({ root, policyDir, dispatch, canon_path_cou
 	const packet_sha256 = createHash('sha256').update(raw).digest('hex');
 	if (packet_sha256 !== dispatch.sha256) throw new Error('sha256 が packet と一致しない');
 	const packet = JSON.parse(raw.toString('utf8'));
+	assertNoForbiddenKeys(packet);
+	assertAdrPaths(root, packet.adr_paths ?? []);
+	if (!Number.isInteger(canon_path_count) || canon_path_count < 0) {
+		throw new Error('canon_path_count は導出した 0 以上の整数');
+	}
 	const input = buildDispatchPolicyInput({
 		packet,
 		packet_bytes: raw.length,
@@ -142,26 +160,45 @@ export function assertDispatchPolicy({ root, policyDir, dispatch, canon_path_cou
 	return { input, deny, required_mode, packet };
 }
 
+function gitLines(root, args) {
+	return execFileSync('git', ['-c', 'core.quotePath=false', ...args], {
+		encoding: 'utf8',
+		cwd: root
+	})
+		.split('\n')
+		.map((s) => s.trim())
+		.filter(Boolean);
+}
+
+function resolveMergeBase(root) {
+	for (const base of ['origin/main', 'main']) {
+		try {
+			const mb = execFileSync('git', ['-c', 'core.quotePath=false', 'merge-base', base, 'HEAD'], {
+				encoding: 'utf8',
+				cwd: root
+			}).trim();
+			if (mb) return mb;
+		} catch {
+			// 次の基準
+		}
+	}
+	throw new Error('canon 件数を導出できない（merge-base 欠落）。欠落で stay を通さない');
+}
+
 export function countCanonPaths(root, policyDir = join(WORKSPACE, 'policy')) {
-	let diff = [];
-	try {
-		diff = execFileSync('git', ['-c', 'core.quotePath=false', 'diff', '--name-only', 'origin/main'], {
-			encoding: 'utf8',
-			cwd: root
-		})
-			.split('\n')
-			.map((s) => s.trim())
-			.filter(Boolean);
-	} catch {
-		diff = [];
-	}
+	const mb = resolveMergeBase(root);
+	const diff = [
+		...new Set([
+			...gitLines(root, ['diff', '--cached', '--name-only']),
+			...gitLines(root, ['diff', '--name-only']),
+			...gitLines(root, ['ls-files', '--others', '--exclude-standard']),
+			...gitLines(root, ['diff', '--name-only', mb])
+		])
+	];
 	if (!diff.length) return 0;
-	try {
-		const paths = evalHarnessCanonPaths(diff, policyDir);
-		return Array.isArray(paths) ? paths.length : diff.length;
-	} catch {
-		return diff.length;
-	}
+	const paths = evalHarnessCanonPaths(diff, policyDir);
+	if (!Array.isArray(paths)) throw new Error('harness.canon.paths が配列ではない');
+	return paths.length;
 }
 
 function evalHarnessCanonPaths(diff_paths, policyDir) {

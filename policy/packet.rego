@@ -16,7 +16,37 @@ has_schema if input.packet.schema == "harness-query/v1"
 
 has_cycle if regex.match(`^C-[0-9]{4}$`, input.packet.cycle)
 
+has_packet_node if is_string(input.packet.node)
+
+has_packet_seq if is_number(input.packet.seq)
+
 has_bytes if is_number(input.packet_bytes)
+
+has_expected_seats if {
+	is_array(input.expected_seats)
+	count(input.expected_seats) > 0
+}
+
+seat_ok if input.dispatch.seat in input.expected_seats
+
+has_facts if is_string(input.packet.feature)
+
+has_facts if {
+	is_string(input.packet.diff_stat)
+	count(input.packet.diff_stat) > 0
+}
+
+has_facts if {
+	is_array(input.packet.catalog_hits)
+	count(input.packet.catalog_hits) > 0
+}
+
+has_facts if {
+	is_array(input.packet.adr_paths)
+	count(input.packet.adr_paths) > 0
+}
+
+has_facts if is_object(input.packet.metrics)
 
 has_sha if regex.match(`^[a-f0-9]{64}$`, input.dispatch.sha256)
 
@@ -47,6 +77,8 @@ effort_ok if input.dispatch.effort in input.effort_allow
 
 is_third if input.trio_third == true
 
+is_trio if input.dispatch.escalate == "trio"
+
 walk_forbidden if {
 	some path, value
 	walk(input.packet, [path, value])
@@ -58,7 +90,13 @@ deny contains "schema は harness-query/v1" if not has_schema
 
 deny contains "cycle は C-NNNN" if not has_cycle
 
+deny contains "packet.node が必要" if not has_packet_node
+
+deny contains "packet.seq が必要" if not has_packet_seq
+
 deny contains "禁則キー" if walk_forbidden
+
+deny contains "事実の無い空パケット" if not has_facts
 
 deny contains "packet_bytes が必要" if not has_bytes
 
@@ -86,6 +124,14 @@ deny contains "required_mode は isolated か packet" if not has_required_mode
 deny contains "escalate が不正" if not has_escalate
 
 deny contains "seat が不正" if not has_seat
+
+deny contains "expected_seats が必要" if not has_expected_seats
+
+deny contains "席が dispatch_seats の外" if {
+	has_seat
+	has_expected_seats
+	not seat_ok
+}
 
 deny contains "child_keys が必要" if not has_child_keys
 
@@ -154,6 +200,13 @@ deny contains "Muse は trio 第3以外禁止" if {
 	has_seat
 	input.dispatch.seat == "muse"
 	not is_third
+}
+
+deny contains "Muse は escalate trio 必須" if {
+	has_seat
+	has_escalate
+	input.dispatch.seat == "muse"
+	not is_trio
 }
 
 deny contains "実装席を Opus に付け替えない" if input.role_swap_to_opus == true

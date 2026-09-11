@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildPacket, writePacket } from './lib/harness-query.mjs';
-import { assertDispatchPolicy, buildDispatchPolicyInput, roleFor } from './lib/packet-policy.mjs';
+import { assertDispatchPolicy, buildDispatchPolicyInput, countCanonPaths, roleFor } from './lib/packet-policy.mjs';
 
 const WORKSPACE = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -137,5 +137,41 @@ test('導出 input は自己申告フラグを使わない', () => {
 	});
 	assert.equal(input.trio_third, false);
 	assert.deepEqual(input.effort_allow, ['high']);
+	assert.deepEqual(input.expected_seats, ['opus']);
 	assert.equal(input.role_swap_to_opus, false);
+});
+
+test('git が無いルートでは canon 件数を 0 に落とさない', () => {
+	const root = tmpRoot();
+	assert.throws(() => countCanonPaths(root), /merge-base|導出できない/);
+});
+
+test('verify に grok 席は deny', () => {
+	const root = tmpRoot();
+	const packet = buildPacket({
+		cycle: 'C-0010',
+		node: 'skill:verify',
+		seq: 1,
+		context_mode: 'isolated',
+		feature: 'F-0007',
+		diff_stat: '1 file'
+	});
+	const written = writePacket({ root, packet });
+	assert.throws(
+		() =>
+			assertDispatchPolicy({
+				root,
+				policyDir: join(WORKSPACE, 'policy'),
+				dispatch: {
+					cycle: 'C-0010',
+					node: 'skill:verify',
+					seq: 1,
+					seat: 'grok',
+					escalate: 'stay',
+					sha256: written.sha256
+				},
+				canon_path_count: 0
+			}),
+		/席|deny|dispatch_seats/
+	);
 });

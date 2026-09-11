@@ -117,27 +117,23 @@ if (type === 'node_state') {
 		console.error('seq は周内で単調増加（次は 1）');
 		process.exit(1);
 	}
-	const child_keys = (arg('child-keys') || '')
-		.split(',')
-		.map((s) => s.trim())
-		.filter(Boolean);
+	if (process.argv.includes('--canon-path-count') || process.argv.includes('--child-keys')) {
+		console.error('--canon-path-count / --child-keys は自己申告なので使えない。件数と席は導出する');
+		process.exit(1);
+	}
 	let canon_path_count;
-	const rawCanon = arg('canon-path-count');
-	if (rawCanon != null) {
-		canon_path_count = Number(rawCanon);
-		if (!Number.isInteger(canon_path_count) || canon_path_count < 0) {
-			console.error('--canon-path-count は 0 以上の整数');
-			process.exit(1);
-		}
-	} else {
+	try {
 		canon_path_count = countCanonPaths(ROOT);
+	} catch (e) {
+		console.error(e.message);
+		process.exit(1);
 	}
 	try {
 		assertDispatchPolicy({
 			root: ROOT,
 			dispatch: ev,
 			canon_path_count,
-			child_keys
+			child_keys: []
 		});
 	} catch (e) {
 		console.error(e.message);

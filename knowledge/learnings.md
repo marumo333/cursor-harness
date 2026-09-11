@@ -30,6 +30,8 @@
 - 初回 trio 3/3 差し戻し: `packet.rego` が opa test 専用で dispatch に刺さっていなかった。
   sha256 形式だけ見て実体と突合せず、欠落は fail-open、`--seq` で単調増加を迂回できた。
   執行点を `cycle-record --type dispatch` に移し、node×seat から役割を導出し、欠落は deny にした。
+- 再レビューも差し戻し。`--canon-path-count` 自己申告と git 失敗時の 0 を廃し、
+  席を dispatch_seats に固定、Muse は escalate trio 必須、`--adr` の symlink を拒否した。
 
 ---
 

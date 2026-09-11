@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { computeMetrics, foldCycle } from './lib/cycle-metrics.mjs';
@@ -214,4 +214,9 @@ test('--adr は knowledge 配下の実在パスだけ', () => {
 	assert.throws(() => assertAdrPaths(root, ['/etc/passwd']), /knowledge/);
 	assert.throws(() => assertAdrPaths(root, ['knowledge/learnings.md']), /decisions|criteria|features/);
 	assertAdrPaths(root, ['knowledge/decisions/0045-dispatch-context-packet.md']);
+	symlinkSync(
+		join(root, 'knowledge', 'decisions', '0045-dispatch-context-packet.md'),
+		join(root, 'knowledge', 'decisions', 'evil.md')
+	);
+	assert.throws(() => assertAdrPaths(root, ['knowledge/decisions/evil.md']), /symlink/);
 });

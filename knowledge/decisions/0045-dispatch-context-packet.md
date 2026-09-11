@@ -13,10 +13,13 @@
   2. **照会は `scripts/harness-query.mjs`。** `knowledge/graph/packets/C-NNNN.<node>.<seq>.json`
      （≤32768 バイト、gitignore）。超過は truncate せず失敗。空は書かない。
      禁則キー: `learnings` / `conversation` / `decisions` / `session`。
-     `effort` / `escalate` はパケットに載せない。
+     `effort` / `escalate` / `seat` はパケットに載せない。
+     `--adr` は実在する `knowledge/decisions|criteria|features` の通常ファイルだけ（symlink 拒否）。
   3. **親上書きは cycle の dispatch 行が正本。** node / seq / 席 / effort / escalate / sha256。
      seq は周内単調増加。平文 `writer: parent` は信用しない。
      子が同じキーを返したら deny し cycle に残す。
+     席は `model-routing.yaml` の dispatch_seats に固定する。Muse は `escalate: trio` 必須。
+     canon 件数は git + `harness.canon.paths` で導出する。CLI 自己申告は置かない。欠落は deny。
   4. **effort 上書きは許容幅が2要素以上のときだけ。** 幅1は hard deny。
      ゲート effort を親が下げることは不可。実装席を Opus に付け替えない。
   5. **escalate は `stay` / `trio` / `ceiling` / `human`。**

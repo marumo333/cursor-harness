@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, lstatSync, mkdirSync, realpathSync, writeFileSync } from 'node:fs';
+import { dirname, join, relative } from 'node:path';
 
 export const PACKET_MAX_BYTES = 32768;
 export const FORBIDDEN_KEYS = new Set([
@@ -18,12 +18,23 @@ const MODES = new Set(['isolated', 'packet']);
 const ADR_RE = /^knowledge\/(decisions|criteria|features)\/[A-Za-z0-9._/-]+$/;
 
 export function assertAdrPaths(root, paths) {
+	const knowledge = join(root, 'knowledge');
 	for (const p of paths ?? []) {
 		const rel = String(p).replaceAll('\\', '/');
 		if (rel.includes('..') || rel.startsWith('/') || !ADR_RE.test(rel)) {
 			throw new Error('--adr は knowledge/decisions|criteria|features 配下の相対パス');
 		}
-		if (!existsSync(join(root, rel))) throw new Error(`--adr が存在しない: ${rel}`);
+		const abs = join(root, rel);
+		if (!existsSync(abs)) throw new Error(`--adr が存在しない: ${rel}`);
+		const st = lstatSync(abs);
+		if (st.isSymbolicLink() || st.isDirectory()) {
+			throw new Error('--adr は実在する通常ファイルだけ（symlink / ディレクトリは拒否）');
+		}
+		const real = realpathSync(abs);
+		const fromKnowledge = relative(realpathSync(knowledge), real).replaceAll('\\', '/');
+		if (fromKnowledge.startsWith('..') || !/^(decisions|criteria|features)\//.test(fromKnowledge)) {
+			throw new Error('--adr は knowledge/decisions|criteria|features 配下の相対パス');
+		}
 	}
 }
 
