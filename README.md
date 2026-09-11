@@ -1,6 +1,7 @@
 # cursor-harness
 
 Cursor ハーネスの**テンプレート**。対象は席・正本・ゲート・cycle（[ADR 0039](knowledge/decisions/0039-harness-template-cycle-graph.md)）。
+ライセンスは [MIT](LICENSE)（Copyright (c) 2026 marumo333）。
 
 ## 実行環境
 
@@ -34,19 +35,142 @@ node scripts/install-git-hooks.mjs
 
 ## アーキテクチャ
 
-層と、AI 実装 PR の問題から自己改善が回る経路を示す。元ファイルは [`docs/architecture/`](docs/architecture/)。
+このハーネスは席・正本・ゲート・cycle で回る。入力は人間の依頼と Feature、
+実行は席、token効率化は code-mode と packet、品質ゲートは hooks / OPA / feature-gate、
+成果は正本（skill / ADR / criteria / Rego）、フィードバックは cycle と learnings である。
+監査の主体は親 Grok 4.6 である。Uber の Gateway や艦隊は置かない。OPA は canon 変更のゲートであり、自己改善ループそのものではない。
+
+旧 PNG は [`docs/architecture/`](docs/architecture/) に履歴として残す。正は下記 mermaid。
+
+### 監査
+
+受付 → 監査（親）→ 計画 / 実装 / 敵対レビュー / 検証 / 内省 → 公開。
+辺は `required-cycle.json` と同じ（adversarial-review → verify → reflect）。
+OPA / feature-gate は横の判定であり、正本へは書かない。正本へ入るのは人間マージだけ。
+
+```mermaid
+flowchart TB
+  subgraph inbound["受付"]
+    H["人間の依頼"]
+    FE["Feature proposed"]
+  end
+
+  subgraph plant["実行"]
+    P["監査 親 Grok 4.6"]
+    CM["token効率化"]
+    PK["packet"]
+    PL["計画 writing-plans"]
+    IM["実装 Grok"]
+    AR["敵対レビュー Fable"]
+    VR["検証 verifier Opus"]
+    RF["内省 reflector Opus"]
+    TR["高リスク trio<br/>Fable / Grok / Muse"]
+  end
+
+  subgraph qa["品質ゲート"]
+    HK["hooks / commit-msg"]
+    FG["feature-gate / OPA"]
+  end
+
+  subgraph warehouse["正本"]
+    SK["skills / agents"]
+    AD["ADR / criteria / Feature"]
+    PO["policy Rego"]
+  end
+
+  subgraph ship["公開"]
+    PR["PR"]
+    HM["人間マージ"]
+  end
+
+  H --> P
+  FE --> P
+  P --> CM
+  P --> PK
+  P --> PL
+  PK --> IM
+  PK --> AR
+  PK --> VR
+  PK --> RF
+  IM --> HK
+  IM --> AR
+  AR --> VR
+  VR --> RF
+  AR -.-> TR
+  VR --> FG
+  RF --> FE
+  P --> PR
+  PR --> HM
+  HM --> warehouse
+```
 
 ### ランタイム
 
-席と強制の層。OPA は canon 変更のゲートであり、自己改善ループそのものではない。
+席と強制の層。子へ渡すのは packet だけ。会話履歴と learnings 全文は継がない。
+hooks を踏むのは実装 Grok の commit。OPA は判定であり正本へは書かない。
 
-![cursor-harness ランタイム](docs/architecture/harness-runtime-architecture.png)
+```mermaid
+flowchart LR
+  subgraph seats["席"]
+    direction TB
+    G["親 Grok 4.6"]
+    IMP["実装 Grok"]
+    F["計画 / レビュー Fable 5.1"]
+    O["検証 / 内省 Opus 5"]
+    M["第3 Muse medium"]
+  end
+
+  subgraph force["強制"]
+    direction TB
+    Hook["git hooks"]
+    Gate["OPA feature-gate"]
+    Packet["packet.canon deny"]
+  end
+
+  subgraph canon["正本"]
+    direction TB
+    Feat["Feature YAML"]
+    Skill["skills"]
+    Policy["Rego"]
+  end
+
+  G -->|"packet"| F
+  G -->|"packet"| O
+  G -->|"trio のみ"| M
+  G --> IMP
+  IMP --> Hook
+  O --> Gate
+  Gate -.->|"判定のみ"| Packet
+  HM["人間マージ"] --> Feat
+  HM --> Skill
+  HM --> Policy
+```
 
 ### 再起的自己改善
 
-AI 実装 PR に省略・失敗・差し戻しが残ったときだけ回る。人間のマージが点火。cycle-after-merge は下書き PR までで、エージェントは自動起動しない。OPA は横のゲート。
+AI 実装 PR に省略・失敗・差し戻しが残ったときだけ回る。人間のマージが点火。
+cycle-after-merge は下書き PR までで、エージェントは自動起動しない。OPA は横のゲート。
 
-![再起的自己改善](docs/architecture/harness-self-improve-architecture.png)
+```mermaid
+flowchart TD
+  AIPR["AI 実装 PR"] --> Q{"省略 / 失敗 / 差し戻し?"}
+  Q -->|残る| Merge1["人間がマージ"]
+  Q -->|無い| Merge2["人間がマージ"]
+  Merge1 --> CAM["cycle-after-merge"]
+  CAM --> Draft["次 Feature の下書き PR"]
+  Draft --> Stop["エージェントは自動起動しない"]
+  Merge2 --> Grow["正本に定着"]
+  Grow --> Next["次周は人間が開く"]
+  Draft --> Next
+  L["learnings"] --> FP["Feature proposed"]
+  FP --> HM2["人間マージ"]
+  HM2 --> Adm["admitted"]
+  Adm --> Allow["OPA allow"]
+  Allow --> HG["harness-grow"]
+  HG --> PR3["apply PR"]
+  PR3 --> HM3["人間マージ"]
+  HM3 --> CanonOut["skill / ADR / criteria / Rego"]
+```
 
 ## 構成
 

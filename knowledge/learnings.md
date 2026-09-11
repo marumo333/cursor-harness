@@ -8,6 +8,78 @@
 
 ---
 
+## 2026-09-11 — 工場比喻を監査 / token効率化へ置換（F-0011 / C-0011）
+
+**問い**
+
+- README の工場比喻（工場長 / 治具 など）を正本語彙（席・正本・ゲート・cycle）へ寄せ、
+  後退を機械判定で止められるか。
+
+**worked**
+
+- 人間指示の写像をそのまま固定した。治具 code-mode → `token効率化`、工場長 → `監査`。
+  ソフトウェア工場 / 工場フロア / 工程カード / 抜き取り / 検査 / 振り返り / 出荷 / 正本倉庫 / 原料 も置換。
+- TDD 赤は新テストが `### 監査` 不在で失敗（アサーションを先に置き README を後で直した）。置換後 3/3 緑。
+- 旧語を `doesNotMatch` で固定したので、次周に工場語が戻ると赤になる。
+  用語の一貫性を人の読みではなく `scripts/license-readme.test.mjs` に落とせた。
+- 触ったのは表示テキストだけ。mermaid の node id（`plant` / `warehouse` / `ship`）と
+  C-0009 が固定した禁止辺（`FG --> warehouse` / `Gate --> Feat` / `HK --> AR` / `HG --> CanonOut`）・
+  cycle 辺（`AR --> VR` / `VR --> RF` / `HM --> warehouse`）は変えていないので、権限モデルのテストは緑のまま。
+- `pnpm test` 113、`opa test` 77、`feature-gate` 成功（F-0001 被覆）。F-0011 は proposed のまま、入場しない。
+- commit 2b41e05 は origin に push 済みで PR 14。C-0009 でブロッカーだった push 権限は解消している。
+
+**failed / edge cases**
+
+- C-0009 のエントリは当時の現物（工場 mermaid・工場語のノード名）を書いている。履歴なので消さない。
+  現行 README の第1図見出しは「監査」で、C-0009 の記述と現物のずれは本エントリで吸収する。
+- 「工場」を全文一括置換すると、棄却済み他社概念の固有名
+  （`docs/superpowers/specs/2026-09-04-token-efficiency-design.md` の「Uber 工場」）まで巻き込む。
+  禁止語の適用範囲は README に限定し、非対象を設計メモに明記した。
+- F-0011 のファイル名は `F-0011-mit-license-factory-diagram.yaml` のまま。
+  出生票のパスは動かさず、`title` と `problem` だけ現行語彙へ直した。
+- 用語修正でもテスト列挙は既存のまま済んだ。新規テストファイルを足していないので、
+  C-0009 で踏んだ `package.json` と `.github/workflows/feature-gate.yml` の二重列挙は再発しない。
+- trio は Fable 承認 / Grok 承認 / Muse が初回差し戻し（読了範囲不足）→ seq4 の再レビューで承認。
+  Muse は packet の `diff_stat` が略称だけだと現物を読まずに判定に入る。席の傾向として記録する（[[0031]]）。
+- 原因は packet 側にある。commit 後は `git diff --stat` が空なので親が
+  `README LICENSE TEMPLATE package.json ...` と略称を手書きし、レビュー席が必読パスを引けない。
+  再現可能な改善なので F-0012 を proposed で起票した。
+- plan-confirm は並列展開なしで省略、harness-grow は入場なしで省略。
+
+---
+
+## 2026-09-11 — MIT と工場 mermaid（F-0011 / C-0009）
+
+**問い**
+
+- 複製先に法的包装（LICENSE）を付け、README の構造図を静的 PNG から mermaid 正本へ移せるか。
+
+**worked**
+
+- `scripts/license-readme.test.mjs` が3点を機械判定する。LICENSE は OSI MIT の全文一致、
+  `package.json` の `license` は MIT、README は mermaid 3図（工場 / ランタイム / 再起的自己改善）。
+- TDD 赤は LICENSE 不在の `existsSync` false。追加後に緑。
+  `pnpm test` 113、`opa test` 77、`feature-gate` 成功で前進可能。
+- 図は禁止辺を `doesNotMatch` で固定した（`FG --> warehouse` / `Gate --> Feat` / `HK --> AR` / `HG --> CanonOut`）。
+  必須辺は `AR --> VR` / `VR --> RF` / `HM --> warehouse`、OPA は「判定のみ」表記。
+- 旧 PNG は `docs/architecture/` に履歴として残した。README 本文は PNG を参照しない。
+- 適用は F-0001 被覆。F-0011 は proposed のまま。0044 決定本文は消していない。
+
+**failed / edge cases**
+
+- CI のテスト実行は `node --test` の明示列挙なので、新テストは `package.json` の `test` と
+  `.github/workflows/feature-gate.yml` の両方に足さないと緑のまま走らない。片方追記が初回の指摘点。
+- 初回 trio は体1/体2が差し戻し。「欠落 PNG」の誤記（実体は履歴として存在）、工程順が逆、
+  ゲートから倉庫へ抜ける辺、Fable が hooks を踏む表記、CI 未列挙。
+- 再レビューも体1が差し戻し。`HK --> AR` は hooks からレビューへ出る辺、`HG --> CanonOut` は
+  allow を迂回する直結。図の矢印1本が権限モデルの誤読を作るので、禁止辺はテスト側に落とした。
+- 3回目 trio で 3/3 承認。plan-confirm は並列展開なしで省略、harness-grow は入場なしで省略。
+- ブロッカー: 環境の `GITHUB_TOKEN` が無効で origin へ push できず、PR 作成は
+  「remote に commits が無い」で失敗した。ローカル `cursor/mit-license-factory-diagram-1dcb` に 3 commit。
+  ゲートが全部緑でも push 権限は verify の外側で落ちる。
+
+---
+
 ## 2026-09-11 — ディスパッチ packet を本 PR で実装する（F-0007 / C-0010）
 
 **問い**

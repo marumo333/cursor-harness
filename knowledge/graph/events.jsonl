@@ -71,3 +71,40 @@
 {"t":"2026-09-11T05:51:32.663Z","type":"edge_state","cycle":"C-0008","from":"skill:adversarial-review","to":"skill:verify","state":"taken","reason":"再レビュー3/3承認。票は pending"}
 {"t":"2026-09-11T05:51:32.684Z","type":"edge_state","cycle":"C-0008","from":"skill:verify","to":"skill:reflect","state":"taken","reason":"feature-gate / pnpm test 緑"}
 {"t":"2026-09-11T08:26:39.401Z","type":"human_approved","cycle":"C-0008","merge_sha":"93219814df7f3c39abee92c9cfc1ef10bf5dd3f6","pr":"13"}
+{"t":"2026-09-11T08:35:11.728Z","type":"cycle_open","cycle":"C-0009","source":"manual"}
+{"t":"2026-09-11T08:35:28.539Z","type":"dispatch","cycle":"C-0009","node":"skill:adversarial-review","seq":1,"seat":"fable","escalate":"trio","sha256":"476d1f4d99578d9088cddbcfe6dd226f0ba0e49f993b308af9141591b80a15a7"}
+{"t":"2026-09-11T08:35:32.562Z","type":"dispatch","cycle":"C-0009","node":"skill:adversarial-review","seq":2,"seat":"grok","escalate":"trio","sha256":"80a8849442ed2e928d68e4f1b14d5ff0265e915c73562c3c94018c1bb405513a"}
+{"t":"2026-09-11T08:35:32.699Z","type":"dispatch","cycle":"C-0009","node":"skill:adversarial-review","seq":3,"seat":"muse","escalate":"trio","sha256":"1bda294bcbd5c65b2c7541f7a1ae23d4e4a85a2ba995256521714d0f3a626b1e"}
+{"t":"2026-09-11T08:42:21.368Z","type":"dispatch","cycle":"C-0009","node":"skill:adversarial-review","seq":4,"seat":"fable","escalate":"trio","sha256":"d1fe94ba12845926c3049a369c953d7fd1bd79b96891ab80327355472a1a8c4b"}
+{"t":"2026-09-11T08:42:21.502Z","type":"dispatch","cycle":"C-0009","node":"skill:adversarial-review","seq":5,"seat":"grok","escalate":"trio","sha256":"5aa186cf6b74ebb748df6b746335798496620537103ac9d711ba503de9e9a7bf"}
+{"t":"2026-09-11T08:42:21.634Z","type":"dispatch","cycle":"C-0009","node":"skill:adversarial-review","seq":6,"seat":"muse","escalate":"trio","sha256":"156dbfc92cdd078e62d48955a3676f3a83248317ac02b83f8169c503207ccc7a"}
+{"t":"2026-09-11T08:47:38.979Z","type":"dispatch","cycle":"C-0009","node":"skill:adversarial-review","seq":7,"seat":"fable","escalate":"trio","sha256":"98b66ba276a9e1aca88da41d737e59d7a9e16b7e66f4e5d31cabc8a85c7b8e05"}
+{"t":"2026-09-11T08:47:39.111Z","type":"dispatch","cycle":"C-0009","node":"skill:adversarial-review","seq":8,"seat":"grok","escalate":"trio","sha256":"f457caba0959d0c46be653dc115a00aa1c4f3397da518b198aea00c7b1754d9c"}
+{"t":"2026-09-11T08:47:39.241Z","type":"dispatch","cycle":"C-0009","node":"skill:adversarial-review","seq":9,"seat":"muse","escalate":"trio","sha256":"59fb80767b1e2b798a5edfe935530268bf3821333c087f45b396b61e77baf0b2"}
+{"t":"2026-09-11T08:48:00.000Z","type":"dispatch","cycle":"C-0009","node":"skill:verify","seq":1,"seat":"opus","escalate":"trio","sha256":"9cfee658809fce6598595f25945056bd9a8e6678839ba2307a5f2cba1f0ea57a"}
+{"t":"2026-09-11T08:50:00.000Z","type":"dispatch","cycle":"C-0009","node":"skill:reflect","seq":1,"seat":"opus","escalate":"trio","sha256":"9d5c9da863ff76a3239f48840095a7688bd8576c58bca531eda4290d058c01f6"}
+{"t":"2026-09-11T08:52:00.000Z","type":"node_state","cycle":"C-0009","node":"skill:harness-api-budget","state":"used"}
+{"t":"2026-09-11T08:52:00.010Z","type":"node_state","cycle":"C-0009","node":"skill:adversarial-review","state":"used"}
+{"t":"2026-09-11T08:52:00.020Z","type":"node_state","cycle":"C-0009","node":"skill:verify","state":"used"}
+{"t":"2026-09-11T08:52:00.030Z","type":"node_state","cycle":"C-0009","node":"skill:reflect","state":"used"}
+{"t":"2026-09-11T08:52:00.040Z","type":"node_state","cycle":"C-0009","node":"skill:plan-confirm","state":"skipped"}
+{"t":"2026-09-11T08:52:00.050Z","type":"node_state","cycle":"C-0009","node":"skill:harness-grow","state":"skipped"}
+{"t":"2026-09-11T08:52:00.060Z","type":"edge_state","cycle":"C-0009","from":"skill:adversarial-review","to":"skill:verify","state":"taken","reason":"第3回trio 3/3承認"}
+{"t":"2026-09-11T08:52:00.070Z","type":"edge_state","cycle":"C-0009","from":"skill:verify","to":"skill:reflect","state":"taken","reason":"feature-gate / pnpm test 緑"}
+{"t":"2026-09-11T08:52:00.080Z","type":"token_ledger","cycle":"C-0009","seat":"grok","effort":"medium","packet_bytes":1122,"tasks":11,"zero_value_reinject":false}
+{"t":"2026-09-11T13:40:04.673Z","type":"cycle_open","cycle":"C-0011","source":"manual"}
+{"t":"2026-09-11T13:40:04.744Z","type":"dispatch","cycle":"C-0011","node":"skill:adversarial-review","seq":1,"seat":"fable","escalate":"trio","sha256":"bdb8a5e067fcff0ec49e574aefe5c0fa209511aafe1de80bd12ebc0ab0c7d457"}
+{"t":"2026-09-11T13:40:04.883Z","type":"dispatch","cycle":"C-0011","node":"skill:adversarial-review","seq":2,"seat":"grok","escalate":"trio","sha256":"14dc95163a0f9edac5917962a45c9330b9e1ab6e1d984099ac724576774384c1"}
+{"t":"2026-09-11T13:40:05.028Z","type":"dispatch","cycle":"C-0011","node":"skill:adversarial-review","seq":3,"seat":"muse","escalate":"trio","sha256":"fd382119cc18765159efd6a42ed909aa735a8531f3f4eb23cb40c68662412d25"}
+{"t":"2026-09-11T13:45:03.918Z","type":"dispatch","cycle":"C-0011","node":"skill:adversarial-review","seq":4,"seat":"muse","escalate":"trio","sha256":"35c92a741b339bc58273fad26cbb031bbc6ec876d63f3924ebb8a21be194b12c"}
+{"t":"2026-09-11T13:45:41.612Z","type":"dispatch","cycle":"C-0011","node":"skill:verify","seq":1,"seat":"opus","escalate":"trio","sha256":"3ff80b7f22aa4c25561140f01f6fa3ab2d44e2e1873b3b6e03d5ec02f67219bc"}
+{"t":"2026-09-11T13:53:37.775Z","type":"dispatch","cycle":"C-0011","node":"skill:reflect","seq":1,"seat":"opus","escalate":"trio","sha256":"e316c3b21ca045bfbe263e5cb59383c55d8735ee77c48c824cf0eac41132a378"}
+{"t":"2026-09-11T13:57:46.437Z","type":"node_state","cycle":"C-0011","node":"skill:harness-api-budget","state":"used"}
+{"t":"2026-09-11T13:57:46.465Z","type":"node_state","cycle":"C-0011","node":"skill:adversarial-review","state":"used"}
+{"t":"2026-09-11T13:57:46.494Z","type":"node_state","cycle":"C-0011","node":"skill:verify","state":"used"}
+{"t":"2026-09-11T13:57:46.524Z","type":"node_state","cycle":"C-0011","node":"skill:reflect","state":"used"}
+{"t":"2026-09-11T13:57:46.553Z","type":"node_state","cycle":"C-0011","node":"skill:plan-confirm","state":"skipped"}
+{"t":"2026-09-11T13:57:46.581Z","type":"node_state","cycle":"C-0011","node":"skill:harness-grow","state":"skipped"}
+{"t":"2026-09-11T13:57:46.609Z","type":"edge_state","cycle":"C-0011","from":"skill:adversarial-review","to":"skill:verify","state":"taken","reason":"trio 3/3（Museはseq4再レビュー）"}
+{"t":"2026-09-11T13:57:46.636Z","type":"edge_state","cycle":"C-0011","from":"skill:verify","to":"skill:reflect","state":"taken","reason":"feature-gate / pnpm test 緑"}
+{"t":"2026-09-11T13:57:46.664Z","type":"token_ledger","cycle":"C-0011","seat":"grok","effort":"medium","packet_bytes":6813,"tasks":8,"zero_value_reinject":false}
