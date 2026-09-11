@@ -8,6 +8,27 @@
 
 ---
 
+## 2026-09-11 — 計画/レビューを Fable 5.1、第3を Muse に揃える（F-0009 / C-0008）
+
+**問い**
+
+- 計画確定は Opus のままでよいか。レビューは Fable 5.1 の方が的確か。
+- 第3を Muse に完全に差し替えるか。
+
+**worked**
+
+- 計画と敵対レビューは Fable 5.1 high。verifier / reflector は Opus。
+- trio は Fable / Grok / Muse。Fable と Opus は同居させない。
+- 第3の現行ピンは Muse medium。0044 決定1 も Sol を現行から外した。
+- Fable の Opus フォールバックは failed。
+
+**failed / edge cases**
+
+- Fable は約2倍。Privacy Mode は保持オプトインが要る。
+- 検証席まで Fable にはしない。機械判定に払う理由が薄い。
+
+---
+
 ## 2026-09-11 — 第3レンズを Muse Spark 1.3 にする（F-0008 / C-0007）
 
 **問い**

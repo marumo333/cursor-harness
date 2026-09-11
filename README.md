@@ -10,7 +10,7 @@ Cursor ハーネスの**テンプレート**。対象は席・正本・ゲート
 
 ## 何をするか
 
-- 席: 親 Grok 4.6 / Opus 5 ゲート / Muse Spark 1.3 は**高リスク3体多数決のみ**
+- 席: 親 Grok 4.6 / 計画・レビューは Fable 5.1 / 検証は Opus 5 / Muse Spark 1.3 は**高リスク3体多数決のみ**
 - 正本: [`knowledge/features/F-NNNN-*.yaml`](knowledge/features/README.md)。GitHub Issues / Spec Kit は正本にしない（[ADR 0033](knowledge/decisions/0033-harness-api-budget-routing.md)）
 - ゲート: OPA `node scripts/feature-gate.mjs`（自己改善ループそのものではない）
 - 出生規則: Feature は `proposed` で起票する。**同一 PR で `admitted` / `approved` にしない**（[ADR 0038](knowledge/decisions/0038-feature-canon-opa-grow.md)）

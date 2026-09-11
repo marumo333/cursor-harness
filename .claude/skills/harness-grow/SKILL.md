@@ -8,9 +8,9 @@ description: 入場済み Feature だけ skill/rule/Rego に昇格し、判断�
 ## 手順
 
 1. `knowledge/features/` の `proposed` / `admitted` / `in_progress` を読む。learnings 生メモは正本ではない。
-2. 敵対レビュー（Opus 5・新しい文脈、`adversarial-review` skill）を通し、
-   `evidence.adversarial_review: approved` を票に書く。grow 前の確定判断は Opus Task
-   （親 Grok のまま規約化しない・[[0033]] / [[0037]]）。
+2. 敵対レビュー（Fable 5.1・新しい文脈、`adversarial-review` skill）を通し、
+   `evidence.adversarial_review: approved` を票に書く。grow 前の確定判断は Fable Task
+   （親 Grok のまま規約化しない・[[0033]] / [[0047]]）。
 3. `node scripts/feature-gate.mjs --admit knowledge/features/F-NNNN-….yaml` が allow なら
    `status: admitted`。deny なら票を直す（黙って skill を書かない）。
 4. 昇格（`apply`。対象は票の `proposed_change.paths` のみ）:

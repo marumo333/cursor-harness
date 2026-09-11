@@ -32,10 +32,10 @@
     Router プール（GPT-5.5 / Opus 5 / Grok 4.5 / Fable 5）に 4.6 は未掲載。
     ハーネス親は Router ではなく明示 Grok なので、ヘルプの遅れは差し替えを止めない。
   - **今は変えない席**:
-    - Claude ゲート＝Opus 5（`claude-opus-5-thinking-high`）。価格表に Opus 6 は無い。
+    - Claude 計画/レビュー＝Fable 5.1（[[0047]]）。verifier / reflector は Opus 5。
       Claude 4.6/4.7/4.8 は Hidden の旧 4.x 系であり、ゲート後継ではない。
     - 第3席は [[0046]] で `muse-spark-1.3-medium`。GPT-5.5 は Router 用。Sol / Luna / Terra は第3の代替ではない。
-    - Fable 5 は天井判断のみ。約2倍コスト。ゲート代替禁止・Opus との trio 同居禁止は維持。
+    - Fable 5.1 は計画/レビュー席（[[0047]]）。天井は extra-high / max の追加だけ。約2倍コスト。Opus との trio 同居禁止は維持。
     - Composer 2.5 は親にしない（日常コーディング用。0033 の「親は Grok」と衝突）。
     - Auto/Router を親にしない（クロスファミリー検証の席が消える）。
 - 決定:
@@ -45,7 +45,7 @@
     親 UI で xhigh を選ぶのは任意。criteria には書かない（Task に渡すと静かに落ちる）。
   - **実装の並列展開 / `review_trio` 第2席＝Grok 4.6**。
     `grok_task` と trio 第2も `cursor-grok-4.6-high-fast`。
-  - **第1席 Opus 5 は据え置き。第3席は [[0046]] で Muse Spark 1.3 medium。**
+  - **第1席は [[0047]] で Fable 5.1 high。第3席は [[0046]] で Muse Spark 1.3 medium。**
   - **0031 / 0033 / 0037 は廃止しない。** 世代ピンだけ改正。`supersedes` に載せない。
   - **不変条件**: 親は常時 Grok。Claude は名前付き Task のみ。Muse は 3体多数決以外禁止（[[0046]]）。
     hooks から Task を物理起動しない。

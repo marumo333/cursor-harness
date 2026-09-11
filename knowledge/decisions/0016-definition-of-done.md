@@ -10,7 +10,7 @@
      例外は `criteria/code-quality.yaml` の `tdd_exceptions` を人間が明示した場合のみ（[[0013]]）。
   4. 秘密スキャン通過（`PUBLIC_`以外の鍵がクライアント/コミットに無い）。
   5. **独立敵対レビュー通過**（実装と別 agent・新しい文脈・「壊せ」視点）。
-     高リスクは Opus 5 / Grok / Muse Spark 1.3 medium の3体多数決（[[0046]]）。自己レビューは前進段を満たさない（[[0031]] / [[0037]]）。
+     高リスクは Fable 5.1 / Grok / Muse Spark 1.3 medium の3体多数決（[[0046]] / [[0047]]）。自己レビューは前進段を満たさない（[[0031]] / [[0037]]）。
   6. **並列展開する場合は plan-confirm 承認証跡**が計画ファイルにあること（[[0033]]）。
   7. **`knowledge/learnings.md` に内省を追記**し、判断に触れた場合は Feature 正本を起票（[[0038]]）。
   8. **必須 skill の used/skipped を `knowledge/graph/events.jsonl` に記録**（[[0039]]）。

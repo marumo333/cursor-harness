@@ -1,29 +1,30 @@
 ---
 name: harness-api-budget
-description: Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Museは3体のみ）。壁打ち〜検証の席判断で使う。
+description: Cursor Pro+ API枠を守る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体のみ）。壁打ち〜検証の席判断で使う。
 ---
 
-# harness-api-budget skill（[[0033]] / [[0037]] / [[0039]] / [[0040]] / [[0046]]）
+# harness-api-budget skill（[[0033]] / [[0037]] / [[0039]] / [[0040]] / [[0046]] / [[0047]]）
 
 ## 席の要約
 
 | 席                   | いつ                                                                 |
 | -------------------- | -------------------------------------------------------------------- |
 | 親チャット **Grok 4.6** | 常時。壁打ち・調査・下書き・ディスパッチ操作・統合・cycle 記録    |
-| Task **Opus 5**         | plan-confirm / 敵対レビュー / verifier / reflector / 設計 / grow 前 |
+| Task **Fable 5.1 high** | plan-confirm / 敵対レビュー（モード1・trio 体1） / 設計 / grow 前 |
+| Task **Opus 5**         | verifier / reflector                                                 |
 | Task **Grok 4.6**       | 明文化済みの実装並列展開 / 複数試行                                 |
 | Task **Muse Spark 1.3** | **高リスク3体の第3レンズのみ**（secret）。他では使わない。effort は medium |
 
 ## budget_guards（必ず守る）
 
 1. 親を Opus/Fable にピッカー切替しない。
-2. Opus Task 入力は**成果物のみ**（計画 md / diff / 失敗ログ / ADR パス）。会話履歴の丸投げ禁止。
-3. Muse は `review_trio`（モード2）以外で起動しない。Sol / Terra / Luna は第3に使わない。
+2. ゲート Task 入力は**成果物のみ**（計画 md / diff / 失敗ログ / ADR パス）。会話履歴の丸投げ禁止。
+3. Muse は `review_trio`（モード2）以外で起動しない。Sol / Terra / Luna は使わない。
 4. 3体多数決は高リスク（セキュリティ/入場/再起/アーキ）のみ。
 5. plan-confirm は **並列展開前のみ**必須（単独小修正は省略可。敵対レビューは省略不可）。
-6. Opus ゲートは **名前付き agent 必須**。model 未指定の汎用 Task でゲート代替禁止。
+6. ゲートは **名前付き agent 必須**。model 未指定の汎用 Task でゲート代替禁止。
 7. Fable と Opus を trio に同居させない（Claude 席は1系統・[[0037]]）。
-8. Fable は `fable_seat` のみ: 天井判断の追加起動。ゲート既定代替禁止。
+8. Fable のガードフォールバック（Opus へ落ちる）は failed。天井は extra-high / max の追加だけ。
 9. **1周の再注入**: 各席に渡すのは goal / feature / diff / 関連 ADR パス / 今周の事実だけ。
    `learnings.md` 全文と `decisions/` 全件を親と各 Task が読み直さない（同じ本文は1周1席）。
    これは入力トークン削減。pre-commit（[[0042]]）は回避防止であり、トークンは減らさない。
@@ -31,6 +32,6 @@ description: Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus T
 ## superpowers 接続
 
 `brainstorming`(親 Grok) → `writing-plans`(親 Grok) →
-`plan-confirm`(Opus Task, 並列展開時) → `parallel-dispatch` → `adversarial-review` → `verify` → `reflect`。
+`plan-confirm`(Fable Task, 並列展開時) → `parallel-dispatch` → `adversarial-review` → `verify` → `reflect`。
 
 使ったら `cycle` skill で node/edge を記録する。

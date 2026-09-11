@@ -26,7 +26,7 @@
 			"path": ".claude/skills/harness-api-budget/SKILL.md",
 			"rels": [],
 			"status": "n/a",
-			"summary": "Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Museは3体のみ）。壁打ち〜検証の席判断で使う。"
+			"summary": "Cursor Pro+ API枠を守る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体のみ）。壁打ち〜検証の席判断で使う。"
 		},
 		{
 			"id": "skill:harness-audit",
@@ -62,7 +62,7 @@
 			"path": ".claude/skills/plan-confirm/SKILL.md",
 			"rels": [],
 			"status": "n/a",
-			"summary": "並列展開前の計画確定レビュー（Opus backend-architect）。writing-plans完了直後・parallel-dispatch前に必ず使う"
+			"summary": "並列展開前の計画確定レビュー（Fable 5.1 backend-architect）。writing-plans完了直後・parallel-dispatch前"
 		},
 		{
 			"id": "skill:reflect",
@@ -125,7 +125,7 @@
 			"path": "knowledge/criteria/model-routing.yaml",
 			"rels": [],
 			"status": "n/a",
-			"summary": "ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040 / 0046"
+			"summary": "ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040 / 0046 / 0047"
 		},
 		{
 			"id": "criterion:security-policy",
@@ -641,6 +641,36 @@
 			"summary": "第3レンズ＝Muse Spark 1.3 medium"
 		},
 		{
+			"id": "ADR-0047",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0047-fable-plan-review.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0040"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0046"
+				}
+			],
+			"status": "accepted",
+			"summary": "計画確定と敵対レビュー＝Fable 5.1 high"
+		},
+		{
 			"id": "F-0001",
 			"kind": "feature",
 			"layer": "machine",
@@ -711,6 +741,15 @@
 			"rels": [],
 			"status": "proposed",
 			"summary": "第3レンズを Muse Spark 1.3 medium に切り替える"
+		},
+		{
+			"id": "F-0009",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0009-fable-plan-review.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "計画確定と敵対レビューを Fable 5.1 にする"
 		},
 		{
 			"id": "cycle:required",

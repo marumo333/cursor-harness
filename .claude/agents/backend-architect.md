@@ -1,11 +1,11 @@
 ---
 name: backend-architect
 description: ハーネス設計判断と ADR 起票。正本・OPA・cycle の境界を決める時に使う。
-model: claude-opus-5-thinking-high
+model: claude-fable-5-1-thinking-high
 tools: Read, Grep, Glob, Write, Edit
 ---
 
-# backend-architect（Opus 5）
+# backend-architect（Fable 5.1 high）
 
 ## 役割
 ハーネス テンプレートの設計を決め、ADR に落とす。対象は席・正本・ゲート・cycle（[[0039]]）。

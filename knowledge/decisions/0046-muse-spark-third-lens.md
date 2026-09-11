@@ -16,7 +16,7 @@
   - 切替 PR のモード2 体3を `muse-spark-1.3-medium` で起動し完走した
     （agent `bc-129b9715-8e38-5c39-b51a-3255399712a0`。質問なし・承認）。
 - 決定:
-  1. **`review_trio` 第3 = `muse-spark-1.3-medium`。** 役割は秘密漏れ・出力の無害化・allow 信用。
+  1. **`review_trio` 第3 = `muse-spark-1.3-medium`。** 体1は Fable 5.1（[[0047]]）。役割は秘密漏れ・出力の無害化・allow 信用。
      モード2以外では起動しない。
   2. **GPT-5.6 Sol / Terra / Luna は第3に戻さない。** Router 用にも使わない。
   3. **Gemini 3.8 Flash medium は予備。** Muse の Task スラッグが消えたときだけ、
@@ -31,5 +31,5 @@
      F-0001（`in_progress` / `supersede_adr: true`）の被覆。F-0003 + [[0040]] と同じ。
      F-0008 の `supersede_adr` は true（票が改正する ADR と旗を一致させる）。
   9. **ADR 番号。** 0045 は F-0007（dispatch packet）用に空ける。本判断は 0046。
-- 結果: 席骨格は親 Grok + Opus ゲート + 第3は3体のみ。系列は Anthropic / xAI / Meta。
+- 結果: 席骨格は親 Grok + 計画/レビュー Fable + 検証 Opus + 第3 Muse は3体のみ。系列は Anthropic / xAI / Meta。
 - 関連: [[0031]] [[0033]] [[0037]] [[0039]] [[0040]] [[0044]]
