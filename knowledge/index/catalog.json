@@ -863,6 +863,15 @@
 			"summary": "MITライセンス発行と監査 mermaid"
 		},
 		{
+			"id": "F-0012",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0012-packet-review-scope.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "packet の diff_stat を commit 後も実パスにする"
+		},
+		{
 			"id": "cycle:required",
 			"kind": "cycle",
 			"layer": "machine",
