@@ -18,24 +18,26 @@ ok_packet := {
 }
 
 ok_dispatch := {
+	"cycle": "C-0010",
 	"node": "skill:verify",
 	"seq": 1,
 	"seat": "opus",
 	"escalate": "stay",
 	"sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 	"context_mode": "isolated",
-	"effort_set": false,
 }
 
 ok_input := {
 	"packet": ok_packet,
 	"packet_bytes": 200,
+	"packet_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 	"dispatch": ok_dispatch,
 	"writer": "parent",
 	"child_keys": [],
 	"effort_allow": ["high"],
 	"effort_default": "high",
 	"canon_path_count": 0,
+	"required_mode": "isolated",
 	"trio_third": false,
 	"ceiling_replaces_gate": false,
 	"role_swap_to_opus": false,
@@ -68,12 +70,12 @@ test_deny_child_self_promote if {
 }
 
 test_deny_width1_effort_override if {
-	d := object.union(ok_dispatch, {"effort_set": true, "effort": "high"})
+	d := object.union(ok_dispatch, {"effort": "high"})
 	count(canon.deny) > 0 with input as object.union(ok_input, {"dispatch": d, "effort_allow": ["high"]})
 }
 
 test_allow_width2_effort_override if {
-	d := object.union(ok_dispatch, {"effort_set": true, "effort": "high"})
+	d := object.union(ok_dispatch, {"effort": "high"})
 	count(canon.deny) == 0 with input as object.union(ok_input, {
 		"dispatch": d,
 		"effort_allow": ["medium", "high"],
@@ -82,12 +84,40 @@ test_allow_width2_effort_override if {
 }
 
 test_deny_effort_outside_allow if {
-	d := object.union(ok_dispatch, {"effort_set": true, "effort": "low"})
+	d := object.union(ok_dispatch, {"effort": "low"})
 	count(canon.deny) > 0 with input as object.union(ok_input, {
 		"dispatch": d,
 		"effort_allow": ["medium", "high"],
 		"effort_default": "medium",
 	})
+}
+
+test_deny_missing_canon_path_count if {
+	count(canon.deny) > 0 with input as object.remove(ok_input, {"canon_path_count"})
+}
+
+test_deny_negative_bytes if {
+	count(canon.deny) > 0 with input as object.union(ok_input, {"packet_bytes": -5})
+}
+
+test_deny_unknown_seat if {
+	d := object.union(ok_dispatch, {"seat": "sol"})
+	count(canon.deny) > 0 with input as object.union(ok_input, {"dispatch": d})
+}
+
+test_deny_node_mismatch if {
+	d := object.union(ok_dispatch, {"node": "skill:reflect"})
+	count(canon.deny) > 0 with input as object.union(ok_input, {"dispatch": d})
+}
+
+test_deny_sha_mismatch if {
+	count(canon.deny) > 0 with input as object.union(ok_input, {
+		"packet_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+	})
+}
+
+test_deny_required_mode_mismatch if {
+	count(canon.deny) > 0 with input as object.union(ok_input, {"required_mode": "packet"})
 }
 
 test_deny_stay_when_canon_paths if {

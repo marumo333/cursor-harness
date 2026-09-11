@@ -3,6 +3,7 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertDispatchPolicy, countCanonPaths } from './lib/packet-policy.mjs';
 
 const ROOT = process.env.HARNESS_ROOT || join(dirname(fileURLToPath(import.meta.url)), '..');
 const EVENTS = join(ROOT, 'knowledge', 'graph', 'events.jsonl');
@@ -114,6 +115,32 @@ if (type === 'node_state') {
 		}
 	} else if (ev.seq !== 1) {
 		console.error('seq は周内で単調増加（次は 1）');
+		process.exit(1);
+	}
+	const child_keys = (arg('child-keys') || '')
+		.split(',')
+		.map((s) => s.trim())
+		.filter(Boolean);
+	let canon_path_count;
+	const rawCanon = arg('canon-path-count');
+	if (rawCanon != null) {
+		canon_path_count = Number(rawCanon);
+		if (!Number.isInteger(canon_path_count) || canon_path_count < 0) {
+			console.error('--canon-path-count は 0 以上の整数');
+			process.exit(1);
+		}
+	} else {
+		canon_path_count = countCanonPaths(ROOT);
+	}
+	try {
+		assertDispatchPolicy({
+			root: ROOT,
+			dispatch: ev,
+			canon_path_count,
+			child_keys
+		});
+	} catch (e) {
+		console.error(e.message);
 		process.exit(1);
 	}
 } else if (type === 'token_ledger') {

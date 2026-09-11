@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 export const PACKET_MAX_BYTES = 32768;
@@ -9,10 +9,23 @@ export const FORBIDDEN_KEYS = new Set([
 	'decisions',
 	'session',
 	'effort',
-	'escalate'
+	'escalate',
+	'seat'
 ]);
 const CYCLE_RE = /^C-\d{4}$/;
 const MODES = new Set(['isolated', 'packet']);
+
+const ADR_RE = /^knowledge\/(decisions|criteria|features)\/[A-Za-z0-9._/-]+$/;
+
+export function assertAdrPaths(root, paths) {
+	for (const p of paths ?? []) {
+		const rel = String(p).replaceAll('\\', '/');
+		if (rel.includes('..') || rel.startsWith('/') || !ADR_RE.test(rel)) {
+			throw new Error('--adr は knowledge/decisions|criteria|features 配下の相対パス');
+		}
+		if (!existsSync(join(root, rel))) throw new Error(`--adr が存在しない: ${rel}`);
+	}
+}
 
 export function packetFileName({ cycle, node, seq }) {
 	const safe = String(node ?? '').replace(/[:/]/g, '-');
@@ -33,7 +46,7 @@ export function assertNoForbiddenKeys(value, path = '') {
 	if (value && typeof value === 'object') {
 		for (const [k, v] of Object.entries(value)) {
 			if (FORBIDDEN_KEYS.has(k)) {
-				const kind = k === 'effort' || k === 'escalate' ? '子キー' : '禁則';
+				const kind = k === 'effort' || k === 'escalate' || k === 'seat' ? '子キー' : '禁則';
 				throw new Error(`${kind}キー ${k} はパケットに置けない`);
 			}
 			assertNoForbiddenKeys(v, path ? `${path}.${k}` : k);
@@ -80,7 +93,7 @@ export function buildPacket(input) {
 		seq,
 		context_mode,
 		feature: input.feature ?? null,
-		diff_stat: input.diff_stat ?? '',
+		diff_stat: String(input.diff_stat ?? '').slice(0, 2048),
 		metrics: input.metrics ?? null,
 		catalog_hits: (input.catalog_hits ?? []).slice(0, 20).map((h) => ({ id: h.id, path: h.path })),
 		adr_paths: (input.adr_paths ?? []).slice(0, 12).map(String)
@@ -103,7 +116,12 @@ export function writePacket({ root, packet }) {
 	const rel = `knowledge/graph/packets/${packetFileName(packet)}`;
 	const abs = join(root, rel);
 	mkdirSync(dirname(abs), { recursive: true });
-	writeFileSync(abs, raw);
+	try {
+		writeFileSync(abs, raw, { flag: 'wx' });
+	} catch (e) {
+		if (e && e.code === 'EEXIST') throw new Error('既存パケットの上書きは拒否');
+		throw e;
+	}
 	return {
 		path: rel,
 		bytes: Buffer.byteLength(raw),

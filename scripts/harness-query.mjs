@@ -3,7 +3,8 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildPacket, nextDispatchSeq, queryCatalogHits, writePacket } from './lib/harness-query.mjs';
+import { assertAdrPaths, buildPacket, nextDispatchSeq, queryCatalogHits, writePacket } from './lib/harness-query.mjs';
+import { knownNodes, loadRequiredCycle, requiredModeFor } from './lib/packet-policy.mjs';
 
 const ROOT = process.env.HARNESS_ROOT || join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -55,7 +56,13 @@ let seq = arg('seq');
 let diff_stat = arg('diff-stat');
 
 try {
-	if (!seq) seq = String(nextDispatchSeq(loadEvents(), cycle, node));
+	const graph = loadRequiredCycle(ROOT);
+	if (!knownNodes(graph).has(node)) throw new Error(`未知のノード ${node}`);
+	const required = requiredModeFor(graph, node);
+	if (context_mode !== required) throw new Error(`context_mode は ${required}`);
+	assertAdrPaths(ROOT, adr_paths);
+	const events = loadEvents();
+	seq = String(seq ? nextDispatchSeq(events, cycle, node, Number(seq)) : nextDispatchSeq(events, cycle, node));
 	if (diff_stat == null) diff_stat = gitDiffStat();
 	const catalog = loadJson('knowledge/index/catalog.json');
 	const catalog_hits = catalog ? queryCatalogHits(catalog, { feature, paths: adr_paths }) : [];

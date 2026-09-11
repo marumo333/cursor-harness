@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { computeMetrics, foldCycle } from './lib/cycle-metrics.mjs';
 import {
 	PACKET_MAX_BYTES,
+	assertAdrPaths,
 	buildPacket,
 	encodePacket,
 	nextDispatchSeq,
@@ -122,7 +123,7 @@ test('上限超過は truncate せず失敗する', () => {
 		node: 'skill:verify',
 		seq: 1,
 		context_mode: 'isolated',
-		diff_stat: 'x'.repeat(PACKET_MAX_BYTES)
+		metrics: { pad: 'x'.repeat(PACKET_MAX_BYTES) }
 	});
 	assert.throws(() => encodePacket(packet), /上限/);
 });
@@ -187,4 +188,30 @@ test('dispatch seq は周内で単調増加する', () => {
 	assert.equal(nextDispatchSeq(events, 'C-0010', 'skill:verify'), 3);
 	assert.equal(nextDispatchSeq([], 'C-0010', 'skill:verify'), 1);
 	assert.throws(() => nextDispatchSeq(events, 'C-0010', 'skill:verify', 2), /単調/);
+});
+
+test('既存 packet は上書きしない', () => {
+	const root = tmpRoot();
+	const packet = buildPacket({
+		cycle: 'C-0010',
+		node: 'skill:verify',
+		seq: 1,
+		context_mode: 'isolated',
+		feature: 'F-0007',
+		diff_stat: 'first'
+	});
+	writePacket({ root, packet });
+	assert.throws(
+		() => writePacket({ root, packet: { ...packet, diff_stat: 'SECOND' } }),
+		/上書き/
+	);
+});
+
+test('--adr は knowledge 配下の実在パスだけ', () => {
+	const root = tmpRoot();
+	mkdirSync(join(root, 'knowledge', 'decisions'), { recursive: true });
+	writeFileSync(join(root, 'knowledge', 'decisions', '0045-dispatch-context-packet.md'), 'x');
+	assert.throws(() => assertAdrPaths(root, ['/etc/passwd']), /knowledge/);
+	assert.throws(() => assertAdrPaths(root, ['knowledge/learnings.md']), /decisions|criteria|features/);
+	assertAdrPaths(root, ['knowledge/decisions/0045-dispatch-context-packet.md']);
 });

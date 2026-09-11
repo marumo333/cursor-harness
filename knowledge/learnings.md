@@ -26,7 +26,10 @@
 
 - `some k; k in input.child_keys` は OPA で unsafe。完全ルール `child_promotes if "effort" in ...` に分解した。
 - 人間指示で起票と同じ PR に適用した。admit はしない。
-- plan-confirm は並列展開していないので省略。trio はこれから。
+- plan-confirm は並列展開していないので省略。
+- 初回 trio 3/3 差し戻し: `packet.rego` が opa test 専用で dispatch に刺さっていなかった。
+  sha256 形式だけ見て実体と突合せず、欠落は fail-open、`--seq` で単調増加を迂回できた。
+  執行点を `cycle-record --type dispatch` に移し、node×seat から役割を導出し、欠落は deny にした。
 
 ---
 
