@@ -8,6 +8,27 @@
 
 ---
 
+## 2026-09-11 — Uber code-mode を本 PR に入れる（F-0010 / C-0009）
+
+**問い**
+
+- Ultra でも効率と精度を同時に取る。記事の bash 一括は入っているか。
+
+**worked**
+
+- 2+ 照会の生 `&&` は hook deny。`scripts/code-mode.mjs --step` 1回が正。
+- 要約 JSON のみ。上限超過は truncate せず失敗。
+- commit-guard は code-mode の `--step` 内 `--no-verify` も見る。
+- F-0010 は proposed。適用は F-0001。harness-query（F-0007）は別のまま。
+
+**failed / edge cases**
+
+- hook は未来の turn を結合できない。バラした単発照会は止めない。
+- TDD 赤は当初 `ERR_MODULE_NOT_FOUND`（`/tmp/code-mode-red.log`）。
+- cache TTL は触らない。
+
+---
+
 ## 2026-09-11 — 計画/レビューを Fable 5.1、第3を Muse に揃える（F-0009 / C-0008）
 
 **問い**

@@ -1,9 +1,9 @@
 ---
 name: harness-api-budget
-description: Cursor Pro+ API枠を守る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体のみ）。壁打ち〜検証の席判断で使う。
+description: Ultraでもトークン効率と精度を同時に取る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体・照会はcode-mode）。壁打ち〜検証の席判断で使う。
 ---
 
-# harness-api-budget skill（[[0033]] / [[0037]] / [[0039]] / [[0040]] / [[0046]] / [[0047]]）
+# harness-api-budget skill（[[0033]] / [[0037]] / [[0039]] / [[0040]] / [[0046]] / [[0047]] / [[0048]]）
 
 ## 席の要約
 
@@ -28,6 +28,8 @@ description: Cursor Pro+ API枠を守る席ルーティング（Grok親・計画
 9. **1周の再注入**: 各席に渡すのは goal / feature / diff / 関連 ADR パス / 今周の事実だけ。
    `learnings.md` 全文と `decisions/` 全件を親と各 Task が読み直さない（同じ本文は1周1席）。
    これは入力トークン削減。pre-commit（[[0042]]）は回避防止であり、トークンは減らさない。
+10. **code-mode（[[0048]]）**: 照会 bash が2本以上なら `scripts/code-mode.mjs` 1回。
+    中間出力は文脈に載せない。生の `&&` 照会連鎖は hook が deny。Ultra でも省略しない。
 
 ## superpowers 接続
 

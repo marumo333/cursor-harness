@@ -11,6 +11,15 @@
 			"summary": "独立敵対レビューの起動手順（全変更のデフォルトゲート）と高リスク3体3ファミリー多数決。実装完了後・前進判定の前に必ず使う。"
 		},
 		{
+			"id": "skill:code-mode",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/code-mode/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "照会 bash を1回の CLI にまとめ、中間出力を文脈に載せない（Uber code-mode / read_cache）。2本以上の git status"
+		},
+		{
 			"id": "skill:cycle",
 			"kind": "skill",
 			"layer": "human",
@@ -26,7 +35,7 @@
 			"path": ".claude/skills/harness-api-budget/SKILL.md",
 			"rels": [],
 			"status": "n/a",
-			"summary": "Cursor Pro+ API枠を守る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体のみ）。壁打ち〜検証の席判断で使う。"
+			"summary": "Ultraでもトークン効率と精度を同時に取る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体・照会はcode-mode）。"
 		},
 		{
 			"id": "skill:harness-audit",
@@ -687,6 +696,28 @@
 			"summary": "計画確定と敵対レビュー＝Fable 5.1 high"
 		},
 		{
+			"id": "ADR-0048",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0048-uber-code-mode.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0018"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0044"
+				}
+			],
+			"status": "accepted",
+			"summary": "Uber code-mode＝bash 一括と要約"
+		},
+		{
 			"id": "F-0001",
 			"kind": "feature",
 			"layer": "machine",
@@ -766,6 +797,15 @@
 			"rels": [],
 			"status": "proposed",
 			"summary": "計画確定と敵対レビューを Fable 5.1 にする"
+		},
+		{
+			"id": "F-0010",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0010-uber-code-mode.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "Uber code-mode（bash 一括と要約）を入れる"
 		},
 		{
 			"id": "cycle:required",

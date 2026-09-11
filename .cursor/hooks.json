@@ -7,6 +7,10 @@
 				"failClosed": true
 			},
 			{
+				"command": "node .cursor/hooks/code-mode.mjs",
+				"failClosed": true
+			},
+			{
 				"command": "node .cursor/hooks/pre-commit.mjs",
 				"failClosed": true
 			}

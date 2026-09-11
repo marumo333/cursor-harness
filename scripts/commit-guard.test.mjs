@@ -82,3 +82,10 @@ EOF
 	const r = decideCommitGuard(cmd);
 	assert.equal(r.action, 'run-pre-commit');
 });
+
+test('code-mode の step 内 --no-verify も拒否', () => {
+	const r = decideCommitGuard(
+		"node scripts/code-mode.mjs --step 'git commit --no-verify -m \"feat: ダメ。\"'"
+	);
+	assert.equal(r.action, 'deny');
+});
