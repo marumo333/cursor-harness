@@ -28,7 +28,7 @@ definition_of_done:
   - harness_tests_green # pnpm test（cycle 指標）
   - tdd_red_evidence_or_exception
   - secret_scan_pass
-  - review_pass # 独立敵対レビュー（高リスクは Opus/Grok/Sol 3体）
+  - review_pass # 独立敵対レビュー（高リスクは Opus/Grok/Muse 3体）
   - plan_confirm_if_fanout
   - learnings_appended
   - cycle_skills_recorded # 必須 skill の used/skipped（ADR 0039）

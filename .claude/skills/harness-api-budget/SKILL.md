@@ -1,9 +1,9 @@
 ---
 name: harness-api-budget
-description: Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Solは3体のみ）。壁打ち〜検証の席判断で使う。
+description: Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Museは3体のみ）。壁打ち〜検証の席判断で使う。
 ---
 
-# harness-api-budget skill（[[0033]] / [[0037]] / [[0039]] / [[0040]]）
+# harness-api-budget skill（[[0033]] / [[0037]] / [[0039]] / [[0040]] / [[0046]]）
 
 ## 席の要約
 
@@ -12,13 +12,13 @@ description: Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus T
 | 親チャット **Grok 4.6** | 常時。壁打ち・調査・下書き・ディスパッチ操作・統合・cycle 記録    |
 | Task **Opus 5**         | plan-confirm / 敵対レビュー / verifier / reflector / 設計 / grow 前 |
 | Task **Grok 4.6**       | 明文化済みの実装並列展開 / 複数試行                                 |
-| Task **GPT-5.6 Sol** | **高リスク3体の第3レンズのみ**（secret）。他では使わない             |
+| Task **Muse Spark 1.3** | **高リスク3体の第3レンズのみ**（secret）。他では使わない。effort は medium |
 
 ## budget_guards（必ず守る）
 
 1. 親を Opus/Fable にピッカー切替しない。
 2. Opus Task 入力は**成果物のみ**（計画 md / diff / 失敗ログ / ADR パス）。会話履歴の丸投げ禁止。
-3. Sol は `review_trio`（モード2）以外で起動しない。
+3. Muse は `review_trio`（モード2）以外で起動しない。Sol / Terra / Luna は第3に使わない。
 4. 3体多数決は高リスク（セキュリティ/入場/再起/アーキ）のみ。
 5. plan-confirm は **並列展開前のみ**必須（単独小修正は省略可。敵対レビューは省略不可）。
 6. Opus ゲートは **名前付き agent 必須**。model 未指定の汎用 Task でゲート代替禁止。

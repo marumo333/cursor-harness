@@ -1,6 +1,7 @@
 # ADR 0044: トークン効率（code_mode パケット）と第3レンズ後継
 
 - 状態: 提案
+- 改正注記: 第3の現行ピンは [[0046]] で Muse Spark 1.3 medium。Flash medium は予備。code_mode 本体は未実装のまま。
 - 日付: 2026-09-04
 - 改正対象: [[0031]] [[0033]] [[0037]] [[0040]]。廃止ではない
 - 背景:
@@ -21,9 +22,9 @@
     この Cloud Agent の Task allowlist にはまだ無い。
   - Composer 2.5 はスラッグがあるが Cursor Models プールで Grok と同居する。第3レンズ禁止。
 - 決定:
-  1. **席骨格は維持。** 親 Grok 4.6、ゲート Opus 5、第3レンズ現行は GPT-5.6 Sol。
-  2. **第3レンズ後継 = Gemini 3.8 Flash（effort medium）。**
-     切替は allowlist にスラッグがあり、trio 第3席で1回完走したあと。
+  1. **席骨格は維持。** 親 Grok 4.6、ゲート Opus 5、第3レンズ現行は Muse Spark 1.3 medium（[[0046]]）。
+  2. **第3レンズ予備 = Gemini 3.8 Flash（effort medium）。**
+     Muse の Task スラッグが消えたときだけ、新 ADR + Feature（`proposed`）で上げる。
      11/12 に間に合わなければ Composer で埋めず 2 ファミリーに一時縮小する。
   3. **Astra はピンしない。** BYOK を正本にしない。
      同梱が来ないことに加え、recurrent depth による観測性低下も却下理由とする。

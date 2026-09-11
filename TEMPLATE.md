@@ -28,7 +28,7 @@ git push -u origin main
    apply は merge-base に **ファイルが存在する** Feature だけが被覆できる（票の中身は作業ツリーを読む）。
    次 PR の先頭で status を `admitted` にし、レビュー承認のあと `node scripts/feature-gate.mjs --admit` を通す。
    同一 PR で生まれた票を `admitted` / `approved` にはしない。
-5. 席は親 Grok 4.6 / Opus ゲート / Sol は3体のみ。必須 skill は `cycle` に記録する。
+5. 席は親 Grok 4.6 / Opus ゲート / Muse は3体のみ。必須 skill は `cycle` に記録する。
 6. `node scripts/install-git-hooks.mjs`（または `pnpm install` の prepare）で
    `core.hooksPath=scripts/githooks` を入れる。commit 主語は `feat:` / `docs:` 等 + 日本語。
    `--no-verify` は拒否される（[[0042]]）。

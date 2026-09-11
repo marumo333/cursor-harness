@@ -1,0 +1,44 @@
+feature:
+  id: F-0008
+  title: 第3レンズを Muse Spark 1.3 medium に切り替える
+  kind: harness-grow
+  status: proposed
+  source: human
+  created: '2026-09-11'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    第3レンズは GPT-5.6 Sol のまま。OpenAI 同梱は 2026-11-12 提案切れ。
+    0044 は後継を Gemini 3.8 Flash と書いたが、Task スラッグ後の完走を待っていた。
+    Muse Spark 1.3 は Meta 系列で Task スラッグがあり、人間が今すぐ切り替えを指示した。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - knowledge/features/F-0008-muse-spark-third-lens.yaml
+      - knowledge/criteria/model-routing.yaml
+      - knowledge/criteria/code-quality.yaml
+      - knowledge/decisions/0046-muse-spark-third-lens.md
+      - knowledge/decisions/0031-model-strategy-cursor-multi-family.md
+      - knowledge/decisions/0033-harness-api-budget-routing.md
+      - knowledge/decisions/0037-opus5-gate-routing.md
+      - knowledge/decisions/0039-harness-template-cycle-graph.md
+      - knowledge/decisions/0040-grok46-parent-routing.md
+      - knowledge/decisions/0044-token-efficiency.md
+      - knowledge/decisions/0016-definition-of-done.md
+      - knowledge/decisions/0026-model-strategy-accuracy.md
+      - .claude/skills/harness-api-budget/SKILL.md
+      - .claude/skills/adversarial-review/SKILL.md
+      - .claude/skills/harness-audit/SKILL.md
+      - .claude/AGENTS.md
+      - .claude/agents/security-reviewer.md
+      - README.md
+      - TEMPLATE.md
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: false
+    no_jp_code_merge_write: true
+    supersedes: []

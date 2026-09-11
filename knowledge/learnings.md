@@ -8,6 +8,26 @@
 
 ---
 
+## 2026-09-11 — 第3レンズを Muse Spark 1.3 にする（F-0008 / C-0006）
+
+**問い**
+
+- OpenAI 同梱切れの前に、第3席をどの独立ファミリーへ切るか。
+
+**worked**
+
+- 人間が Flash 待ちを上書きし、現行ピンを `muse-spark-1.3-medium` にした。
+- 系列は Anthropic / xAI / Meta。Composer / Fable / Sol は第3に使わない。
+- F-0008 は `proposed` のまま。適用は F-0001 の in_progress 被覆。
+
+**failed / edge cases**
+
+- 0044 の「Flash 後継・完走後」は現行ピンとしては捨てた。Flash は予備。
+- Muse は聞き返しを訓練している。第3は質問せず判定だけ返す、を skill に書いた。
+- Kimi / GLM は Desktop のみ。Task スラッグが無いのでピンしない。
+
+---
+
 ## 2026-08-18 — 三層知識 TLK（F-0006 / C-0005）
 
 **問い**
