@@ -1,0 +1,54 @@
+feature:
+  id: F-0009
+  title: 計画確定と敵対レビューを Fable 5.1 にする
+  kind: harness-grow
+  status: proposed
+  source: human
+  created: '2026-09-11'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    plan-confirm と敵対レビューが Opus 5 固定のまま。人間は Fable 5.1 の方が
+    レビューに的確だと判断した。Fable と Opus を trio に同居させると 0037 に反する。
+    運用の第3ピンは Muse に揃える。0044 決定本文の完走条件は消さない。
+    適用は F-0001 被覆（F-0003 / F-0008 と同じ）。本票は proposed のまま改正旗だけ合わせる。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - knowledge/features/F-0009-fable-plan-review.yaml
+      - knowledge/criteria/model-routing.yaml
+      - knowledge/decisions/0047-fable-plan-review.md
+      - knowledge/decisions/0031-model-strategy-cursor-multi-family.md
+      - knowledge/decisions/0033-harness-api-budget-routing.md
+      - knowledge/decisions/0037-opus5-gate-routing.md
+      - knowledge/decisions/0039-harness-template-cycle-graph.md
+      - knowledge/decisions/0040-grok46-parent-routing.md
+      - knowledge/decisions/0044-token-efficiency.md
+      - knowledge/decisions/0046-muse-spark-third-lens.md
+      - knowledge/decisions/0016-definition-of-done.md
+      - knowledge/decisions/0018-ai-security.md
+      - knowledge/decisions/0026-model-strategy-accuracy.md
+      - knowledge/criteria/code-quality.yaml
+      - .claude/skills/harness-api-budget/SKILL.md
+      - .claude/skills/plan-confirm/SKILL.md
+      - .claude/skills/adversarial-review/SKILL.md
+      - .claude/skills/harness-audit/SKILL.md
+      - .claude/skills/harness-grow/SKILL.md
+      - .claude/skills/parallel-dispatch/SKILL.md
+      - .claude/AGENTS.md
+      - .claude/agents/backend-architect.md
+      - .claude/agents/security-reviewer.md
+      - README.md
+      - TEMPLATE.md
+      - docs/superpowers/specs/2026-09-11-fable-plan-review-design.md
+      - docs/superpowers/specs/2026-09-10-dispatch-context-packet-design.md
+      - docs/superpowers/plans/2026-09-11-fable-plan-review.md
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: true
+    no_jp_code_merge_write: true
+    supersedes: []

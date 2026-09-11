@@ -11,6 +11,15 @@
 			"summary": "独立敵対レビューの起動手順（全変更のデフォルトゲート）と高リスク3体3ファミリー多数決。実装完了後・前進判定の前に必ず使う。"
 		},
 		{
+			"id": "skill:code-mode",
+			"kind": "skill",
+			"layer": "human",
+			"path": ".claude/skills/code-mode/SKILL.md",
+			"rels": [],
+			"status": "n/a",
+			"summary": "照会 bash を1回の CLI にまとめ、中間出力を文脈に載せない（Uber code-mode / read_cache）。2本以上の git status"
+		},
+		{
 			"id": "skill:cycle",
 			"kind": "skill",
 			"layer": "human",
@@ -26,7 +35,7 @@
 			"path": ".claude/skills/harness-api-budget/SKILL.md",
 			"rels": [],
 			"status": "n/a",
-			"summary": "Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Solは3体のみ）。壁打ち〜検証の席判断で使う。"
+			"summary": "Ultraでもトークン効率と精度を同時に取る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体・照会はcode-mode・子"
 		},
 		{
 			"id": "skill:harness-audit",
@@ -62,7 +71,7 @@
 			"path": ".claude/skills/plan-confirm/SKILL.md",
 			"rels": [],
 			"status": "n/a",
-			"summary": "並列展開前の計画確定レビュー（Opus backend-architect）。writing-plans完了直後・parallel-dispatch前に必ず使う"
+			"summary": "並列展開前の計画確定レビュー（Fable 5.1 backend-architect）。writing-plans完了直後・parallel-dispatch前"
 		},
 		{
 			"id": "skill:reflect",
@@ -125,7 +134,7 @@
 			"path": "knowledge/criteria/model-routing.yaml",
 			"rels": [],
 			"status": "n/a",
-			"summary": "ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040"
+			"summary": "ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040 / 0046 / 0047"
 		},
 		{
 			"id": "criterion:security-policy",
@@ -607,6 +616,154 @@
 			"summary": "トークン効率（code_mode パケット）と第3レンズ後継"
 		},
 		{
+			"id": "ADR-0045",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0045-dispatch-context-packet.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0040"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0044"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0046"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0047"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0048"
+				}
+			],
+			"status": "proposed",
+			"summary": "ディスパッチ packet（isolated / packet と親の effort 上書き）"
+		},
+		{
+			"id": "ADR-0046",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0046-muse-spark-third-lens.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0040"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0044"
+				}
+			],
+			"status": "accepted",
+			"summary": "第3レンズ＝Muse Spark 1.3 medium"
+		},
+		{
+			"id": "ADR-0047",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0047-fable-plan-review.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0018"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0040"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0044"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0046"
+				}
+			],
+			"status": "accepted",
+			"summary": "計画確定と敵対レビュー＝Fable 5.1 high"
+		},
+		{
+			"id": "ADR-0048",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0048-uber-code-mode.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0018"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0044"
+				}
+			],
+			"status": "accepted",
+			"summary": "Uber code-mode＝bash 一括と要約"
+		},
+		{
 			"id": "F-0001",
 			"kind": "feature",
 			"layer": "machine",
@@ -659,6 +816,42 @@
 			"rels": [],
 			"status": "proposed",
 			"summary": "三層知識（machine / index / human）"
+		},
+		{
+			"id": "F-0007",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0007-dispatch-context-packet.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "ディスパッチ packet（context_mode と親の effort 上書き）"
+		},
+		{
+			"id": "F-0008",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0008-muse-spark-third-lens.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "第3レンズを Muse Spark 1.3 medium に切り替える"
+		},
+		{
+			"id": "F-0009",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0009-fable-plan-review.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "計画確定と敵対レビューを Fable 5.1 にする"
+		},
+		{
+			"id": "F-0010",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0010-uber-code-mode.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "Uber code-mode（bash 一括と要約）を入れる"
 		},
 		{
 			"id": "cycle:required",

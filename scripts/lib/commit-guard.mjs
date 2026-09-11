@@ -1,5 +1,6 @@
 import { lintCommitMessage } from './commit-msg-lint.mjs';
 import { parseGitCommitCommand } from './git-commit-cmd.mjs';
+import { extractCodeModeSteps, isCodeModeCommand } from './code-mode.mjs';
 
 export function splitShellSegments(command) {
 	return String(command ?? '')
@@ -21,7 +22,10 @@ export function decideCommitGuard(command) {
 		return { action: 'deny', errors: ['[commit-guard] hook 基盤の無効化は禁止。'] };
 	}
 	let needPrecommit = false;
-	for (const seg of splitShellSegments(cmd)) {
+	const segs = isCodeModeCommand(cmd)
+		? [...splitShellSegments(cmd), ...extractCodeModeSteps(cmd)]
+		: splitShellSegments(cmd);
+	for (const seg of segs) {
 		const parsed = parseGitCommitCommand(seg);
 		if (!parsed.isCommit) continue;
 		if (parsed.skipsHooks) {

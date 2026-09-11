@@ -1,0 +1,43 @@
+feature:
+  id: F-0010
+  title: Uber code-mode（bash 一括と要約）を入れる
+  kind: harness-grow
+  status: proposed
+  source: human
+  created: '2026-09-11'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    Uber の code-mode（複数 bash を 1 本にまとめ、中間を文脈に載せない）が
+    未実装。0044 は harness-query に読み替えて本体が無い。生の && 連鎖は
+    全文がモデルに戻り、read_cache の prefix が太る。
+    適用は F-0001 被覆。本票は proposed のまま。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - knowledge/features/F-0010-uber-code-mode.yaml
+      - knowledge/decisions/0048-uber-code-mode.md
+      - knowledge/decisions/0044-token-efficiency.md
+      - knowledge/decisions/0033-harness-api-budget-routing.md
+      - scripts/lib/code-mode.mjs
+      - scripts/lib/commit-guard.mjs
+      - scripts/code-mode.mjs
+      - scripts/code-mode.test.mjs
+      - scripts/commit-guard.test.mjs
+      - .cursor/hooks/code-mode.mjs
+      - .cursor/hooks.json
+      - .claude/skills/code-mode/SKILL.md
+      - .claude/skills/harness-api-budget/SKILL.md
+      - package.json
+      - .github/workflows/feature-gate.yml
+      - docs/superpowers/specs/2026-09-11-uber-code-mode-design.md
+      - docs/superpowers/plans/2026-09-11-uber-code-mode.md
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: true
+    no_jp_code_merge_write: true
+    supersedes: []

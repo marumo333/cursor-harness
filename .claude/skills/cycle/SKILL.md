@@ -21,11 +21,24 @@ hooks から Task は起動しない。親が各 skill のあと（または Sto
 
 `node scripts/cycle-record.mjs --type edge_state --cycle C-0001 --from skill:verify --to skill:reflect --state taken|skipped --reason '...'`
 
+## ディスパッチと観測（[[0045]]）
+
+親が子を起動する直前:
+
+`node scripts/harness-query.mjs --cycle C-NNNN --node skill:verify --context-mode isolated --feature F-NNNN --adr knowledge/decisions/0045-dispatch-context-packet.md`
+
+`node scripts/cycle-record.mjs --type dispatch --cycle C-NNNN --node skill:verify --seq 1 --seat opus --escalate stay --sha256 <packetのsha256>`
+
+周の観測（`$` は書かない。`need_rerun` に足さない）:
+
+`node scripts/cycle-record.mjs --type token_ledger --cycle C-NNNN --seat grok --effort medium --packet-bytes N --tasks N --zero-value-reinject false`
+
 ## 集計
 
 `node scripts/cycle-metrics.mjs --cycle C-0001`
 
 `should_file_feature=true` なら reflector が Feature を proposed で起票する（直接 skill を書き換えない）。
+token_ledger は観測項だけ。3指標と再起条件は変えない。
 
 ## 再起
 

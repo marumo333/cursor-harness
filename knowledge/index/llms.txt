@@ -10,11 +10,15 @@
 - [F-0004](knowledge/features/F-0004-review-followups.yaml) (proposed): レビュー指摘の再修正（4.6 本文・pnpm・起動手順）
 - [F-0005](knowledge/features/F-0005-always-on-precommit.yaml) (proposed): 常時 pre-commit と日本語 conventional 主語
 - [F-0006](knowledge/features/F-0006-tri-layer-knowledge.yaml) (proposed): 三層知識（machine / index / human）
+- [F-0007](knowledge/features/F-0007-dispatch-context-packet.yaml) (proposed): ディスパッチ packet（context_mode と親の effort 上書き）
+- [F-0008](knowledge/features/F-0008-muse-spark-third-lens.yaml) (proposed): 第3レンズを Muse Spark 1.3 medium に切り替える
+- [F-0009](knowledge/features/F-0009-fable-plan-review.yaml) (proposed): 計画確定と敵対レビューを Fable 5.1 にする
+- [F-0010](knowledge/features/F-0010-uber-code-mode.yaml) (proposed): Uber code-mode（bash 一括と要約）を入れる
 - [criterion:code-quality](knowledge/criteria/code-quality.yaml) (n/a): コード品質バー — ハーネス テンプレート。出典: ADR 0013-0016 / 0038 / 0039
 - [criterion:cycle-metrics](knowledge/criteria/cycle-metrics.yaml) (n/a): サイクル3指標 — ADR 0039。実装は scripts/cycle-metrics.mjs / policy/cycle.rego
 - [criterion:grow-admission](knowledge/criteria/grow-admission.yaml) (n/a): Feature 正本 + OPA grow 入場 — ハーネス/reflector/verify が参照。出典: ADR 0038
 - [criterion:knowledge-layers](knowledge/criteria/knowledge-layers.yaml) (n/a): 三層知識の型 — ハーネスが参照。出典: ADR 0043
-- [criterion:model-routing](knowledge/criteria/model-routing.yaml) (n/a): ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040
+- [criterion:model-routing](knowledge/criteria/model-routing.yaml) (n/a): ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040 / 0046 / 0047
 - [criterion:security-policy](knowledge/criteria/security-policy.yaml) (n/a): ハーネス側の AI セキュリティ（ADR 0018）。
 - [cycle:required](knowledge/graph/required-cycle.json) (n/a): required 4 / optional 2
 
@@ -37,12 +41,17 @@
 - [ADR-0042](knowledge/decisions/0042-always-on-precommit-ja-conventional.md) (accepted): pre-commit は常時起動、コミット主語は日本語 conventional
 - [ADR-0043](knowledge/decisions/0043-tri-layer-knowledge.md) (proposed): 三層知識（machine / index / human）
 - [ADR-0044](knowledge/decisions/0044-token-efficiency.md) (proposed): トークン効率（code_mode パケット）と第3レンズ後継
+- [ADR-0045](knowledge/decisions/0045-dispatch-context-packet.md) (proposed): ディスパッチ packet（isolated / packet と親の effort 上書き）
+- [ADR-0046](knowledge/decisions/0046-muse-spark-third-lens.md) (accepted): 第3レンズ＝Muse Spark 1.3 medium
+- [ADR-0047](knowledge/decisions/0047-fable-plan-review.md) (accepted): 計画確定と敵対レビュー＝Fable 5.1 high
+- [ADR-0048](knowledge/decisions/0048-uber-code-mode.md) (accepted): Uber code-mode＝bash 一括と要約
 - [skill:adversarial-review](.claude/skills/adversarial-review/SKILL.md) (n/a): 独立敵対レビューの起動手順（全変更のデフォルトゲート）と高リスク3体3ファミリー多数決。実装完了後・前進判定の前に必ず使う。
+- [skill:code-mode](.claude/skills/code-mode/SKILL.md) (n/a): 照会 bash を1回の CLI にまとめ、中間出力を文脈に載せない（Uber code-mode / read_cache）。2本以上の git status
 - [skill:cycle](.claude/skills/cycle/SKILL.md) (n/a): 1周の skill 使用/省略をグラフに記録し、3指標を出す。ループ終了時に必ず使う。
-- [skill:harness-api-budget](.claude/skills/harness-api-budget/SKILL.md) (n/a): Cursor Pro+ API枠を守る席ルーティング（Grok親・Opus Taskゲート・Solは3体のみ）。壁打ち〜検証の席判断で使う。
+- [skill:harness-api-budget](.claude/skills/harness-api-budget/SKILL.md) (n/a): Ultraでもトークン効率と精度を同時に取る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体・照会はcode-mode・子
 - [skill:harness-audit](.claude/skills/harness-audit/SKILL.md) (n/a): ハーネス健全性を決定的にスコア化し履歴に記録。実行するほど成長しているかを可視化する。
 - [skill:harness-grow](.claude/skills/harness-grow/SKILL.md) (n/a): 入場済み Feature だけ skill/rule/Rego に昇格し、判断を ADR/criteria に落とす。ハーネスを複利成長させる。
 - [skill:parallel-dispatch](.claude/skills/parallel-dispatch/SKILL.md) (n/a): 実装の並列展開判断と起動手順（Task並列 / 作業ツリー分離 / 読み取り専用）。親Grokが計画を subagent に配る時に使う。
-- [skill:plan-confirm](.claude/skills/plan-confirm/SKILL.md) (n/a): 並列展開前の計画確定レビュー（Opus backend-architect）。writing-plans完了直後・parallel-dispatch前に必ず使う
+- [skill:plan-confirm](.claude/skills/plan-confirm/SKILL.md) (n/a): 並列展開前の計画確定レビュー（Fable 5.1 backend-architect）。writing-plans完了直後・parallel-dispatch前
 - [skill:reflect](.claude/skills/reflect/SKILL.md) (n/a): タスク後の内省（効いた/失敗/境界事例を言語化し learnings に追記）。自己成長ループ④の入口。
 - [skill:verify](.claude/skills/verify/SKILL.md) (n/a): 完了の定義を機械判定（feature-gate / opa test / cycle 指標 / secret）。タスク検証段で必ず使う。

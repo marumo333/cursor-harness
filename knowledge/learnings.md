@@ -8,6 +8,136 @@
 
 ---
 
+## 2026-09-11 — ディスパッチ packet を本 PR で実装する（F-0007 / C-0010）
+
+**問い**
+
+- トークン効率の本丸（子に会話を継がない / 何バイト渡したか測る）をこの prime で入れるか。
+
+**worked**
+
+- `harness-query` が `C-NNNN.<node>.<seq>.json` を gitignore 配下に書く。32KiB・空・禁則キーは失敗。
+- `packet.rego` は deny 空だけ。幅1 effort、canon 周の stay、子の自己昇格、Muse の第3外を落とす。
+- `token_ledger` は観測だけ。3指標 / `need_rerun` は変えない。
+- F-0007 は proposed のまま。適用は F-0001。0045 は新規。0044 決定本文は消さない。
+- TDD 赤は `ERR_MODULE_NOT_FOUND` / `foldTokenLedger` 未 export。その後 assertion 緑、`pnpm test` 100、feature-gate 成功。
+
+**failed / edge cases**
+
+- `some k; k in input.child_keys` は OPA で unsafe。完全ルール `child_promotes if "effort" in ...` に分解した。
+- 人間指示で起票と同じ PR に適用した。admit はしない。
+- plan-confirm は並列展開していないので省略。
+- 初回 trio 3/3 差し戻し: `packet.rego` が opa test 専用で dispatch に刺さっていなかった。
+  sha256 形式だけ見て実体と突合せず、欠落は fail-open、`--seq` で単調増加を迂回できた。
+  執行点を `cycle-record --type dispatch` に移し、node×seat から役割を導出し、欠落は deny にした。
+- 再レビューも差し戻し。`--canon-path-count` 自己申告と git 失敗時の 0 を廃し、
+  席を dispatch_seats に固定、Muse は escalate trio 必須、`--adr` の symlink を拒否した。
+- 3回目 trio: review 席から grok（体2）が落ちていた。GIT_DIR 偽装で件数 0 にできた。
+  空 feature を事実とみなしていた。体2を review_trio に戻し、git 環境変数を無視し、空値を事実から外した。
+- 4回目は 1/3。GIT_DIR テストが実リポ差分に依存し main で赤になる。diff_stat 空白が事実扱い。
+  テストを一時リポに移し、空白 diff_stat も空にした。
+  続けて ZWSP と PATH 偽 git を塞いだ。HARNESS_ROOT 差し替えは残る（CLI の作業根）。
+
+---
+
+## 2026-09-11 — Uber code-mode を本 PR に入れる（F-0010 / C-0009）
+
+**問い**
+
+- Ultra でも効率と精度を同時に取る。記事の bash 一括は入っているか。
+
+**worked**
+
+- 2+ 照会の生 `&&` は hook deny。`scripts/code-mode.mjs --step` 1回が正。
+- 要約 JSON のみ。上限超過は truncate せず失敗。
+- commit-guard は code-mode の `--step` 内 `--no-verify` も見る。
+- F-0010 は proposed。適用は F-0001。harness-query（F-0007）は別のまま。
+
+**failed / edge cases**
+
+- hook は未来の turn を結合できない。バラした単発照会は止めない。
+- TDD 赤は当初 `ERR_MODULE_NOT_FOUND`（`/tmp/code-mode-red.log`）。
+- cache TTL は触らない。
+
+---
+
+## 2026-09-11 — 計画/レビューを Fable 5.1、第3を Muse に揃える（F-0009 / C-0008）
+
+**問い**
+
+- 計画確定は Opus のままでよいか。レビューは Fable 5.1 の方が的確か。
+- 第3を Muse に完全に差し替えるか。
+
+**worked**
+
+- 計画と敵対レビューは Fable 5.1 high。verifier / reflector は Opus。
+- trio は Fable / Grok / Muse。Fable と Opus は同居させない。
+- 第3の現行ピンは Muse medium。0044 決定1 も Sol を現行から外した。
+- Fable の Opus フォールバックは failed。
+
+**failed / edge cases**
+
+- Fable は約2倍。Privacy Mode は保持オプトインが要る。
+- 検証席まで Fable にはしない。機械判定に払う理由が薄い。
+- 初回 trio は 3/3 差し戻し。0044 決定本文を再び書いた、C-0008 を learnings だけに書いた、
+  受理 ADR の決定本文を in-place 置換した、F-0009 に F-0001 適用経路が無かった、
+  F-0007 spec が Sol 第3のまま、0040 の役割不変条件への免除が無かった。
+- 決定本文は戻して改正注記だけ現行ピンにする。適用経路は F-0008 と同じ文を 0047 に書いた。
+
+---
+
+## 2026-09-11 — 第3レンズを Muse Spark 1.3 にする（F-0008 / C-0007）
+
+**問い**
+
+- OpenAI 同梱切れの前に、第3席をどの独立ファミリーへ切るか。
+
+**worked**
+
+- 人間が Flash 待ちを上書きし、現行ピンを `muse-spark-1.3-medium` にした。
+- 系列は Anthropic / xAI / Meta。Composer / Fable / Sol は第3に使わない。
+- F-0008 は `proposed` のまま。適用は F-0001 の in_progress 被覆。
+- F-0007 起票 PR とこの切替を一つの PR にまとめた。
+
+**failed / edge cases**
+
+- 初回 trio は体1/体2が差し戻し。C-0006 を F-0007 と二重に書いた、0044 決定本文を書き換えた、
+  `sol_seat` 削除で deny が弱く見えた、F-0008 の `supersede_adr` が false のまま ADR を改正した。
+- C-0007 に直し、0044 本文は戻し、`no_sol_terra_luna` を置いた。適用は F-0001（F-0003 と同じ）。
+- Muse は聞き返しを訓練している。不確実は差し戻し、を skill に足した。
+- Kimi / GLM は Desktop のみ。Task スラッグが無いのでピンしない。
+
+---
+
+## 2026-09-10 — ディスパッチ packet 起票（F-0007 / C-0006）
+
+**問い**
+
+- Graph / Loop / Judge / LangChain context mode をこのハーネスに写すとき、
+  親から子へ何を継ぎ、誰が model / effort を変えてよいか。
+
+**worked**
+
+- 会話 fork は不採用。写すのはリポに落ちた事実の JSON packet（isolated / packet）。
+- 親の effort / escalate 上書きはノード属性として残す。子の自己昇格は不可。
+- 型の正本は TypeScript ではなく Rego（0014 / 0043）。
+- 本周は出生規則どおり F-0007 を `proposed` だけ起票。admit しない。
+
+**failed / edge cases**
+
+- 0044 の `harness-query` は未実装のまま。本票が入場後に実装する。
+- 指名できる xAI 個人の「evals をエージェントが持て」ツイートは一次ソース未確定。
+  公式は Grok 4.6 カード §5。採点関数はループの外（InferenceEval / 本リポの OPA）。
+- F-0001 の `approved` 自己申告（C1）はこの PR では直さない。
+- 初回敵対レビューは差し戻し。paths の部分木被覆、supersede_adr、escalate の引き下げ、
+  平文 writer、packet 保管が抜けていた。票をファイル単位に直し、spec に閉じた。
+- 再レビューも差し戻し。F-0001 和集合でファイル単位が強制にならないこと、
+  stay の高リスク判定が散文だったことを認め、自票パス追加と機械導出を spec に書いた。
+- 三回目は高リスク集合の手書き列挙が 73 ファイルを漏らした。canon 非空を高リスクに倒す。
+- 四回目は低リスク例外が evidence と skill を単独レンズに落とした。例外は置かない。
+
+---
+
 ## 2026-08-18 — 三層知識 TLK（F-0006 / C-0005）
 
 **問い**

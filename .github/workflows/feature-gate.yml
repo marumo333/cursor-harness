@@ -23,7 +23,7 @@ jobs:
             node scripts/feature-gate.mjs
           fi
       - name: ハーネス単体テスト
-        run: node --test scripts/cycle-metrics.test.mjs scripts/commit-msg-lint.test.mjs scripts/git-commit-cmd.test.mjs scripts/commit-guard.test.mjs scripts/blocked-env.test.mjs scripts/lint-commit-range.test.mjs scripts/knowledge-catalog.test.mjs
+        run: node --test scripts/cycle-metrics.test.mjs scripts/commit-msg-lint.test.mjs scripts/git-commit-cmd.test.mjs scripts/commit-guard.test.mjs scripts/blocked-env.test.mjs scripts/lint-commit-range.test.mjs scripts/knowledge-catalog.test.mjs scripts/code-mode.test.mjs scripts/harness-query.test.mjs scripts/packet-policy.test.mjs
       - name: 三層知識カタログの鮮度と OPA 突合
         run: |
           set -euo pipefail

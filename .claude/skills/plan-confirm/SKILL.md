@@ -1,9 +1,9 @@
 ---
 name: plan-confirm
-description: 並列展開前の計画確定レビュー（Opus backend-architect）。writing-plans完了直後・parallel-dispatch前に必ず使う。
+description: 並列展開前の計画確定レビュー（Fable 5.1 backend-architect）。writing-plans完了直後・parallel-dispatch前に必ず使う。
 ---
 
-# plan-confirm skill（[[0033]] / [[0037]]）
+# plan-confirm skill（[[0033]] / [[0037]] / [[0047]]）
 
 **適用範囲**: `parallel-dispatch`（実装の並列展開）の**直前のみ必須**。親 Grok の単独小修正では省略可。
 文書・誤字のみは対象外。省略しても **敵対レビューは省略不可**。
@@ -15,7 +15,7 @@ description: 並列展開前の計画確定レビュー（Opus backend-architect
    - Feature 正本 / OPA / cycle 再起条件の変更
    - 複数 skill・policy にまたがる横断変更
    - hooks や GitHub Actions の強制点
-3. `backend-architect` を **Task（Opus 5・新しい文脈）**で起動。入力は**計画 md のみ**（＋必要なら関連 ADR パス）。
+3. `backend-architect` を **Task（Fable 5.1 high・新しい文脈）**で起動。入力は**計画 md のみ**（＋必要なら関連 ADR パス）。
    会話履歴は渡さない。実装禁止。
    - 非 C: 「壊せ／抜け／リスク。承認か差し戻しのみ」
    - C: 上記＋「境界・正本・再起の有界性・ADR 要否。設計不足なら差し戻し」

@@ -1,25 +1,73 @@
-# ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040
+# ハーネス席 — ADR 0031 / 0033 / 0037 / 0039 / 0040 / 0046 / 0047
 # 親も Task も high-fast。xhigh は 4.6 の努力段だが Task allowlist に無い。
+# 第3は medium を明示する。Muse の公式既定 high には上げない。
+# 計画とレビューは Fable 5.1 high。verifier / reflector は Opus。
 harness_agents:
   chat_orchestrator: cursor-grok-4.6-high-fast
   grok_task: cursor-grok-4.6-high-fast
-  opus_gates:
+  fable_gates:
     - plan-confirm
     - review_default
+  opus_gates:
     - verifier
     - reflector
   review_trio:
-    - model: claude-opus-5-thinking-high
+    - model: claude-fable-5-1-thinking-high
     - model: cursor-grok-4.6-high-fast
-    - model: gpt-5.6-sol-medium
+    - model: muse-spark-1.3-medium
   sonnet_pin: claude-sonnet-5-thinking-high
-  fable_exception: claude-fable-5-thinking-high
+  fable_pin: claude-fable-5-1-thinking-high
   budget_guards:
     parent_chat: grok-only
-    opus_input: artifacts-only
-    sol_seat: review_trio_only
-    fable_seat: explicit-ceiling-only
+    gate_input: artifacts-only
+    third_lens_seat: review_trio_only
+    no_sol_terra_luna: true
+    fable_seat: plan-confirm-and-review
+    opus_seat: verify-and-reflect
     trio_when: high-risk-only
     plan_confirm_when: before-fanout-only
     no_generic_task_as_gate: true
     no_fable_opus_cohabit_trio: true
+    fable_guardrail_fallback_is_fail: true
+# effort は概念値。Task 実在スラッグが high-fast だけの席はスラッグを変えない（[[0044]] / [[0045]]）。
+# 幅1の上書きは packet.rego が deny。ゲートを親が下げることも不可。
+effort_defaults:
+  parent: medium
+  implement: medium
+  gate: high
+  third: medium
+  ceiling: high
+effort_allow:
+  parent:
+    - medium
+    - high
+  implement:
+    - medium
+    - high
+  gate:
+    - high
+  third:
+    - medium
+  ceiling:
+    - high
+escalate:
+  - stay
+  - trio
+  - ceiling
+  - human
+context_mode:
+  - isolated
+  - packet
+dispatch_seats:
+  parent: grok
+  implement: grok
+  plan_confirm: fable
+  review: fable
+  review_trio:
+    - fable
+    - grok
+    - muse
+  verify: opus
+  reflect: opus
+  third: muse
+  harness_grow: fable

@@ -21,7 +21,7 @@ description: 実装の並列展開判断と起動手順（Task並列 / 作業ツ
    → **同一ワークスペースで Task 並列起動**。1メッセージで複数 subagent を同時に起動する。
 3. **同じファイル群に触る可能性がある / 同一タスクの複数試行（best-of-N）か？**
    → **作業ツリー分離**（best-of-n-runner）。採用しなかった側の学びは learnings に記録してから破棄する。
-   採用後のレビューは通常どおり Opus 敵対。
+   採用後のレビューは通常どおり Fable 敵対。
 4. **依存関係があるか？** → 並列にしない。逐次ディスパッチ、または境界を先に確定してから並列化する。
 
 ## ディスパッチの手順
@@ -31,13 +31,16 @@ description: 実装の並列展開判断と起動手順（Task並列 / 作業ツ
 3. 仕様が明文化できたタスクのみ `grok_task`（[[0040]] / `model-routing.yaml`）に委譲する。
    親 UI スラッグ（`chat_orchestrator`）を Task に渡さない。曖昧なタスク・非自明ロジックは Opus Task。
 4. subagent への指示に必ず含める: 対象ファイル / 完了条件 / 読むべき ADR・criteria / 禁止事項。
+   入力は **packet**（`scripts/harness-query.mjs`）。会話 fork は置かない。
+   effort / escalate は親だけが cycle dispatch に書く。子が同じキーを返したら deny。
 5. 起動は 1メッセージにまとめる。完了後、**親 Grok が統合** → `adversarial-review` → `verify`。
    **並列展開の出力をレビューなしでマージしない。**
+   ゲート席は isolated packet。パケットが無ければ起動しない。
 
 ## アンチパターン
 
 - plan-confirm なしの並列展開。
 - 粒度が大きすぎる委譲。
 - 同じファイルを触る2体を同一ワークスペースで並列起動。
-- model 未指定の汎用 Task で Opus ゲートを代替すること。
+- model 未指定の汎用 Task で Fable/Opus ゲートを代替すること。
 - hooks から Task を自動起動すること（[[0033]]）。

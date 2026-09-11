@@ -1,13 +1,14 @@
 # ADR 0039: ハーネス制約と有界サイクルグラフ
 
 - 状態: 受理
+- 改正注記: 第3は [[0046]] で Muse medium。計画/レビューは [[0047]] で Fable 5.1。決定本文の「Opus ゲート」列挙は履歴。Sol は使わない。
 - 日付: 2026-08-14
 - 背景: 本リポは Cursor ハーネスのテンプレートである。対象は席・正本・ゲート・cycle に閉じる。
   自己改善は「人間がチャットを開く1周」しか無く、skill 省略も複製/送信後の再起も無い。
   無制限の自動再起は無制限再起防止（[[0033]]）と衝突する。
 - 決定:
   1. **対象はハーネス制約。** 席は親 Grok + Opus ゲート（plan-confirm / 敵対レビュー /
-     verifier / reflector）+ Sol は3体のみ。正本は Feature、ゲートは OPA、改善は cycle。
+     verifier / reflector）+ Muse は3体のみ（[[0046]]）。正本は Feature、ゲートは OPA、改善は cycle。
   2. **グラフは skill / Feature / cycle。** ノード=skill/feature/cycle、辺=受け渡し/承認、
      状態=used|skipped|failed|approved。正本イベントは `knowledge/graph/events.jsonl`。
   3. **3指標。** node_skip_rate / edge_skip_rate / state_integrity。閾値超過で Feature を proposed 起票。
