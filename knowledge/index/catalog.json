@@ -854,6 +854,15 @@
 			"summary": "Uber code-mode（bash 一括と要約）を入れる"
 		},
 		{
+			"id": "F-0011",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0011-mit-license-factory-diagram.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "MITライセンス発行と工場構造 mermaid"
+		},
+		{
 			"id": "cycle:required",
 			"kind": "cycle",
 			"layer": "machine",
