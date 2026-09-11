@@ -1,0 +1,34 @@
+feature:
+  id: F-0012
+  title: packet の diff_stat を commit 後も実パスにする
+  kind: harness-grow
+  status: proposed
+  source: reflector
+  created: '2026-09-11'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    packet の diff_stat は未コミット差分の git diff --stat なので、commit 済みの周では空になる。
+    親は空を避けるため略称（README LICENSE TEMPLATE package.json ...）を手書きし、
+    レビュー席は必読パスを引けない。C-0011 では Muse が読了範囲不足で初回差し戻しになり、
+    seq4 の再レビューまで trio が閉じなかった。packet.rego は空と空白は落とすが、
+    略称の羅列は「事実あり」として通る。
+    commit 後は base との差分から実パスを出し、出せない時は失敗させる（略称の手書きを許さない）。
+    入場判定そのものの変更が要るなら別票にする。適用は F-0001 被覆。本票は proposed のまま。入場しない。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - knowledge/features/F-0012-packet-review-scope.yaml
+      - scripts/harness-query.mjs
+      - scripts/lib/harness-query.mjs
+      - scripts/harness-query.test.mjs
+      - .claude/skills/adversarial-review/SKILL.md
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: false
+    no_jp_code_merge_write: true
+    supersedes: []
