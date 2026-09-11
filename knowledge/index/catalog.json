@@ -648,6 +648,14 @@
 			"rels": [
 				{
 					"rel": "cites",
+					"target": "ADR-0016"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0018"
+				},
+				{
+					"rel": "cites",
 					"target": "ADR-0031"
 				},
 				{
@@ -660,7 +668,15 @@
 				},
 				{
 					"rel": "cites",
+					"target": "ADR-0039"
+				},
+				{
+					"rel": "cites",
 					"target": "ADR-0040"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0044"
 				},
 				{
 					"rel": "cites",

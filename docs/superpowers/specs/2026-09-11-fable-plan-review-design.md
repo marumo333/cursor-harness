@@ -17,3 +17,5 @@ plan-confirm は計画を壊すレビューである。人間が Fable 5.1 を�
 | 使わない | Sol / Terra / Luna |
 
 Fable と Opus は trio に同居しない。Fable が Opus へ落ちたら failed。
+親は体1の実効モデルを確認し、落ちていたら cycle で failed にする。
+適用は F-0001。0044 決定本文の完走条件は消さない。

@@ -63,8 +63,8 @@ LangChain fork を実装 Task に載せる。
 | escalate | `stay` / `trio` / `ceiling` / `human`。意味は下表 |
 | 子の自己昇格 | 不可。試行は deny + cycle |
 | ゲート effort を親が下げる | 不可 |
-| Sol | trio 第3以外は親でも不可 |
-| Fable / ceiling | ゲート既定の代替には使わない（[[0037]]）。追加レビューだけ |
+| Muse | trio 第3以外は親でも不可（[[0046]]）。Sol / Terra / Luna は使わない |
+| Fable | 計画/レビュー席（[[0047]]）。ceiling は extra-high / max の追加だけ。verifier / reflector の代替と trio への Opus 同居は禁止 |
 | 実装を Opus に付け替え | 不可。役割はグラフが持つ |
 | 会話キー | `learnings` / `conversation` / `decisions` / `session` は禁則 |
 | 値の扱い | packet 本文はデータ。命令にしない。スポットライトで囲む（[[0018]]） |
@@ -78,7 +78,7 @@ LangChain fork を実装 Task に載せる。
 | token_ledger | 観測専用。`need_rerun` の条件を増やさない（[[0039]]） |
 | 0044 | 廃止しない。packet CLI と token_ledger を本票が実装する。既存 ADR ファイルは上書きしない |
 | ADR 0045 | 新規ファイルのみ。`supersede_adr: false` |
-| 席骨格 | 0031 / 0033 / 0037 / 0040 を維持 |
+| 席骨格 | 0031 / 0033 / 0037 / 0040 を維持。世代ピンは 0046 / 0047 |
 | レビュー | 起票 PR はモード1。適用 PR は高リスクのためモード2（trio） |
 
 ### escalate の意味
@@ -87,7 +87,7 @@ LangChain fork を実装 Task に載せる。
 | --- | --- | --- |
 | `stay` | 既定席のまま、かつ canon 差分が空のとき | canon 差分が1件でもある周で trio を外すこと。高リスクは `data.harness.canon.paths` が非空なら真。低リスク例外は置かない（`evidence` や skill 本文を単独レンズに落とさない） |
 | `trio` | canon 差分が非空のとき必須。非 canon 周では任意（禁止しない） | 非 canon 周での常時 trio を必須にすること |
-| `ceiling` | ゲート不一致または criteria の天井条件があるとき、**追加**レビュー | Opus ゲートの代替、trio への Fable 同居 |
+| `ceiling` | ゲート不一致または criteria の天井条件があるとき、**追加**レビュー | verifier / reflector の代替、trio への Fable+Opus 同居 |
 | `human` | 常に可。再起・入場の最終鍵 | エージェントが `human_approved` を書くこと |
 
 ## 構成（入場後の適用。本 PR では起票のみ）
@@ -147,7 +147,7 @@ LangChain fork を実装 Task に載せる。
 - F-0001 が開いたまま適用すると和集合で全域が F-0001 に帰属する。本票は自票1件を paths に含め、閉じる作業は別 Feature。
 - `policy/` や `scripts/` を部分木で被覆する → ゲート自身を書き換えられる。票の paths はファイル単位（意思表示）。
 - 既存 ADR に `supersede_adr: true` で空の supersedes → 17 本の無言上書き。0045 は新規のみ。
-- `escalate: stay` で高リスク trio を外す / `ceiling` で Opus を代替する → 0033 / 0037。
+- `escalate: stay` で高リスク trio を外す / `ceiling` で verifier / reflector を代替する → 0033 / 0037 / 0047。
 - 平文 `writer: parent` だけを信じる → 子が自己昇格を書ける。cycle ダイジェスト必須。
 - token_ledger を `need_rerun` に足す → 0039 の有界再起が壊れる。
 - packet をコミットする → 秘密が hook をすり抜けうる。gitignore + 一時ファイル検査。

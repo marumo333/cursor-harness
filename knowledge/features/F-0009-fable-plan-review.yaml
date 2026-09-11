@@ -10,7 +10,8 @@ feature:
   problem: >
     plan-confirm と敵対レビューが Opus 5 固定のまま。人間は Fable 5.1 の方が
     レビューに的確だと判断した。Fable と Opus を trio に同居させると 0037 に反する。
-    第3の現行ピンに Sol が文書として残っている。
+    運用の第3ピンは Muse に揃える。0044 決定本文の完走条件は消さない。
+    適用は F-0001 被覆（F-0003 / F-0008 と同じ）。本票は proposed のまま改正旗だけ合わせる。
   proposed_change:
     mutates_canon: true
     paths:
@@ -40,6 +41,8 @@ feature:
       - README.md
       - TEMPLATE.md
       - docs/superpowers/specs/2026-09-11-fable-plan-review-design.md
+      - docs/superpowers/specs/2026-09-10-dispatch-context-packet-design.md
+      - docs/superpowers/plans/2026-09-11-fable-plan-review.md
   evidence:
     adversarial_review: pending
     review_agent: security-reviewer

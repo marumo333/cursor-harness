@@ -1,17 +1,17 @@
 # ADR 0037: ハーネス Claude ゲート席＝Opus 5（骨格は 0033 維持）
 
 - 状態: 受理（改正対象: [[0033]] [[0031]]；改正: [[0039]] [[0040]]）
-- 改正注記: 「Grok 4.5 据え置き」は [[0040]] で 4.6。計画/レビューは [[0047]] で Fable 5.1。verifier / reflector は Opus 5。第3は [[0046]] で Muse medium。
+- 改正注記: 「Grok 4.5 据え置き」は [[0040]] で 4.6。第3は [[0046]] で Muse medium。計画/レビューは [[0047]] で Fable 5.1。verifier / reflector は Opus 5。決定本文の「全 Claude ゲート＝Opus 5」「Fable を既定から外す」は履歴。
 - 日付: 2026-07-24
 - 背景: Claude Opus 5 GA。0033 の枠（親 Grok＋Claude ゲート集中）を維持しつつゲート既定を Opus 5 にする。
 - 決定:
-  - **Claude 計画/レビュー席 = Fable 5.1 high**（[[0047]]）。
-    対象: `backend-architect` / `security-reviewer` / 単独敵対レビュー・grow 前・plan-confirm。
-    **verifier / reflector = Opus 5**（`claude-opus-5-thinking-high`）。
+  - **Claude ゲート席の既定 = Opus 5**（`claude-opus-5-thinking-high`）。
+    対象: `backend-architect` / `security-reviewer` / `verifier` / `reflector` /
+    単独敵対レビュー・grow 前レビュー・plan-confirm。
   - **親チャット＝Grok 4.6**（[[0040]]）。
   - **実装の並列展開＝Grok 4.6**（[[0040]]）。
-  - **`review_trio`＝Fable 5.1 high / Grok 4.6 / Muse Spark 1.3 medium**（[[0046]] / [[0047]]）。Fable と Opus を同一 trio に同居させない。
-  - **Fable の天井**は extra-high / max の追加だけ。ガードフォールバックは failed。
+  - **`review_trio`＝Opus 5 / Grok 4.6 / Muse Spark 1.3 medium**（[[0046]]）。Fable と Opus を同一 trio に同居させない。
+  - **Fable 5 は既定ロースターから外す**。許可は天井判断の追加レビューのみ。ゲート既定代替には使わない。
   - **不変条件**: 独立した新しい文脈・敵対的レビュー、名前付き agent 必須、Opus Task 入力は成果物のみ。
-- 結果: 席は親 Grok + 計画/レビュー Fable + 検証 Opus + Muse 3体（[[0046]] / [[0047]]）。
+- 結果: 席は親 Grok + Opus ゲート + Muse 3体（[[0039]] / [[0046]]）。
 - 関連: [[0031]] [[0033]] [[0026]] [[0016]] [[0018]] [[0039]] [[0040]]
