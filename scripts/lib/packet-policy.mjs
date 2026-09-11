@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
-import { assertAdrPaths, assertNoForbiddenKeys, packetFileName } from './harness-query.mjs';
+import { assertAdrPaths, assertNoForbiddenKeys, hasFacts, packetFileName } from './harness-query.mjs';
 
 const WORKSPACE = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -143,6 +143,7 @@ export function assertDispatchPolicy({ root, policyDir, dispatch, canon_path_cou
 	const packet = JSON.parse(raw.toString('utf8'));
 	assertNoForbiddenKeys(packet);
 	assertAdrPaths(root, packet.adr_paths ?? []);
+	if (!hasFacts(packet)) throw new Error('空パケットは書かない');
 	if (!Number.isInteger(canon_path_count) || canon_path_count < 0) {
 		throw new Error('canon_path_count は導出した 0 以上の整数');
 	}

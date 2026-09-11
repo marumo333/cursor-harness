@@ -143,15 +143,24 @@ test('導出 input は自己申告フラグを使わない', () => {
 });
 
 test('GIT_DIR を空リポに向けても件数は対象 root から数える', () => {
+	const repo = mkdtempSync(join(tmpdir(), 'canon-git-'));
+	execFileSync('git', ['init', '-b', 'main'], { cwd: repo });
+	execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '--allow-empty', '-m', 'init'], {
+		cwd: repo
+	});
+	mkdirSync(join(repo, 'scripts'), { recursive: true });
+	writeFileSync(join(repo, 'scripts', 'x.mjs'), 'export {}\n');
 	const clean = mkdtempSync(join(tmpdir(), 'empty-git-'));
 	execFileSync('git', ['init'], { cwd: clean });
 	const prevDir = process.env.GIT_DIR;
 	const prevTree = process.env.GIT_WORK_TREE;
+	const without = countCanonPaths(repo);
 	process.env.GIT_DIR = join(clean, '.git');
 	process.env.GIT_WORK_TREE = clean;
 	try {
-		const n = countCanonPaths(WORKSPACE);
-		assert.ok(n > 0);
+		const withEnv = countCanonPaths(repo);
+		assert.equal(withEnv, without);
+		assert.ok(without > 0);
 	} finally {
 		if (prevDir === undefined) delete process.env.GIT_DIR;
 		else process.env.GIT_DIR = prevDir;

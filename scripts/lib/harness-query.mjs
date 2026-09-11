@@ -65,14 +65,20 @@ export function assertNoForbiddenKeys(value, path = '') {
 	}
 }
 
-function hasFacts(packet) {
-	if (packet.feature) return true;
+export function hasFacts(packet) {
+	if (String(packet.feature ?? '').trim()) return true;
 	if (String(packet.diff_stat ?? '').trim()) return true;
-	if (packet.metrics && typeof packet.metrics === 'object' && Object.keys(packet.metrics).length > 0) {
+	if (packet.metrics && typeof packet.metrics === 'object') {
+		if (Object.values(packet.metrics).some((v) => v != null && String(v).trim() !== '')) return true;
+	}
+	if (
+		(packet.catalog_hits ?? []).some(
+			(h) => String(h?.id ?? '').trim() && String(h?.path ?? '').trim()
+		)
+	) {
 		return true;
 	}
-	if ((packet.catalog_hits ?? []).length > 0) return true;
-	if ((packet.adr_paths ?? []).length > 0) return true;
+	if ((packet.adr_paths ?? []).some((p) => String(p ?? '').trim())) return true;
 	return false;
 }
 

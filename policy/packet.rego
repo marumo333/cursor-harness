@@ -36,23 +36,35 @@ has_facts if {
 
 has_facts if {
 	is_string(input.packet.diff_stat)
-	count(input.packet.diff_stat) > 0
+	count(trim(input.packet.diff_stat, " \t\n\r")) > 0
 }
 
-has_facts if {
-	is_array(input.packet.catalog_hits)
-	count(input.packet.catalog_hits) > 0
+has_catalog_hit if {
+	some h in input.packet.catalog_hits
+	is_string(h.id)
+	count(trim(h.id, " \t\n\r")) > 0
+	is_string(h.path)
+	count(trim(h.path, " \t\n\r")) > 0
 }
 
-has_facts if {
-	is_array(input.packet.adr_paths)
-	count(input.packet.adr_paths) > 0
+has_facts if has_catalog_hit
+
+has_adr if {
+	some p in input.packet.adr_paths
+	is_string(p)
+	count(trim(p, " \t\n\r")) > 0
 }
 
-has_facts if {
-	is_object(input.packet.metrics)
-	count(input.packet.metrics) > 0
+has_facts if has_adr
+
+has_metric if {
+	some k
+	v := input.packet.metrics[k]
+	v != null
+	count(trim(sprintf("%v", [v]), " \t\n\r")) > 0
 }
+
+has_facts if has_metric
 
 has_sha if regex.match(`^[a-f0-9]{64}$`, input.dispatch.sha256)
 
