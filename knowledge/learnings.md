@@ -35,7 +35,8 @@
 - 3回目 trio: review 席から grok（体2）が落ちていた。GIT_DIR 偽装で件数 0 にできた。
   空 feature を事実とみなしていた。体2を review_trio に戻し、git 環境変数を無視し、空値を事実から外した。
 - 4回目は 1/3。GIT_DIR テストが実リポ差分に依存し main で赤になる。diff_stat 空白が事実扱い。
-  テストを一時リポに移し、空白 diff_stat も空にした。PATH 偽 git / HARNESS_ROOT 差し替えは残る。
+  テストを一時リポに移し、空白 diff_stat も空にした。
+  続けて ZWSP と PATH 偽 git を塞いだ。HARNESS_ROOT 差し替えは残る（CLI の作業根）。
 
 ---
 

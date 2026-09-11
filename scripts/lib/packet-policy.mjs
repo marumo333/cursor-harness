@@ -161,19 +161,24 @@ export function assertDispatchPolicy({ root, policyDir, dispatch, canon_path_cou
 	return { input, deny, required_mode, packet };
 }
 
+function gitBin() {
+	for (const p of ['/usr/bin/git', '/bin/git']) {
+		if (existsSync(p)) return p;
+	}
+	throw new Error('git バイナリが /usr/bin に無い');
+}
+
 function gitEnv() {
 	const env = { ...process.env };
-	delete env.GIT_DIR;
-	delete env.GIT_WORK_TREE;
-	delete env.GIT_INDEX_FILE;
-	delete env.GIT_OBJECT_DIRECTORY;
-	delete env.GIT_ALTERNATE_OBJECT_DIRECTORIES;
-	delete env.GIT_COMMON_DIR;
+	for (const k of Object.keys(env)) {
+		if (k === 'PATH' || k.startsWith('GIT_')) delete env[k];
+	}
+	env.PATH = '/usr/bin:/bin';
 	return env;
 }
 
 function gitLines(root, args) {
-	return execFileSync('git', ['-c', 'core.quotePath=false', '-C', root, ...args], {
+	return execFileSync(gitBin(), ['-c', 'core.quotePath=false', '-C', root, ...args], {
 		encoding: 'utf8',
 		cwd: root,
 		env: gitEnv()
@@ -186,7 +191,7 @@ function gitLines(root, args) {
 function resolveMergeBase(root) {
 	for (const base of ['origin/main', 'main']) {
 		try {
-			const mb = execFileSync('git', ['-c', 'core.quotePath=false', '-C', root, 'merge-base', base, 'HEAD'], {
+			const mb = execFileSync(gitBin(), ['-c', 'core.quotePath=false', '-C', root, 'merge-base', base, 'HEAD'], {
 				encoding: 'utf8',
 				cwd: root,
 				env: gitEnv()

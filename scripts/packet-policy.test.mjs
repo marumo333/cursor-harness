@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -166,6 +166,26 @@ test('GIT_DIR を空リポに向けても件数は対象 root から数える', 
 		else process.env.GIT_DIR = prevDir;
 		if (prevTree === undefined) delete process.env.GIT_WORK_TREE;
 		else process.env.GIT_WORK_TREE = prevTree;
+	}
+});
+
+test('PATH の偽 git では件数を 0 にできない', () => {
+	const repo = mkdtempSync(join(tmpdir(), 'canon-git-'));
+	execFileSync('git', ['init', '-b', 'main'], { cwd: repo });
+	execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '--allow-empty', '-m', 'init'], {
+		cwd: repo
+	});
+	mkdirSync(join(repo, 'scripts'), { recursive: true });
+	writeFileSync(join(repo, 'scripts', 'x.mjs'), 'export {}\n');
+	const bin = mkdtempSync(join(tmpdir(), 'fake-git-'));
+	writeFileSync(join(bin, 'git'), '#!/bin/sh\nexit 0\n');
+	chmodSync(join(bin, 'git'), 0o755);
+	const prev = process.env.PATH;
+	process.env.PATH = `${bin}:${prev}`;
+	try {
+		assert.ok(countCanonPaths(repo) > 0);
+	} finally {
+		process.env.PATH = prev;
 	}
 });
 

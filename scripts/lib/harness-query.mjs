@@ -65,20 +65,22 @@ export function assertNoForbiddenKeys(value, path = '') {
 	}
 }
 
+const INVISIBLE = /[\s\u00a0\u200b\u200c\u200d\u2060\ufeff\u3000]/g;
+
+export function visibleText(value) {
+	return String(value ?? '').replace(INVISIBLE, '');
+}
+
 export function hasFacts(packet) {
-	if (String(packet.feature ?? '').trim()) return true;
-	if (String(packet.diff_stat ?? '').trim()) return true;
+	if (visibleText(packet.feature)) return true;
+	if (visibleText(packet.diff_stat)) return true;
 	if (packet.metrics && typeof packet.metrics === 'object') {
-		if (Object.values(packet.metrics).some((v) => v != null && String(v).trim() !== '')) return true;
+		if (Object.values(packet.metrics).some((v) => v != null && visibleText(v))) return true;
 	}
-	if (
-		(packet.catalog_hits ?? []).some(
-			(h) => String(h?.id ?? '').trim() && String(h?.path ?? '').trim()
-		)
-	) {
+	if ((packet.catalog_hits ?? []).some((h) => visibleText(h?.id) && visibleText(h?.path))) {
 		return true;
 	}
-	if ((packet.adr_paths ?? []).some((p) => String(p ?? '').trim())) return true;
+	if ((packet.adr_paths ?? []).some((p) => visibleText(p))) return true;
 	return false;
 }
 

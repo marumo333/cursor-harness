@@ -29,22 +29,24 @@ has_expected_seats if {
 
 seat_ok if input.dispatch.seat in input.expected_seats
 
+empty_text(s) if regex.match(`^[\p{Z}\p{C}]*$`, s)
+
 has_facts if {
 	is_string(input.packet.feature)
-	count(trim(input.packet.feature, " \t\n\r")) > 0
+	not empty_text(input.packet.feature)
 }
 
 has_facts if {
 	is_string(input.packet.diff_stat)
-	count(trim(input.packet.diff_stat, " \t\n\r")) > 0
+	not empty_text(input.packet.diff_stat)
 }
 
 has_catalog_hit if {
 	some h in input.packet.catalog_hits
 	is_string(h.id)
-	count(trim(h.id, " \t\n\r")) > 0
+	not empty_text(h.id)
 	is_string(h.path)
-	count(trim(h.path, " \t\n\r")) > 0
+	not empty_text(h.path)
 }
 
 has_facts if has_catalog_hit
@@ -52,7 +54,7 @@ has_facts if has_catalog_hit
 has_adr if {
 	some p in input.packet.adr_paths
 	is_string(p)
-	count(trim(p, " \t\n\r")) > 0
+	not empty_text(p)
 }
 
 has_facts if has_adr
@@ -61,7 +63,7 @@ has_metric if {
 	some k
 	v := input.packet.metrics[k]
 	v != null
-	count(trim(sprintf("%v", [v]), " \t\n\r")) > 0
+	not empty_text(sprintf("%v", [v]))
 }
 
 has_facts if has_metric

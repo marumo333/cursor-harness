@@ -190,6 +190,11 @@ test_deny_whitespace_diff_stat if {
 	count(canon.deny) > 0 with input as object.union(ok_input, {"packet": p})
 }
 
+test_deny_zwsp_diff_stat if {
+	p := object.union(ok_packet, {"feature": "", "diff_stat": "\u200b", "catalog_hits": [], "adr_paths": [], "metrics": {}})
+	count(canon.deny) > 0 with input as object.union(ok_input, {"packet": p})
+}
+
 test_deny_implement_to_opus if {
 	count(canon.deny) > 0 with input as object.union(ok_input, {"role_swap_to_opus": true})
 }
