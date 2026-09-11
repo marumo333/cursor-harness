@@ -1,16 +1,16 @@
 {
 	"nodes": [
-		{ "id": "skill:harness-api-budget", "kind": "skill" },
-		{ "id": "skill:adversarial-review", "kind": "skill" },
-		{ "id": "skill:verify", "kind": "skill" },
-		{ "id": "skill:reflect", "kind": "skill" }
+		{ "id": "skill:harness-api-budget", "kind": "skill", "context_mode": "packet" },
+		{ "id": "skill:adversarial-review", "kind": "skill", "context_mode": "isolated" },
+		{ "id": "skill:verify", "kind": "skill", "context_mode": "isolated" },
+		{ "id": "skill:reflect", "kind": "skill", "context_mode": "packet" }
 	],
 	"edges": [
 		{ "from": "skill:adversarial-review", "to": "skill:verify", "kind": "handoff" },
 		{ "from": "skill:verify", "to": "skill:reflect", "kind": "handoff" }
 	],
 	"optional_nodes": [
-		{ "id": "skill:plan-confirm", "kind": "skill", "when": "fanout" },
-		{ "id": "skill:harness-grow", "kind": "skill", "when": "feature_proposed" }
+		{ "id": "skill:plan-confirm", "kind": "skill", "when": "fanout", "context_mode": "isolated" },
+		{ "id": "skill:harness-grow", "kind": "skill", "when": "feature_proposed", "context_mode": "isolated" }
 	]
 }

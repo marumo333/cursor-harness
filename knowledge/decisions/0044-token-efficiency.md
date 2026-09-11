@@ -1,7 +1,7 @@
 # ADR 0044: トークン効率（code_mode パケット）と第3レンズ後継
 
 - 状態: 提案
-- 改正注記: 第3の現行ピンは [[0046]] で Muse Spark 1.3 medium。計画/レビューは [[0047]] で Fable 5.1。Flash medium は予備。Uber の bash 一括 code-mode は [[0048]]。決定5 の harness-query は未実装（F-0007）。決定1/2/4 の本文は消さない。
+- 改正注記: 第3の現行ピンは [[0046]] で Muse Spark 1.3 medium。計画/レビューは [[0047]] で Fable 5.1。Flash medium は予備。Uber の bash 一括 code-mode は [[0048]]。決定5 の harness-query と決定6 の token_ledger は [[0045]] / F-0007 が実装。決定1/2/4 の本文は消さない。
 - 日付: 2026-09-04
 - 改正対象: [[0031]] [[0033]] [[0037]] [[0040]]。廃止ではない
 - 背景:

@@ -41,13 +41,14 @@
 - [ADR-0042](knowledge/decisions/0042-always-on-precommit-ja-conventional.md) (accepted): pre-commit は常時起動、コミット主語は日本語 conventional
 - [ADR-0043](knowledge/decisions/0043-tri-layer-knowledge.md) (proposed): 三層知識（machine / index / human）
 - [ADR-0044](knowledge/decisions/0044-token-efficiency.md) (proposed): トークン効率（code_mode パケット）と第3レンズ後継
+- [ADR-0045](knowledge/decisions/0045-dispatch-context-packet.md) (proposed): ディスパッチ packet（isolated / packet と親の effort 上書き）
 - [ADR-0046](knowledge/decisions/0046-muse-spark-third-lens.md) (accepted): 第3レンズ＝Muse Spark 1.3 medium
 - [ADR-0047](knowledge/decisions/0047-fable-plan-review.md) (accepted): 計画確定と敵対レビュー＝Fable 5.1 high
 - [ADR-0048](knowledge/decisions/0048-uber-code-mode.md) (accepted): Uber code-mode＝bash 一括と要約
 - [skill:adversarial-review](.claude/skills/adversarial-review/SKILL.md) (n/a): 独立敵対レビューの起動手順（全変更のデフォルトゲート）と高リスク3体3ファミリー多数決。実装完了後・前進判定の前に必ず使う。
 - [skill:code-mode](.claude/skills/code-mode/SKILL.md) (n/a): 照会 bash を1回の CLI にまとめ、中間出力を文脈に載せない（Uber code-mode / read_cache）。2本以上の git status
 - [skill:cycle](.claude/skills/cycle/SKILL.md) (n/a): 1周の skill 使用/省略をグラフに記録し、3指標を出す。ループ終了時に必ず使う。
-- [skill:harness-api-budget](.claude/skills/harness-api-budget/SKILL.md) (n/a): Ultraでもトークン効率と精度を同時に取る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体・照会はcode-mode）。
+- [skill:harness-api-budget](.claude/skills/harness-api-budget/SKILL.md) (n/a): Ultraでもトークン効率と精度を同時に取る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体・照会はcode-mode・子
 - [skill:harness-audit](.claude/skills/harness-audit/SKILL.md) (n/a): ハーネス健全性を決定的にスコア化し履歴に記録。実行するほど成長しているかを可視化する。
 - [skill:harness-grow](.claude/skills/harness-grow/SKILL.md) (n/a): 入場済み Feature だけ skill/rule/Rego に昇格し、判断を ADR/criteria に落とす。ハーネスを複利成長させる。
 - [skill:parallel-dispatch](.claude/skills/parallel-dispatch/SKILL.md) (n/a): 実装の並列展開判断と起動手順（Task並列 / 作業ツリー分離 / 読み取り専用）。親Grokが計画を subagent に配る時に使う。

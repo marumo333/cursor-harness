@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { computeMetrics, foldCycle, latestOpenCycle, nextCycleId } from './lib/cycle-metrics.mjs';
+import { computeMetrics, foldCycle, foldTokenLedger, latestOpenCycle, nextCycleId } from './lib/cycle-metrics.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const required = JSON.parse(readFileSync(join(ROOT, 'knowledge/graph/required-cycle.json'), 'utf8'));
@@ -83,4 +83,67 @@ test('新しい cycle を開いたら古い未承認には戻らない', () => {
 		]),
 		'C-0005'
 	);
+});
+
+test('token_ledger は畳み込みで観測項だけ出す', () => {
+	const ledger = foldTokenLedger(
+		[
+			{
+				cycle: 'C-0010',
+				type: 'token_ledger',
+				seat: 'grok',
+				effort: 'medium',
+				packet_bytes: 120,
+				tasks: 2,
+				zero_value_reinject: true
+			},
+			{
+				cycle: 'C-0010',
+				type: 'token_ledger',
+				seat: 'fable',
+				effort: 'high',
+				packet_bytes: 80,
+				tasks: 1,
+				zero_value_reinject: false
+			},
+			{
+				cycle: 'C-0009',
+				type: 'token_ledger',
+				seat: 'opus',
+				effort: 'high',
+				packet_bytes: 999,
+				tasks: 9,
+				zero_value_reinject: true
+			}
+		],
+		'C-0010'
+	);
+	assert.equal(ledger.task_count, 3);
+	assert.equal(ledger.packet_bytes_sum, 200);
+	assert.equal(ledger.zero_value_reinject_count, 1);
+	assert.deepEqual(ledger.seats, ['grok', 'fable']);
+});
+
+test('token_ledger は need_rerun 相当の3指標を変えない', () => {
+	const events = [
+		{ cycle: 'C-0010', type: 'node_state', node: 'skill:harness-api-budget', state: 'used' },
+		{ cycle: 'C-0010', type: 'node_state', node: 'skill:adversarial-review', state: 'used' },
+		{ cycle: 'C-0010', type: 'node_state', node: 'skill:verify', state: 'used' },
+		{ cycle: 'C-0010', type: 'node_state', node: 'skill:reflect', state: 'used' },
+		{ cycle: 'C-0010', type: 'edge_state', from: 'skill:adversarial-review', to: 'skill:verify', state: 'taken' },
+		{ cycle: 'C-0010', type: 'edge_state', from: 'skill:verify', to: 'skill:reflect', state: 'taken' },
+		{
+			cycle: 'C-0010',
+			type: 'token_ledger',
+			seat: 'grok',
+			effort: 'medium',
+			packet_bytes: 10,
+			tasks: 1,
+			zero_value_reinject: true
+		}
+	];
+	const m = computeMetrics(required, foldCycle(events, 'C-0010'));
+	assert.equal(m.should_file_feature, false);
+	assert.equal(m.has_failed, false);
+	assert.equal(m.node_skip_rate, 0);
 });

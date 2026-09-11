@@ -29,3 +29,40 @@ harness_agents:
     no_generic_task_as_gate: true
     no_fable_opus_cohabit_trio: true
     fable_guardrail_fallback_is_fail: true
+# effort は概念値。Task 実在スラッグが high-fast だけの席はスラッグを変えない（[[0044]] / [[0045]]）。
+# 幅1の上書きは packet.rego が deny。ゲートを親が下げることも不可。
+effort_defaults:
+  parent: medium
+  implement: medium
+  gate: high
+  third: medium
+  ceiling: high
+effort_allow:
+  parent:
+    - medium
+    - high
+  implement:
+    - medium
+    - high
+  gate:
+    - high
+  third:
+    - medium
+  ceiling:
+    - high
+escalate:
+  - stay
+  - trio
+  - ceiling
+  - human
+context_mode:
+  - isolated
+  - packet
+dispatch_seats:
+  parent: grok
+  implement: grok
+  plan_confirm: fable
+  review: fable
+  verify: opus
+  reflect: opus
+  third: muse

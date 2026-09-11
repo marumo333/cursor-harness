@@ -25,7 +25,9 @@ const PACKAGE_HOME = {
 	'harness.canon': 'canon.rego',
 	'harness.canon_test': 'canon_test.rego',
 	'cycle.admission': 'cycle.rego',
-	'cycle.admission_test': 'cycle_test.rego'
+	'cycle.admission_test': 'cycle_test.rego',
+	'packet.canon': 'packet.rego',
+	'packet.canon_test': 'packet_test.rego'
 };
 
 const args = process.argv.slice(2);
@@ -104,7 +106,9 @@ const RESOLVED_NS = {
 	'data.harness.canon': 'canon.rego',
 	'data.harness.canon_test': 'canon_test.rego',
 	'data.cycle.admission': 'cycle.rego',
-	'data.cycle.admission_test': 'cycle_test.rego'
+	'data.cycle.admission_test': 'cycle_test.rego',
+	'data.packet.canon': 'packet.rego',
+	'data.packet.canon_test': 'packet_test.rego'
 };
 
 function walkRego(dir, fn) {

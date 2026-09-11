@@ -35,7 +35,7 @@
 			"path": ".claude/skills/harness-api-budget/SKILL.md",
 			"rels": [],
 			"status": "n/a",
-			"summary": "Ultraでもトークン効率と精度を同時に取る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体・照会はcode-mode）。"
+			"summary": "Ultraでもトークン効率と精度を同時に取る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体・照会はcode-mode・子"
 		},
 		{
 			"id": "skill:harness-audit",
@@ -614,6 +614,52 @@
 			],
 			"status": "proposed",
 			"summary": "トークン効率（code_mode パケット）と第3レンズ後継"
+		},
+		{
+			"id": "ADR-0045",
+			"kind": "decision",
+			"layer": "human",
+			"path": "knowledge/decisions/0045-dispatch-context-packet.md",
+			"rels": [
+				{
+					"rel": "cites",
+					"target": "ADR-0031"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0033"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0037"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0039"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0040"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0044"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0046"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0047"
+				},
+				{
+					"rel": "cites",
+					"target": "ADR-0048"
+				}
+			],
+			"status": "proposed",
+			"summary": "ディスパッチ packet（isolated / packet と親の effort 上書き）"
 		},
 		{
 			"id": "ADR-0046",

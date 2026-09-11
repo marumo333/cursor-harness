@@ -66,14 +66,13 @@ AGENTS.md / CLAUDE.md は本票の paths に入れない。packet 必須の文�
 - [x] learnings 追記と C-0006 の cycle 記録
 - [x] PR。同一 PR で admit しない
 
-### 適用 PR（マージ後）
+### 適用（本 PR。人間指示で起票と同じ prime に載せる。admit しない）
 
-- [ ] status を `admitted` にし `node scripts/feature-gate.mjs --admit` を通す
-- [ ] 失敗する `harness-query` テストを先に書く
-- [ ] CLI を最小実装しテストを緑にする
-- [ ] packet Rego と OPA テスト
-- [ ] required-cycle と model-routing に mode / effort を書く
-- [ ] skill をパケット入力に更新する
-- [ ] plan-confirm（C トリガ）→ 敵対レビュー **モード2（trio）** → verify
-- [ ] 票の `proposed_change.paths` を適用 PR で広げない
-- [ ] catalog `--write` / `--check`
+- [x] 失敗する `harness-query` テストを先に書く
+- [x] CLI を最小実装しテストを緑にする
+- [x] packet Rego と OPA テスト
+- [x] required-cycle と model-routing に mode / effort を書く
+- [x] skill をパケット入力に更新する
+- [ ] 敵対レビュー **モード2（trio）** → verify
+- [x] 票の `proposed_change.paths` を広げない。status は `proposed` のまま（admit しない）
+- [x] catalog `--write` / `--check`

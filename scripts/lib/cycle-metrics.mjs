@@ -78,3 +78,23 @@ export function nextCycleId(id) {
 	const n = m ? Number(m[1]) + 1 : 1;
 	return `C-${String(n).padStart(4, '0')}`;
 }
+
+/**
+ * token_ledger の観測項。need_rerun / 3指標には入れない。
+ * @param {object[]} events
+ * @param {string} cycleId
+ */
+export function foldTokenLedger(events, cycleId) {
+	const seats = [];
+	let task_count = 0;
+	let packet_bytes_sum = 0;
+	let zero_value_reinject_count = 0;
+	for (const ev of events ?? []) {
+		if (ev.cycle !== cycleId || ev.type !== 'token_ledger') continue;
+		task_count += Number(ev.tasks) || 0;
+		packet_bytes_sum += Number(ev.packet_bytes) || 0;
+		if (ev.zero_value_reinject === true) zero_value_reinject_count += 1;
+		if (ev.seat && !seats.includes(ev.seat)) seats.push(ev.seat);
+	}
+	return { task_count, packet_bytes_sum, zero_value_reinject_count, seats };
+}

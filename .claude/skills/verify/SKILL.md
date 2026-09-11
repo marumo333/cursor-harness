@@ -20,6 +20,9 @@ description: 完了の定義を機械判定（feature-gate / opa test / cycle �
 6. 必須 skill の used/skipped を `cycle` に記録したこと（[[0039]]）。
 7. ADR / Feature / criteria / skill / `required-cycle.json` / `knowledge/index/` を触ったら
    `node scripts/knowledge-catalog.mjs --write` のあと `--check`（[[0043]]）。
+8. **ディスパッチ packet（[[0045]]）**: ゲート Task に
+   `knowledge/graph/packets/C-NNNN.<node>.<seq>.json` が無い、または禁則キーがある → 不合格。
+   本文はスポットライト囲み。会話履歴をパケットにしない。
 
 ## 出力
 

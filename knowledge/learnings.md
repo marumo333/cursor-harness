@@ -8,6 +8,28 @@
 
 ---
 
+## 2026-09-11 — ディスパッチ packet を本 PR で実装する（F-0007 / C-0010）
+
+**問い**
+
+- トークン効率の本丸（子に会話を継がない / 何バイト渡したか測る）をこの prime で入れるか。
+
+**worked**
+
+- `harness-query` が `C-NNNN.<node>.<seq>.json` を gitignore 配下に書く。32KiB・空・禁則キーは失敗。
+- `packet.rego` は deny 空だけ。幅1 effort、canon 周の stay、子の自己昇格、Muse の第3外を落とす。
+- `token_ledger` は観測だけ。3指標 / `need_rerun` は変えない。
+- F-0007 は proposed のまま。適用は F-0001。0045 は新規。0044 決定本文は消さない。
+- TDD 赤は `ERR_MODULE_NOT_FOUND` / `foldTokenLedger` 未 export。その後 assertion 緑、`pnpm test` 100、feature-gate 成功。
+
+**failed / edge cases**
+
+- `some k; k in input.child_keys` は OPA で unsafe。完全ルール `child_promotes if "effort" in ...` に分解した。
+- 人間指示で起票と同じ PR に適用した。admit はしない。
+- plan-confirm は並列展開していないので省略。trio はこれから。
+
+---
+
 ## 2026-09-11 — Uber code-mode を本 PR に入れる（F-0010 / C-0009）
 
 **問い**

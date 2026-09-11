@@ -1,9 +1,9 @@
 ---
 name: harness-api-budget
-description: Ultraでもトークン効率と精度を同時に取る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体・照会はcode-mode）。壁打ち〜検証の席判断で使う。
+description: Ultraでもトークン効率と精度を同時に取る席ルーティング（Grok親・計画/レビューはFable・検証はOpus・Museは3体・照会はcode-mode・子へはpacket）。壁打ち〜検証の席判断で使う。
 ---
 
-# harness-api-budget skill（[[0033]] / [[0037]] / [[0039]] / [[0040]] / [[0046]] / [[0047]] / [[0048]]）
+# harness-api-budget skill（[[0033]] / [[0037]] / [[0039]] / [[0040]] / [[0045]] / [[0046]] / [[0047]] / [[0048]]）
 
 ## 席の要約
 
@@ -30,6 +30,9 @@ description: Ultraでもトークン効率と精度を同時に取る席ルー�
    これは入力トークン削減。pre-commit（[[0042]]）は回避防止であり、トークンは減らさない。
 10. **code-mode（[[0048]]）**: 照会 bash が2本以上なら `scripts/code-mode.mjs` 1回。
     中間出力は文脈に載せない。生の `&&` 照会連鎖は hook が deny。Ultra でも省略しない。
+11. **packet（[[0045]]）**: 子には `scripts/harness-query.mjs` が書いた JSON だけ。
+    会話・learnings 全文・ADR 全件は継がない。effort / escalate は親が cycle の dispatch 行に書く。
+    ゲートは isolated、Worker / reflector は packet。会話 fork は置かない。
 
 ## superpowers 接続
 

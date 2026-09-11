@@ -12,6 +12,7 @@ feature:
     会話 fork と診断成果物の継承が混ざり、1周1再注入が壊れる。
     席と effort は YAML 固定のままで、記事側の「親がノード属性を書く」上書きが正本に無い。
     形を TypeScript に置くと消える型になり、Rego 入場と二重化する。
+    適用は F-0001 被覆（F-0003 / F-0008 と同じ）。本票は proposed のまま。入場しない。
   proposed_change:
     mutates_canon: true
     paths:

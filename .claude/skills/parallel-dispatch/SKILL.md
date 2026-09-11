@@ -31,8 +31,11 @@ description: 実装の並列展開判断と起動手順（Task並列 / 作業ツ
 3. 仕様が明文化できたタスクのみ `grok_task`（[[0040]] / `model-routing.yaml`）に委譲する。
    親 UI スラッグ（`chat_orchestrator`）を Task に渡さない。曖昧なタスク・非自明ロジックは Opus Task。
 4. subagent への指示に必ず含める: 対象ファイル / 完了条件 / 読むべき ADR・criteria / 禁止事項。
+   入力は **packet**（`scripts/harness-query.mjs`）。会話 fork は置かない。
+   effort / escalate は親だけが cycle dispatch に書く。子が同じキーを返したら deny。
 5. 起動は 1メッセージにまとめる。完了後、**親 Grok が統合** → `adversarial-review` → `verify`。
    **並列展開の出力をレビューなしでマージしない。**
+   ゲート席は isolated packet。パケットが無ければ起動しない。
 
 ## アンチパターン
 
