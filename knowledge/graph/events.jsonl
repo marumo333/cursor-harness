@@ -70,3 +70,4 @@
 {"t":"2026-09-11T05:51:32.644Z","type":"node_state","cycle":"C-0008","node":"skill:reflect","state":"used"}
 {"t":"2026-09-11T05:51:32.663Z","type":"edge_state","cycle":"C-0008","from":"skill:adversarial-review","to":"skill:verify","state":"taken","reason":"再レビュー3/3承認。票は pending"}
 {"t":"2026-09-11T05:51:32.684Z","type":"edge_state","cycle":"C-0008","from":"skill:verify","to":"skill:reflect","state":"taken","reason":"feature-gate / pnpm test 緑"}
+{"t":"2026-09-11T08:26:39.401Z","type":"human_approved","cycle":"C-0008","merge_sha":"93219814df7f3c39abee92c9cfc1ef10bf5dd3f6","pr":"13"}
