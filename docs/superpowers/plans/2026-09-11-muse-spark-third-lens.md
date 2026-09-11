@@ -17,7 +17,7 @@ tdd_exceptions:
 - [x] ADR 0046 と F-0008（proposed）を書く
 - [x] criteria / skill / AGENTS / README を Muse に揃える
 - [x] feature-gate と pnpm test（48/48、78/78）
-- [ ] モード2 trio（体3は Muse）。初回は体1/体2差し戻し
+- [x] モード2 trio（体3は Muse）。初回差し戻し、再レビューは 3/3 承認
 - [x] catalog `--write` / `--check`
 - [x] PR。F-0008 は proposed のまま
 - [x] C-0007 を記録する（C-0006 は F-0007 側）
