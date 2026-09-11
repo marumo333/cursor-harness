@@ -19,10 +19,9 @@ harness_agents:
     parent_chat: grok-only
     opus_input: artifacts-only
     third_lens_seat: review_trio_only
-    muse_seat: review_trio_only
+    no_sol_terra_luna: true
     fable_seat: explicit-ceiling-only
     trio_when: high-risk-only
     plan_confirm_when: before-fanout-only
     no_generic_task_as_gate: true
     no_fable_opus_cohabit_trio: true
-    no_sol_as_third: true
