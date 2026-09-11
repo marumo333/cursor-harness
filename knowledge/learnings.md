@@ -32,6 +32,8 @@
   執行点を `cycle-record --type dispatch` に移し、node×seat から役割を導出し、欠落は deny にした。
 - 再レビューも差し戻し。`--canon-path-count` 自己申告と git 失敗時の 0 を廃し、
   席を dispatch_seats に固定、Muse は escalate trio 必須、`--adr` の symlink を拒否した。
+- 3回目 trio: review 席から grok（体2）が落ちていた。GIT_DIR 偽装で件数 0 にできた。
+  空 feature を事実とみなしていた。体2を review_trio に戻し、git 環境変数を無視し、空値を事実から外した。
 
 ---
 

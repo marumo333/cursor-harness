@@ -18,8 +18,11 @@
   3. **親上書きは cycle の dispatch 行が正本。** node / seq / 席 / effort / escalate / sha256。
      seq は周内単調増加。平文 `writer: parent` は信用しない。
      子が同じキーを返したら deny し cycle に残す。
-     席は `model-routing.yaml` の dispatch_seats に固定する。Muse は `escalate: trio` 必須。
-     canon 件数は git + `harness.canon.paths` で導出する。CLI 自己申告は置かない。欠落は deny。
+     席は node ごとの許容集合に固定する（親=grok、verify/reflect=opus、
+     plan-confirm/grow=fable、adversarial-review=review_trio の fable/grok/muse）。
+     Muse は `escalate: trio` 必須。自己申告の child_keys / canon 件数は置かない。
+     子の自己昇格は記録行の席・effort・escalate が集合外なら deny。
+     canon 件数は対象 root の git（`GIT_DIR` 環境は無視）+ `harness.canon.paths` で導出する。欠落は deny。
   4. **effort 上書きは許容幅が2要素以上のときだけ。** 幅1は hard deny。
      ゲート effort を親が下げることは不可。実装席を Opus に付け替えない。
   5. **escalate は `stay` / `trio` / `ceiling` / `human`。**

@@ -168,6 +168,23 @@ test_deny_verify_seat_grok if {
 	count(canon.deny) > 0 with input as object.union(ok_input, {"dispatch": d})
 }
 
+test_allow_review_grok_trio if {
+	d := object.union(ok_dispatch, {"node": "skill:adversarial-review", "seat": "grok", "escalate": "trio"})
+	p := object.union(ok_packet, {"node": "skill:adversarial-review"})
+	count(canon.deny) == 0 with input as object.union(ok_input, {
+		"packet": p,
+		"dispatch": d,
+		"canon_path_count": 1,
+		"required_mode": "isolated",
+		"expected_seats": ["fable", "grok", "muse"],
+	})
+}
+
+test_deny_empty_feature_only if {
+	p := object.union(ok_packet, {"feature": "", "diff_stat": "", "catalog_hits": [], "adr_paths": [], "metrics": {}})
+	count(canon.deny) > 0 with input as object.union(ok_input, {"packet": p})
+}
+
 test_deny_implement_to_opus if {
 	count(canon.deny) > 0 with input as object.union(ok_input, {"role_swap_to_opus": true})
 }

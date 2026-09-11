@@ -29,7 +29,10 @@ has_expected_seats if {
 
 seat_ok if input.dispatch.seat in input.expected_seats
 
-has_facts if is_string(input.packet.feature)
+has_facts if {
+	is_string(input.packet.feature)
+	count(trim(input.packet.feature, " \t\n\r")) > 0
+}
 
 has_facts if {
 	is_string(input.packet.diff_stat)
@@ -46,7 +49,10 @@ has_facts if {
 	count(input.packet.adr_paths) > 0
 }
 
-has_facts if is_object(input.packet.metrics)
+has_facts if {
+	is_object(input.packet.metrics)
+	count(input.packet.metrics) > 0
+}
 
 has_sha if regex.match(`^[a-f0-9]{64}$`, input.dispatch.sha256)
 

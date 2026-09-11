@@ -19,7 +19,7 @@ const ROLE_BY_NODE = {
 
 const SEATS_BY_NODE = {
 	'skill:harness-api-budget': ['grok'],
-	'skill:adversarial-review': ['fable', 'muse'],
+	'skill:adversarial-review': ['fable', 'grok', 'muse'],
 	'skill:verify': ['opus'],
 	'skill:reflect': ['opus'],
 	'skill:plan-confirm': ['fable'],
@@ -160,10 +160,22 @@ export function assertDispatchPolicy({ root, policyDir, dispatch, canon_path_cou
 	return { input, deny, required_mode, packet };
 }
 
+function gitEnv() {
+	const env = { ...process.env };
+	delete env.GIT_DIR;
+	delete env.GIT_WORK_TREE;
+	delete env.GIT_INDEX_FILE;
+	delete env.GIT_OBJECT_DIRECTORY;
+	delete env.GIT_ALTERNATE_OBJECT_DIRECTORIES;
+	delete env.GIT_COMMON_DIR;
+	return env;
+}
+
 function gitLines(root, args) {
-	return execFileSync('git', ['-c', 'core.quotePath=false', ...args], {
+	return execFileSync('git', ['-c', 'core.quotePath=false', '-C', root, ...args], {
 		encoding: 'utf8',
-		cwd: root
+		cwd: root,
+		env: gitEnv()
 	})
 		.split('\n')
 		.map((s) => s.trim())
@@ -173,9 +185,10 @@ function gitLines(root, args) {
 function resolveMergeBase(root) {
 	for (const base of ['origin/main', 'main']) {
 		try {
-			const mb = execFileSync('git', ['-c', 'core.quotePath=false', 'merge-base', base, 'HEAD'], {
+			const mb = execFileSync('git', ['-c', 'core.quotePath=false', '-C', root, 'merge-base', base, 'HEAD'], {
 				encoding: 'utf8',
-				cwd: root
+				cwd: root,
+				env: gitEnv()
 			}).trim();
 			if (mb) return mb;
 		} catch {

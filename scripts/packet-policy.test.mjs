@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -139,6 +140,24 @@ test('導出 input は自己申告フラグを使わない', () => {
 	assert.deepEqual(input.effort_allow, ['high']);
 	assert.deepEqual(input.expected_seats, ['opus']);
 	assert.equal(input.role_swap_to_opus, false);
+});
+
+test('GIT_DIR を空リポに向けても件数は対象 root から数える', () => {
+	const clean = mkdtempSync(join(tmpdir(), 'empty-git-'));
+	execFileSync('git', ['init'], { cwd: clean });
+	const prevDir = process.env.GIT_DIR;
+	const prevTree = process.env.GIT_WORK_TREE;
+	process.env.GIT_DIR = join(clean, '.git');
+	process.env.GIT_WORK_TREE = clean;
+	try {
+		const n = countCanonPaths(WORKSPACE);
+		assert.ok(n > 0);
+	} finally {
+		if (prevDir === undefined) delete process.env.GIT_DIR;
+		else process.env.GIT_DIR = prevDir;
+		if (prevTree === undefined) delete process.env.GIT_WORK_TREE;
+		else process.env.GIT_WORK_TREE = prevTree;
+	}
 });
 
 test('git が無いルートでは canon 件数を 0 に落とさない', () => {

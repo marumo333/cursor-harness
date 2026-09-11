@@ -63,6 +63,11 @@ dispatch_seats:
   implement: grok
   plan_confirm: fable
   review: fable
+  review_trio:
+    - fable
+    - grok
+    - muse
   verify: opus
   reflect: opus
   third: muse
+  harness_grow: fable
