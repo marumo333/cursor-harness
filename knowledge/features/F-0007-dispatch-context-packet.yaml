@@ -1,0 +1,48 @@
+feature:
+  id: F-0007
+  title: ディスパッチ packet（context_mode と親の effort 上書き）
+  kind: harness-grow
+  status: proposed
+  source: human
+  created: '2026-09-10'
+  learning_refs:
+    - knowledge/learnings.md
+  problem: >
+    ゲートは isolated（新しい文脈・成果物のみ）だが、親が子に何を継ぐかは語彙が無い。
+    会話 fork と診断成果物の継承が混ざり、1周1再注入が壊れる。
+    席と effort は YAML 固定のままで、記事側の「親がノード属性を書く」上書きが正本に無い。
+    形を TypeScript に置くと消える型になり、Rego 入場と二重化する。
+  proposed_change:
+    mutates_canon: true
+    paths:
+      - knowledge/features/F-0007-dispatch-context-packet.yaml
+      - knowledge/graph/required-cycle.json
+      - knowledge/criteria/model-routing.yaml
+      - knowledge/decisions/0045-dispatch-context-packet.md
+      - policy/packet.rego
+      - policy/packet_test.rego
+      - scripts/feature-gate.mjs
+      - scripts/harness-query.mjs
+      - scripts/lib/harness-query.mjs
+      - scripts/harness-query.test.mjs
+      - scripts/lib/cycle-metrics.mjs
+      - scripts/cycle-metrics.test.mjs
+      - scripts/cycle-record.mjs
+      - package.json
+      - .github/workflows/feature-gate.yml
+      - .gitignore
+      - .claude/skills/harness-api-budget/SKILL.md
+      - .claude/skills/parallel-dispatch/SKILL.md
+      - .claude/skills/adversarial-review/SKILL.md
+      - .claude/skills/verify/SKILL.md
+      - .claude/skills/reflect/SKILL.md
+      - .claude/skills/cycle/SKILL.md
+  evidence:
+    adversarial_review: pending
+    review_agent: security-reviewer
+    verification: pending
+    opa_decision: pending
+  constraints:
+    supersede_adr: false
+    no_jp_code_merge_write: true
+    supersedes: []

@@ -695,6 +695,15 @@
 			"summary": "三層知識（machine / index / human）"
 		},
 		{
+			"id": "F-0007",
+			"kind": "feature",
+			"layer": "machine",
+			"path": "knowledge/features/F-0007-dispatch-context-packet.yaml",
+			"rels": [],
+			"status": "proposed",
+			"summary": "ディスパッチ packet（context_mode と親の effort 上書き）"
+		},
+		{
 			"id": "F-0008",
 			"kind": "feature",
 			"layer": "machine",

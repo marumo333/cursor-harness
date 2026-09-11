@@ -19,6 +19,7 @@
 - 人間が Flash 待ちを上書きし、現行ピンを `muse-spark-1.3-medium` にした。
 - 系列は Anthropic / xAI / Meta。Composer / Fable / Sol は第3に使わない。
 - F-0008 は `proposed` のまま。適用は F-0001 の in_progress 被覆。
+- F-0007 起票 PR とこの切替を一つの PR にまとめた。
 
 **failed / edge cases**
 
@@ -27,6 +28,35 @@
 - C-0007 に直し、0044 本文は戻し、`no_sol_terra_luna` を置いた。適用は F-0001（F-0003 と同じ）。
 - Muse は聞き返しを訓練している。不確実は差し戻し、を skill に足した。
 - Kimi / GLM は Desktop のみ。Task スラッグが無いのでピンしない。
+
+---
+
+## 2026-09-10 — ディスパッチ packet 起票（F-0007 / C-0006）
+
+**問い**
+
+- Graph / Loop / Judge / LangChain context mode をこのハーネスに写すとき、
+  親から子へ何を継ぎ、誰が model / effort を変えてよいか。
+
+**worked**
+
+- 会話 fork は不採用。写すのはリポに落ちた事実の JSON packet（isolated / packet）。
+- 親の effort / escalate 上書きはノード属性として残す。子の自己昇格は不可。
+- 型の正本は TypeScript ではなく Rego（0014 / 0043）。
+- 本周は出生規則どおり F-0007 を `proposed` だけ起票。admit しない。
+
+**failed / edge cases**
+
+- 0044 の `harness-query` は未実装のまま。本票が入場後に実装する。
+- 指名できる xAI 個人の「evals をエージェントが持て」ツイートは一次ソース未確定。
+  公式は Grok 4.6 カード §5。採点関数はループの外（InferenceEval / 本リポの OPA）。
+- F-0001 の `approved` 自己申告（C1）はこの PR では直さない。
+- 初回敵対レビューは差し戻し。paths の部分木被覆、supersede_adr、escalate の引き下げ、
+  平文 writer、packet 保管が抜けていた。票をファイル単位に直し、spec に閉じた。
+- 再レビューも差し戻し。F-0001 和集合でファイル単位が強制にならないこと、
+  stay の高リスク判定が散文だったことを認め、自票パス追加と機械導出を spec に書いた。
+- 三回目は高リスク集合の手書き列挙が 73 ファイルを漏らした。canon 非空を高リスクに倒す。
+- 四回目は低リスク例外が evidence と skill を単独レンズに落とした。例外は置かない。
 
 ---
 
