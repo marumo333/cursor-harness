@@ -35,18 +35,18 @@ node scripts/install-git-hooks.mjs
 
 ## アーキテクチャ
 
-このハーネスは **ソフトウェア工場** である。原料は人間の依頼と Feature、工程は席、
-治具は packet と code-mode、品質ゲートは hooks / OPA / feature-gate、
-製品は正本（skill / ADR / criteria / Rego）、フィードバックは cycle と learnings である。
-Uber の Gateway や艦隊は置かない。OPA は canon 変更のゲートであり、自己改善ループそのものではない。
+このハーネスは席・正本・ゲート・cycle で回る。入力は人間の依頼と Feature、
+実行は席、token効率化は code-mode と packet、品質ゲートは hooks / OPA / feature-gate、
+成果は正本（skill / ADR / criteria / Rego）、フィードバックは cycle と learnings である。
+監査の主体は親 Grok 4.6 である。Uber の Gateway や艦隊は置かない。OPA は canon 変更のゲートであり、自己改善ループそのものではない。
 
 旧 PNG は [`docs/architecture/`](docs/architecture/) に履歴として残す。正は下記 mermaid。
 
-### ソフトウェア工場
+### 監査
 
-受付 → 工場長（親）→ 工程（計画 / 実装 / 抜き取り / 検査 / 振り返り）→ 出荷。
-工程の辺は `required-cycle.json` と同じ（adversarial-review → verify → reflect）。
-OPA / feature-gate は横の判定であり、正本倉庫へは書かない。倉庫へ入るのは人間マージだけ。
+受付 → 監査（親）→ 計画 / 実装 / 敵対レビュー / 検証 / 内省 → 公開。
+辺は `required-cycle.json` と同じ（adversarial-review → verify → reflect）。
+OPA / feature-gate は横の判定であり、正本へは書かない。正本へ入るのは人間マージだけ。
 
 ```mermaid
 flowchart TB
@@ -55,15 +55,15 @@ flowchart TB
     FE["Feature proposed"]
   end
 
-  subgraph plant["工場フロア"]
-    P["工場長 親 Grok 4.6"]
-    CM["治具 code-mode"]
-    PK["工程カード packet"]
+  subgraph plant["実行"]
+    P["監査 親 Grok 4.6"]
+    CM["token効率化"]
+    PK["packet"]
     PL["計画 writing-plans"]
     IM["実装 Grok"]
-    AR["抜き取り adversarial Fable"]
-    VR["検査 verifier Opus"]
-    RF["振り返り reflector Opus"]
+    AR["敵対レビュー Fable"]
+    VR["検証 verifier Opus"]
+    RF["内省 reflector Opus"]
     TR["高リスク trio<br/>Fable / Grok / Muse"]
   end
 
@@ -72,13 +72,13 @@ flowchart TB
     FG["feature-gate / OPA"]
   end
 
-  subgraph warehouse["正本倉庫"]
+  subgraph warehouse["正本"]
     SK["skills / agents"]
     AD["ADR / criteria / Feature"]
     PO["policy Rego"]
   end
 
-  subgraph ship["出荷"]
+  subgraph ship["公開"]
     PR["PR"]
     HM["人間マージ"]
   end

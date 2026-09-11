@@ -860,7 +860,7 @@
 			"path": "knowledge/features/F-0011-mit-license-factory-diagram.yaml",
 			"rels": [],
 			"status": "proposed",
-			"summary": "MITライセンス発行と工場構造 mermaid"
+			"summary": "MITライセンス発行と監査 mermaid"
 		},
 		{
 			"id": "cycle:required",

@@ -42,10 +42,20 @@ test('package.json の license は MIT である', () => {
 	assert.equal(pkg.license, 'MIT');
 });
 
-test('README は mermaid 3図で工場構造を示し PNG を正にしない', () => {
+test('README は mermaid 3図で監査と token効率化を示し PNG を正にしない', () => {
 	const readme = readFileSync(join(ROOT, 'README.md'), 'utf8');
-	assert.match(readme, /ソフトウェア工場/);
+	assert.match(readme, /### 監査/);
+	assert.match(readme, /token効率化/);
 	assert.match(readme, /### 再起的自己改善/);
+	assert.doesNotMatch(readme, /ソフトウェア工場/);
+	assert.doesNotMatch(readme, /工場長/);
+	assert.doesNotMatch(readme, /治具/);
+	assert.doesNotMatch(readme, /工場フロア/);
+	assert.doesNotMatch(readme, /抜き取り/);
+	assert.doesNotMatch(readme, /工程カード/);
+	assert.doesNotMatch(readme, /正本倉庫/);
+	assert.doesNotMatch(readme, /出荷/);
+	assert.doesNotMatch(readme, /原料/);
 	assert.doesNotMatch(readme, /harness-runtime-architecture\.png/);
 	assert.doesNotMatch(readme, /harness-self-improve-architecture\.png/);
 	assert.doesNotMatch(readme, /欠落 PNG/);
@@ -56,8 +66,8 @@ test('README は mermaid 3図で工場構造を示し PNG を正にしない', (
 	const fences = [...readme.matchAll(/```mermaid\n([\s\S]*?)```/g)].map((m) => m[1]);
 	assert.equal(fences.length, 3, `mermaid 図は3つ: ${fences.length}`);
 	assert.ok(
-		fences.some((b) => /工場長/.test(b) && /AR --> VR/.test(b) && /VR --> RF/.test(b) && /HM --> warehouse/.test(b)),
-		'工場図は cycle 辺と人間マージ入場を含む'
+		fences.some((b) => /監査/.test(b) && /token効率化/.test(b) && /AR --> VR/.test(b) && /VR --> RF/.test(b) && /HM --> warehouse/.test(b)),
+		'監査図は cycle 辺と人間マージ入場を含む'
 	);
 	assert.ok(
 		fences.some((b) => /実装 Grok/.test(b) && /IMP --> Hook/.test(b) && /判定のみ/.test(b)),

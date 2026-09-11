@@ -1,6 +1,6 @@
 feature:
   id: F-0011
-  title: MITライセンス発行と工場構造 mermaid
+  title: MITライセンス発行と監査 mermaid
   kind: harness-grow
   status: proposed
   source: human
@@ -11,6 +11,7 @@ feature:
     0044 はアイデンティティを MIT と書いたが LICENSE が無く、複製先の法的包装が無い。
     README のランタイム/自己改善図は静的 PNG で、席ピンと cycle 辺が正本とずれやすい。
     mermaid を正とし、旧 PNG は docs/architecture/ に履歴として残す。
+    工場長 / 治具などの工場比喻は使わない。親は監査、code-mode は token効率化と書く。
     適用は F-0001 被覆。本票は proposed のまま。入場しない。
   proposed_change:
     mutates_canon: true
@@ -22,6 +23,7 @@ feature:
       - scripts/license-readme.test.mjs
       - .github/workflows/feature-gate.yml
       - knowledge/features/F-0011-mit-license-factory-diagram.yaml
+      - docs/superpowers/specs/2026-09-11-audit-token-terms-design.md
   evidence:
     adversarial_review: pending
     review_agent: security-reviewer

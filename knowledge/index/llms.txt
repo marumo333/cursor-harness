@@ -14,7 +14,7 @@
 - [F-0008](knowledge/features/F-0008-muse-spark-third-lens.yaml) (proposed): 第3レンズを Muse Spark 1.3 medium に切り替える
 - [F-0009](knowledge/features/F-0009-fable-plan-review.yaml) (proposed): 計画確定と敵対レビューを Fable 5.1 にする
 - [F-0010](knowledge/features/F-0010-uber-code-mode.yaml) (proposed): Uber code-mode（bash 一括と要約）を入れる
-- [F-0011](knowledge/features/F-0011-mit-license-factory-diagram.yaml) (proposed): MITライセンス発行と工場構造 mermaid
+- [F-0011](knowledge/features/F-0011-mit-license-factory-diagram.yaml) (proposed): MITライセンス発行と監査 mermaid
 - [criterion:code-quality](knowledge/criteria/code-quality.yaml) (n/a): コード品質バー — ハーネス テンプレート。出典: ADR 0013-0016 / 0038 / 0039
 - [criterion:cycle-metrics](knowledge/criteria/cycle-metrics.yaml) (n/a): サイクル3指標 — ADR 0039。実装は scripts/cycle-metrics.mjs / policy/cycle.rego
 - [criterion:grow-admission](knowledge/criteria/grow-admission.yaml) (n/a): Feature 正本 + OPA grow 入場 — ハーネス/reflector/verify が参照。出典: ADR 0038
